@@ -1,0 +1,307 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		CD26B7851E69F9800016AF8C /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD26B7841E69F9800016AF8C /* AppDelegate.swift */; };
+		CD26B7871E69F9800016AF8C /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD26B7861E69F9800016AF8C /* ViewController.swift */; };
+		CD26B78A1E69F9800016AF8C /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CD26B7881E69F9800016AF8C /* Main.storyboard */; };
+		CD26B78C1E69F9800016AF8C /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CD26B78B1E69F9800016AF8C /* Assets.xcassets */; };
+		CD26B78F1E69F9800016AF8C /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CD26B78D1E69F9800016AF8C /* LaunchScreen.storyboard */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		CD26B7811E69F9800016AF8C /* Chottky.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Chottky.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		CD26B7841E69F9800016AF8C /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		CD26B7861E69F9800016AF8C /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
+		CD26B7891E69F9800016AF8C /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		CD26B78B1E69F9800016AF8C /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		CD26B78E1E69F9800016AF8C /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
+		CD26B7901E69F9800016AF8C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		CD26B77E1E69F9800016AF8C /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		CD26B7781E69F9800016AF8C = {
+			isa = PBXGroup;
+			children = (
+				CD26B7831E69F9800016AF8C /* Chottky */,
+				CD26B7821E69F9800016AF8C /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		CD26B7821E69F9800016AF8C /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				CD26B7811E69F9800016AF8C /* Chottky.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		CD26B7831E69F9800016AF8C /* Chottky */ = {
+			isa = PBXGroup;
+			children = (
+				CD26B7841E69F9800016AF8C /* AppDelegate.swift */,
+				CD26B7861E69F9800016AF8C /* ViewController.swift */,
+				CD26B7881E69F9800016AF8C /* Main.storyboard */,
+				CD26B78B1E69F9800016AF8C /* Assets.xcassets */,
+				CD26B78D1E69F9800016AF8C /* LaunchScreen.storyboard */,
+				CD26B7901E69F9800016AF8C /* Info.plist */,
+			);
+			path = Chottky;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		CD26B7801E69F9800016AF8C /* Chottky */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = CD26B7931E69F9800016AF8C /* Build configuration list for PBXNativeTarget "Chottky" */;
+			buildPhases = (
+				CD26B77D1E69F9800016AF8C /* Sources */,
+				CD26B77E1E69F9800016AF8C /* Frameworks */,
+				CD26B77F1E69F9800016AF8C /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = Chottky;
+			productName = Chottky;
+			productReference = CD26B7811E69F9800016AF8C /* Chottky.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		CD26B7791E69F9800016AF8C /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastSwiftUpdateCheck = 0820;
+				LastUpgradeCheck = 0820;
+				ORGANIZATIONNAME = Chottky;
+				TargetAttributes = {
+					CD26B7801E69F9800016AF8C = {
+						CreatedOnToolsVersion = 8.2.1;
+						DevelopmentTeam = PSFCZBNLMD;
+						ProvisioningStyle = Automatic;
+					};
+				};
+			};
+			buildConfigurationList = CD26B77C1E69F9800016AF8C /* Build configuration list for PBXProject "Chottky" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = CD26B7781E69F9800016AF8C;
+			productRefGroup = CD26B7821E69F9800016AF8C /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				CD26B7801E69F9800016AF8C /* Chottky */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		CD26B77F1E69F9800016AF8C /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CD26B78F1E69F9800016AF8C /* LaunchScreen.storyboard in Resources */,
+				CD26B78C1E69F9800016AF8C /* Assets.xcassets in Resources */,
+				CD26B78A1E69F9800016AF8C /* Main.storyboard in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		CD26B77D1E69F9800016AF8C /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CD26B7871E69F9800016AF8C /* ViewController.swift in Sources */,
+				CD26B7851E69F9800016AF8C /* AppDelegate.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXVariantGroup section */
+		CD26B7881E69F9800016AF8C /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				CD26B7891E69F9800016AF8C /* Base */,
+			);
+			name = Main.storyboard;
+			sourceTree = "<group>";
+		};
+		CD26B78D1E69F9800016AF8C /* LaunchScreen.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				CD26B78E1E69F9800016AF8C /* Base */,
+			);
+			name = LaunchScreen.storyboard;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		CD26B7911E69F9800016AF8C /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.2;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		CD26B7921E69F9800016AF8C /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.2;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				SDKROOT = iphoneos;
+				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		CD26B7941E69F9800016AF8C /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				DEVELOPMENT_TEAM = PSFCZBNLMD;
+				INFOPLIST_FILE = Chottky/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = RadiBarq.Chottky;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 3.0;
+			};
+			name = Debug;
+		};
+		CD26B7951E69F9800016AF8C /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				DEVELOPMENT_TEAM = PSFCZBNLMD;
+				INFOPLIST_FILE = Chottky/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = RadiBarq.Chottky;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 3.0;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		CD26B77C1E69F9800016AF8C /* Build configuration list for PBXProject "Chottky" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				CD26B7911E69F9800016AF8C /* Debug */,
+				CD26B7921E69F9800016AF8C /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		CD26B7931E69F9800016AF8C /* Build configuration list for PBXNativeTarget "Chottky" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				CD26B7941E69F9800016AF8C /* Debug */,
+				CD26B7951E69F9800016AF8C /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = CD26B7791E69F9800016AF8C /* Project object */;
+}
