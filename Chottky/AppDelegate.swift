@@ -7,15 +7,53 @@
 //
 
 import UIKit
+import Firebase
+
+
+
+
+
+//#FFCB2A The main color in hash
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
-
+    
     var window: UIWindow?
 
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
+        FIRApp.configure()
+        
+        UINavigationBar.appearance().barTintColor = UIColor.rgb(red: 136, green: 214, blue: 253)
+        
+    
+        //application.statusBarStyle = .lightContent
+        
+       // UINavigationBar.appearance().barStyle = .blackOpaque
+        
+        
+     //   application.statusBarStyle = .lightContent
+        
+       // let statusBarBackgroundView = UIView()
+        
+        //statusBarBackgroundView.backgroundColor = UIColor.orange
+
+        
+        //window?.addSubview(statusBarBackgroundView)
+        //window?.addConstraintsWithFormat(format: "H:|[v0]|", views: statusBarBackgroundView)
+        //window?.addConstraintsWithFormat(format: "V:|[v0(20)]", views: statusBarBackgroundView)
+        
+
+        
+        UIApplication.shared.statusBarStyle = .lightContent
+        
+        UINavigationBar.appearance().clipsToBounds = true
+        
+        let statusBar: UIView = UIApplication.shared.value(forKey: "statusBar") as! UIView
+        
+        statusBar.backgroundColor = UIColor.rgb(red: 100, green: 167, blue: 254)
+        
         return true
     }
 
