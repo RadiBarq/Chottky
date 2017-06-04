@@ -57,9 +57,12 @@ class WelcomeViewController: UIViewController {
                         print("Logged in!")
                     
                         };
-        };
+            };
+        }
     }
-}
+    
+    
+    
     
     
     @IBAction func onLoginPressed(_ sender: UIButton) {
@@ -67,8 +70,6 @@ class WelcomeViewController: UIViewController {
         let mainStoryboard = UIStoryboard(name: "Main", bundle: nil)
         let loginViewController = mainStoryboard.instantiateViewController(withIdentifier: "signInViewController")
         self.present(loginViewController, animated: true, completion: nil)
-        
-        
     }
     
     

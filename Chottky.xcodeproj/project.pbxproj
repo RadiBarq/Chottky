@@ -13,10 +13,19 @@
 		CD26B78F1E69F9800016AF8C /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CD26B78D1E69F9800016AF8C /* LaunchScreen.storyboard */; };
 		CD26B79F1E6A43610016AF8C /* MenuBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD26B79E1E6A43610016AF8C /* MenuBar.swift */; };
 		CD26B7A31E6B6F420016AF8C /* WelcomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD26B7A21E6B6F420016AF8C /* WelcomeViewController.swift */; };
+		CD381A6B1ECF376800B95AF1 /* ItemsCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD381A6A1ECF376800B95AF1 /* ItemsCell.swift */; };
+		CD381A6E1ECF683900B95AF1 /* PostedItemViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD381A6D1ECF683900B95AF1 /* PostedItemViewController.swift */; };
+		CD381A721ECF996A00B95AF1 /* PostedImageCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD381A711ECF996A00B95AF1 /* PostedImageCell.swift */; };
 		CD3BD7061E736F6D00693BAA /* BrowseCollectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD3BD7051E736F6D00693BAA /* BrowseCollectionViewController.swift */; };
 		CD3BD7081E74062500693BAA /* LeftMenuTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD3BD7071E74062500693BAA /* LeftMenuTableViewController.swift */; };
 		CD3BD70E1E7422C800693BAA /* MenuBarCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD3BD70D1E7422C800693BAA /* MenuBarCell.swift */; };
 		CD3BD7101E74708200693BAA /* CameraViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD3BD70F1E74708200693BAA /* CameraViewController.swift */; };
+		CD3C30871ED1DDB900A1C349 /* SoldViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD3C30861ED1DDB900A1C349 /* SoldViewController.swift */; };
+		CD3C30891ED1DDCB00A1C349 /* SellingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD3C30881ED1DDCB00A1C349 /* SellingViewController.swift */; };
+		CD3C308B1ED1DDDB00A1C349 /* WatchingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD3C308A1ED1DDDB00A1C349 /* WatchingViewController.swift */; };
+		CD3C308D1ED1E67500A1C349 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD3C308C1ED1E67500A1C349 /* Constants.swift */; };
+		CD3C30911ED70E4300A1C349 /* ProfileItemsCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD3C30901ED70E4300A1C349 /* ProfileItemsCell.swift */; };
+		CD4AE9C51EE06048003F8B79 /* favorite_black.json in Resources */ = {isa = PBXBuildFile; fileRef = CD4AE9C41EE06048003F8B79 /* favorite_black.json */; };
 		CD6565C91EAAA8B300C6353A /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = CD6565C81EAAA8B300C6353A /* GoogleService-Info.plist */; };
 		CD6565CB1EAAAC2700C6353A /* PhotoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD6565CA1EAAAC2700C6353A /* PhotoViewController.swift */; };
 		CD6565CD1EAAAC3500C6353A /* VideoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD6565CC1EAAAC3500C6353A /* VideoViewController.swift */; };
@@ -25,6 +34,7 @@
 		CD6E2C031E7000EC00D11EC0 /* PeopleCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD6E2C021E7000EC00D11EC0 /* PeopleCell.swift */; };
 		CD6E2C0D1E70C1B400D11EC0 /* SignUpViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD6E2C0C1E70C1B400D11EC0 /* SignUpViewController.swift */; };
 		CD6E2C111E7148E900D11EC0 /* SignInViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD6E2C101E7148E900D11EC0 /* SignInViewController.swift */; };
+		CD772D2B1ECCD7980016ADF7 /* ProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD772D2A1ECCD7980016ADF7 /* ProfileViewController.swift */; };
 		CDDB3D061EC89A3D0083D722 /* CollectionsCollectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDDB3D051EC89A3D0083D722 /* CollectionsCollectionViewController.swift */; };
 		CDDB3D081EC89D9B0083D722 /* CollectionsCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDDB3D071EC89D9B0083D722 /* CollectionsCell.swift */; };
 		CDDB3D0C1EC900730083D722 /* NotificationsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDDB3D0B1EC900730083D722 /* NotificationsTableViewController.swift */; };
@@ -53,10 +63,19 @@
 		CD26B7901E69F9800016AF8C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		CD26B79E1E6A43610016AF8C /* MenuBar.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MenuBar.swift; sourceTree = "<group>"; };
 		CD26B7A21E6B6F420016AF8C /* WelcomeViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WelcomeViewController.swift; sourceTree = "<group>"; };
+		CD381A6A1ECF376800B95AF1 /* ItemsCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ItemsCell.swift; sourceTree = "<group>"; };
+		CD381A6D1ECF683900B95AF1 /* PostedItemViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PostedItemViewController.swift; sourceTree = "<group>"; };
+		CD381A711ECF996A00B95AF1 /* PostedImageCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PostedImageCell.swift; sourceTree = "<group>"; };
 		CD3BD7051E736F6D00693BAA /* BrowseCollectionViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BrowseCollectionViewController.swift; sourceTree = "<group>"; };
 		CD3BD7071E74062500693BAA /* LeftMenuTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LeftMenuTableViewController.swift; sourceTree = "<group>"; };
 		CD3BD70D1E7422C800693BAA /* MenuBarCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MenuBarCell.swift; sourceTree = "<group>"; };
 		CD3BD70F1E74708200693BAA /* CameraViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = CameraViewController.swift; path = ../CameraViewController.swift; sourceTree = "<group>"; };
+		CD3C30861ED1DDB900A1C349 /* SoldViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SoldViewController.swift; sourceTree = "<group>"; };
+		CD3C30881ED1DDCB00A1C349 /* SellingViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SellingViewController.swift; sourceTree = "<group>"; };
+		CD3C308A1ED1DDDB00A1C349 /* WatchingViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WatchingViewController.swift; sourceTree = "<group>"; };
+		CD3C308C1ED1E67500A1C349 /* Constants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
+		CD3C30901ED70E4300A1C349 /* ProfileItemsCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProfileItemsCell.swift; sourceTree = "<group>"; };
+		CD4AE9C41EE06048003F8B79 /* favorite_black.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = favorite_black.json; sourceTree = "<group>"; };
 		CD6565C81EAAA8B300C6353A /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		CD6565CA1EAAAC2700C6353A /* PhotoViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PhotoViewController.swift; sourceTree = "<group>"; };
 		CD6565CC1EAAAC3500C6353A /* VideoViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VideoViewController.swift; sourceTree = "<group>"; };
@@ -65,6 +84,7 @@
 		CD6E2C021E7000EC00D11EC0 /* PeopleCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PeopleCell.swift; sourceTree = "<group>"; };
 		CD6E2C0C1E70C1B400D11EC0 /* SignUpViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SignUpViewController.swift; sourceTree = "<group>"; };
 		CD6E2C101E7148E900D11EC0 /* SignInViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SignInViewController.swift; sourceTree = "<group>"; };
+		CD772D2A1ECCD7980016ADF7 /* ProfileViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProfileViewController.swift; sourceTree = "<group>"; };
 		CDDB3D051EC89A3D0083D722 /* CollectionsCollectionViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CollectionsCollectionViewController.swift; sourceTree = "<group>"; };
 		CDDB3D071EC89D9B0083D722 /* CollectionsCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CollectionsCell.swift; sourceTree = "<group>"; };
 		CDDB3D0B1EC900730083D722 /* NotificationsTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NotificationsTableViewController.swift; sourceTree = "<group>"; };
@@ -152,13 +172,13 @@
 		CD26B79D1E6A42FC0016AF8C /* Controller */ = {
 			isa = PBXGroup;
 			children = (
+				CD381A6C1ECF678700B95AF1 /* Posted Item */,
+				CD772D291ECCD76D0016ADF7 /* Profile */,
 				CDDB3D281ECA4D200083D722 /* Nearby People */,
 				CDDB3D271ECA45AC0083D722 /* Sign Up */,
-				CDDB3D261ECA45990083D722 /* Login */,
 				CDDB3D251ECA45600083D722 /* Welcome */,
 				CDDB3D241ECA29420083D722 /* Support */,
 				CDDB3D231ECA293C0083D722 /* Invite */,
-				CDDB3D221ECA28FA0083D722 /* Profile */,
 				CDDB3D211ECA28E80083D722 /* Categories */,
 				CDDB3D201ECA28C90083D722 /* Browse */,
 				CDDB3D1F1ECA28BF0083D722 /* Login */,
@@ -167,6 +187,32 @@
 				CDDB3D1C1ECA28810083D722 /* Camera */,
 			);
 			name = Controller;
+			sourceTree = "<group>";
+		};
+		CD381A6C1ECF678700B95AF1 /* Posted Item */ = {
+			isa = PBXGroup;
+			children = (
+				CD381A6D1ECF683900B95AF1 /* PostedItemViewController.swift */,
+				CD381A711ECF996A00B95AF1 /* PostedImageCell.swift */,
+			);
+			name = "Posted Item";
+			sourceTree = "<group>";
+		};
+		CD4AE9C21EDF3D98003F8B79 /* Fonts */ = {
+			isa = PBXGroup;
+			children = (
+				CDDB3D121EC90C450083D722 /* Ceria Lebaran.otf */,
+				CDDB3D141EC90DEB0083D722 /* Siddiqua.ttf */,
+			);
+			name = Fonts;
+			sourceTree = "<group>";
+		};
+		CD4AE9C31EDF3DA2003F8B79 /* JSON */ = {
+			isa = PBXGroup;
+			children = (
+				CD4AE9C41EE06048003F8B79 /* favorite_black.json */,
+			);
+			name = JSON;
 			sourceTree = "<group>";
 		};
 		CD6E2C011E7000D800D11EC0 /* Model */ = {
@@ -178,11 +224,24 @@
 			name = Model;
 			sourceTree = "<group>";
 		};
+		CD772D291ECCD76D0016ADF7 /* Profile */ = {
+			isa = PBXGroup;
+			children = (
+				CD772D2A1ECCD7980016ADF7 /* ProfileViewController.swift */,
+				CD3C30861ED1DDB900A1C349 /* SoldViewController.swift */,
+				CD3C30881ED1DDCB00A1C349 /* SellingViewController.swift */,
+				CD3C308A1ED1DDDB00A1C349 /* WatchingViewController.swift */,
+				CD3C30901ED70E4300A1C349 /* ProfileItemsCell.swift */,
+			);
+			name = Profile;
+			sourceTree = "<group>";
+		};
 		CDDB3D111EC90C220083D722 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				CDDB3D141EC90DEB0083D722 /* Siddiqua.ttf */,
-				CDDB3D121EC90C450083D722 /* Ceria Lebaran.otf */,
+				CD4AE9C31EDF3DA2003F8B79 /* JSON */,
+				CD4AE9C21EDF3D98003F8B79 /* Fonts */,
+				CD26B78B1E69F9800016AF8C /* Assets.xcassets */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -233,6 +292,7 @@
 				CDDB3D161EC9F6750083D722 /* ItemViewController.swift */,
 				CD3BD7071E74062500693BAA /* LeftMenuTableViewController.swift */,
 				CD3BD7051E736F6D00693BAA /* BrowseCollectionViewController.swift */,
+				CD381A6A1ECF376800B95AF1 /* ItemsCell.swift */,
 			);
 			name = Browse;
 			sourceTree = "<group>";
@@ -244,13 +304,6 @@
 				CDDB3D071EC89D9B0083D722 /* CollectionsCell.swift */,
 			);
 			name = Categories;
-			sourceTree = "<group>";
-		};
-		CDDB3D221ECA28FA0083D722 /* Profile */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			name = Profile;
 			sourceTree = "<group>";
 		};
 		CDDB3D231ECA293C0083D722 /* Invite */ = {
@@ -275,13 +328,6 @@
 			name = Welcome;
 			sourceTree = "<group>";
 		};
-		CDDB3D261ECA45990083D722 /* Login */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			name = Login;
-			sourceTree = "<group>";
-		};
 		CDDB3D271ECA45AC0083D722 /* Sign Up */ = {
 			isa = PBXGroup;
 			children = (
@@ -304,8 +350,8 @@
 				CD26B7841E69F9800016AF8C /* AppDelegate.swift */,
 				CD6565C81EAAA8B300C6353A /* GoogleService-Info.plist */,
 				CD26B7901E69F9800016AF8C /* Info.plist */,
-				CD26B78B1E69F9800016AF8C /* Assets.xcassets */,
 				CDF5AB311E6C7D9C00E0FE14 /* Extensions.swift */,
+				CD3C308C1ED1E67500A1C349 /* Constants.swift */,
 			);
 			name = Helpers;
 			sourceTree = "<group>";
@@ -379,6 +425,7 @@
 				CD6565C91EAAA8B300C6353A /* GoogleService-Info.plist in Resources */,
 				CD26B78C1E69F9800016AF8C /* Assets.xcassets in Resources */,
 				CD26B78A1E69F9800016AF8C /* Main.storyboard in Resources */,
+				CD4AE9C51EE06048003F8B79 /* favorite_black.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -439,6 +486,7 @@
 			files = (
 				CD6565CF1EAAAC4400C6353A /* SwiftyRecordButton.swift in Sources */,
 				CD3BD70E1E7422C800693BAA /* MenuBarCell.swift in Sources */,
+				CD381A6E1ECF683900B95AF1 /* PostedItemViewController.swift in Sources */,
 				CD6E2C111E7148E900D11EC0 /* SignInViewController.swift in Sources */,
 				CDDB3D171EC9F6750083D722 /* ItemViewController.swift in Sources */,
 				CDDB3D061EC89A3D0083D722 /* CollectionsCollectionViewController.swift in Sources */,
@@ -446,18 +494,26 @@
 				CD3BD7081E74062500693BAA /* LeftMenuTableViewController.swift in Sources */,
 				CD3BD7101E74708200693BAA /* CameraViewController.swift in Sources */,
 				CDDB3D101EC9031A0083D722 /* NotificationsCell.swift in Sources */,
+				CD3C30871ED1DDB900A1C349 /* SoldViewController.swift in Sources */,
+				CD3C308B1ED1DDDB00A1C349 /* WatchingViewController.swift in Sources */,
 				CD6565CD1EAAAC3500C6353A /* VideoViewController.swift in Sources */,
+				CD772D2B1ECCD7980016ADF7 /* ProfileViewController.swift in Sources */,
 				CD6565CB1EAAAC2700C6353A /* PhotoViewController.swift in Sources */,
 				CDE135CB1E75E81C00ED6F72 /* User.swift in Sources */,
+				CD3C30911ED70E4300A1C349 /* ProfileItemsCell.swift in Sources */,
+				CD3C30891ED1DDCB00A1C349 /* SellingViewController.swift in Sources */,
 				CDF5AB321E6C7D9C00E0FE14 /* Extensions.swift in Sources */,
 				CD6E2C0D1E70C1B400D11EC0 /* SignUpViewController.swift in Sources */,
 				CDDB3D0C1EC900730083D722 /* NotificationsTableViewController.swift in Sources */,
 				CDDB3D1B1ECA1E450083D722 /* ItemImageCell.swift in Sources */,
+				CD381A6B1ECF376800B95AF1 /* ItemsCell.swift in Sources */,
 				CD3BD7061E736F6D00693BAA /* BrowseCollectionViewController.swift in Sources */,
+				CD3C308D1ED1E67500A1C349 /* Constants.swift in Sources */,
 				CD26B79F1E6A43610016AF8C /* MenuBar.swift in Sources */,
 				CDDB3D081EC89D9B0083D722 /* CollectionsCell.swift in Sources */,
 				CDE135C71E75E33300ED6F72 /* MessagesTableViewController.swift in Sources */,
 				CD6E2C031E7000EC00D11EC0 /* PeopleCell.swift in Sources */,
+				CD381A721ECF996A00B95AF1 /* PostedImageCell.swift in Sources */,
 				CD6E2C001E6FFD3000D11EC0 /* NearbyPeopleTableViewController.swift in Sources */,
 				CDE135C91E75E50000ED6F72 /* ChatCollectionViewController.swift in Sources */,
 				CD26B7851E69F9800016AF8C /* AppDelegate.swift in Sources */,

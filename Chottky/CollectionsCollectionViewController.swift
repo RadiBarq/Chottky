@@ -17,7 +17,9 @@ class CollectionsCollectionViewController: UICollectionViewController,  UICollec
 
         // Uncomment the following line to preserve selection between presentations
         // self.clearsSelectionOnViewWillAppear = false
-
+        
+        title = "التصنيفات"
+        
         // Register cell classes
         self.collectionView!.register(CollectionsCell.self, forCellWithReuseIdentifier: reuseIdentifier)
 
@@ -94,6 +96,11 @@ class CollectionsCollectionViewController: UICollectionViewController,  UICollec
                         minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
         return 1
     }
+    
+    
+    
+    
+    
     
     func collectionView(_ collectionView: UICollectionView,
                         layout collectionViewLayout: UICollectionViewLayout,

@@ -16,15 +16,16 @@ class ItemImageCell: UICollectionViewCell {
         var image = UIImageView()
         return image
         
-        
     }()
-    
     
     
     override init (frame: CGRect)
     {
         super.init(frame: frame)
-        itemImageView.frame = CGRect(x: 0, y: 0, width: self.frame.width, height: self.frame.height)
+        itemImageView.frame = CGRect(x: 0, y: 10, width: self.frame.width, height: self.frame.height - 10)
+        itemImageView.contentMode = .scaleToFill
+        itemImageView.layer.masksToBounds = true
+        addSubview(itemImageView)
     }
     
     func setupImage(image: UIImage)

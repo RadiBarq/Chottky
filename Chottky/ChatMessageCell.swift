@@ -10,8 +10,6 @@
  
  class ChatMessageCell: UICollectionViewCell {
     
-    
-    
     let textView: UITextView =
         {
             let textV = UITextView()
@@ -21,45 +19,37 @@
             textV.backgroundColor = UIColor.clear
             textV.textColor = .white
             textV.isEditable = false
+            textV.textAlignment = .right
             return textV
     }()
-    
-    
     
     
     var profileImageView: UIImageView =
         {
             let imagView = UIImageView()
-            imagView.image = UIImage(named: "profilepicture")
+            //  imagView.image = UIImage(named: "profilepicture")
             imagView.translatesAutoresizingMaskIntoConstraints = false
             imagView.layer.cornerRadius = 16
             imagView.layer.masksToBounds = true
             imagView.contentMode = .scaleAspectFill
             return imagView
-            
     }()
     
     
     let bubbleView: UIView = {
         
         let view = UIView()
-        view.backgroundColor = UIColor.cyan
+        view.backgroundColor = Constants.SecondColor
         view.translatesAutoresizingMaskIntoConstraints = false
         view.layer.cornerRadius = 16
         view.layer.masksToBounds = true
-        
         return view
+        
     }()
     
-    
     var bubbleViewRightAnchor: NSLayoutConstraint?
-    
     var bubbleViewLeftAnchor: NSLayoutConstraint?
-    
-    
     var bubbleWidthAnchor: NSLayoutConstraint?
-    
-    
     
     override init(frame: CGRect)
     {
@@ -69,25 +59,22 @@
         addSubview(textView)
         addSubview(profileImageView)
         
-        // This is for the profileImage
-        profileImageView.leftAnchor.constraint(equalTo: self.leftAnchor, constant: 8).isActive = true
-        profileImageView.bottomAnchor.constraint(equalTo: self.bottomAnchor).isActive = true
-        profileImageView.widthAnchor.constraint(equalToConstant: 32).isActive = true
-        profileImageView.heightAnchor.constraint(equalToConstant: 32).isActive = true
-  
-        
         bubbleViewRightAnchor  = bubbleView.rightAnchor.constraint(equalTo: self.rightAnchor, constant: -8)
         bubbleViewRightAnchor?.isActive = true
-        bubbleViewLeftAnchor = bubbleView.leftAnchor.constraint(equalTo: profileImageView.rightAnchor, constant: 8 )
-        
+        bubbleViewLeftAnchor = bubbleView.leftAnchor.constraint(equalTo: self.leftAnchor, constant: 8)
         
         //  bubbleViewLeftAnchor?.isActive = false
-        
         bubbleView.topAnchor.constraint(equalTo: self.topAnchor).isActive = true
         bubbleWidthAnchor = bubbleView.widthAnchor.constraint(equalToConstant: 200)
         bubbleWidthAnchor?.isActive = true
         bubbleView.heightAnchor.constraint(equalTo: self.heightAnchor).isActive = true
-    
+        
+        
+        // This is for the profileImage
+        profileImageView.leftAnchor.constraint(equalTo: bubbleView.rightAnchor, constant: 8).isActive = true
+        profileImageView.bottomAnchor.constraint(equalTo: self.bottomAnchor).isActive = true
+        profileImageView.widthAnchor.constraint(equalToConstant: 32).isActive = true
+        profileImageView.heightAnchor.constraint(equalToConstant: 32).isActive = true
         
         
         //textView.rightAnchor.constraint(equalTo: self.rightAnchor).isActive = true
@@ -96,15 +83,12 @@
         textView.topAnchor.constraint(equalTo: self.topAnchor).isActive = true
         // textView.widthAnchor.constraint(equalToConstant: 200).isActive = true
         textView.heightAnchor.constraint(equalTo: self.heightAnchor).isActive = true
-        
         // ios9 constraitns x, y, w, h
-        
     }
+    
     
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
-    
     
  }

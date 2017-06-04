@@ -21,7 +21,11 @@ class NotificationsTableViewController: UITableViewController{
         
        // tableView.register(NotificationsCell.self, forCellReuseIdentifier: "NotificationsCell")
         
+        title = "الاشعارات"
+        
     }
+    
+    
 
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()

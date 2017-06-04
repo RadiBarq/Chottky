@@ -19,14 +19,13 @@ import Firebase
 class AppDelegate: UIResponder, UIApplicationDelegate {
     
     var window: UIWindow?
-
-
+    
+    
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
         FIRApp.configure()
         
-        UINavigationBar.appearance().barTintColor = UIColor.rgb(red: 136, green: 214, blue: 253)
-        
+        UINavigationBar.appearance().barTintColor = UIColor.rgb(red: 51, green: 204, blue: 255)
     
         //application.statusBarStyle = .lightContent
         
@@ -47,13 +46,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
         
         UIApplication.shared.statusBarStyle = .lightContent
-        
         UINavigationBar.appearance().clipsToBounds = true
-        
         let statusBar: UIView = UIApplication.shared.value(forKey: "statusBar") as! UIView
-        
-        statusBar.backgroundColor = UIColor.rgb(red: 100, green: 167, blue: 254)
-        
+        statusBar.backgroundColor = UIColor.rgb(red: 51, green: 204, blue: 255)
         return true
     }
 

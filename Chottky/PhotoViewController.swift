@@ -16,36 +16,87 @@ LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF
 import UIKit
 
 class PhotoViewController: UIViewController {
-
-	override var prefersStatusBarHidden: Bool {
-		return true
-	}
-
+    
+    
+    override var prefersStatusBarHidden: Bool {
+        get {
+            
+            return true
+        }
+    }
+    
 	private var backgroundImage: UIImage
-
+    
 	init(image: UIImage) {
+        
 		self.backgroundImage = image
 		super.init(nibName: nil, bundle: nil)
+        
 	}
-
+    
 	required init?(coder aDecoder: NSCoder) {
+        
 		fatalError("init(coder:) has not been implemented")
+        
 	}
 
 	override func viewDidLoad() {
+        
 		super.viewDidLoad()
 		self.view.backgroundColor = UIColor.gray
 		let backgroundImageView = UIImageView(frame: view.frame)
 		backgroundImageView.contentMode = UIViewContentMode.scaleAspectFit
 		backgroundImageView.image = backgroundImage
 		view.addSubview(backgroundImageView)
-		let cancelButton = UIButton(frame: CGRect(x: 10.0, y: 10.0, width: 30.0, height: 30.0))
+		let cancelButton = UIButton(frame: CGRect(x: 20, y: 20, width: 15, height: 15.0))
 		cancelButton.setImage(#imageLiteral(resourceName: "cancel"), for: UIControlState())
 		cancelButton.addTarget(self, action: #selector(cancel), for: .touchUpInside)
 		view.addSubview(cancelButton)
+        let postButton =  UIButton()
+        postButton.frame = CGRect(x: self.view.frame.size.width / 2 - 75, y: self.view.frame.size.height - 100, width:150 , height:60)
+        postButton.layer.cornerRadius = 30
+        postButton.layer.masksToBounds = true
+        postButton.backgroundColor = Constants.FirstColor
+        postButton.setTitle("مناسبة", for: UIControlState.normal)
+        postButton.addTarget(self, action: #selector(post), for: .touchUpInside)
+        view.addSubview(postButton)
+        
 	}
-
+    
+    
+    override func viewWillAppear(_ animated: Bool) {
+        
+        super.viewWillAppear(animated)
+        self.navigationController?.navigationBar.isHidden = true
+        UIApplication.shared.isStatusBarHidden = true
+    }
+    
 	func cancel() {
-		dismiss(animated: true, completion: nil)
+        
+        self.navigationController?.popViewController(animated: true)
 	}
+    
+    func post()
+    {
+            self.navigationController?.navigationBar.isHidden = false
+            UIApplication.shared.isStatusBarHidden = false
+            let messagesStoryboard = UIStoryboard(name: "Main", bundle: nil)
+            let messagesViewController = messagesStoryboard.instantiateViewController(withIdentifier: "PostedItemViewController") as! PostedItemViewController
+            PostedItemViewController.imageClicked = backgroundImage
+        
+        
+            if (PostedItemViewController.isItFirstTimeOnThisView)
+            {
+                
+                self.navigationController?.pushViewController(messagesViewController, animated: true)
+            }
+        
+            else
+            {
+                
+               self.navigationController?.dismiss(animated: true, completion: nil)
+        }
+            //let newVC = PostedItemViewController(image: backgroundImage)
+           // self.navigationController?.pushViewController(newVC, animated: true)
+    }
 }

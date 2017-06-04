@@ -15,27 +15,48 @@ class CameraViewController: SwiftyCamViewController, SwiftyCamViewControllerDele
     var flashButton: UIButton!
     var captureButton: SwiftyRecordButton!
     
+    
     override func viewDidLoad() {
-        super.viewDidLoad()
         
-        UIApplication.shared.isStatusBarHidden = true
+        super.viewDidLoad()
         cameraDelegate = self
         maximumVideoDuration = 10.0
         addButtons()
+        
     }
-    
-    override var prefersStatusBarHidden: Bool {
-        return true
-    }
-    
     
     override func viewDidAppear(_ animated: Bool) {
+        
         super.viewDidAppear(animated)
     }
     
     func swiftyCam(_ swiftyCam: SwiftyCamViewController, didTake photo: UIImage) {
-        let newVC = PhotoViewController(image: photo)
-        self.present(newVC, animated: true, completion: nil)
+        
+        
+        if (PostedItemViewController.isItFirstTimeOnThisView)
+        {
+            let newVC = PhotoViewController(image: photo)
+            self.navigationController?.pushViewController(newVC, animated: true)
+
+        }
+            
+        else
+        {
+            
+            let newVC = PhotoViewController(image: photo)
+            self.present(newVC, animated: true, completion: nil)
+
+        }
+        
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        
+        super.viewWillAppear(animated)
+        self.navigationController?.navigationBar.isHidden = true
+        //UIApplication.shared.setStatusBarHidden(true, with: .none)
+        UIApplication.shared.isStatusBarHidden = true
+        
     }
     
    // func swiftyCam(_ swiftyCam: SwiftyCamViewController, didBeginRecordingVideo camera: SwiftyCamViewController.CameraSelection) {
@@ -117,7 +138,38 @@ class CameraViewController: SwiftyCamViewController, SwiftyCamViewControllerDele
         flashButton.setImage(#imageLiteral(resourceName: "flashOutline"), for: UIControlState())
         flashButton.addTarget(self, action: #selector(toggleFlashAction(_:)), for: .touchUpInside)
         self.view.addSubview(flashButton)
+        
+        //Realted to the closing button
+        var closeButton = UIButton(frame: CGRect(x: 15, y: 15, width: 30, height: 30))
+        closeButton.setImage(UIImage(named: "ic_close_white"), for: .normal)
+        
+        closeButton.addTarget(self, action: #selector(cameraCloseAction(_:)), for: .touchUpInside)
+        self.view.addSubview(closeButton)
     }
-
-
+    
+    @objc private func cameraCloseAction(_ sender: Any) {
+        
+        //UIApplication.shared.setStatusBarHidden(false, with: .none)
+        UIApplication.shared.isStatusBarHidden = false
+        self.navigationController?.navigationBar.isHidden = false
+        self.navigationController?.popViewController(animated: false)
+        
+    }
+    
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        
+        //UIApplication.shared.setStatusBarHidden(false, with: .none)
+        UIApplication.shared.isStatusBarHidden = false
+        self.navigationController?.navigationBar.isHidden = false
+       // self.navigationController?.popViewController(animated: false)
+    }
+    
+    
+    override var prefersStatusBarHidden: Bool {
+        get {
+            return true
+        }  
+    }
+    
 }
