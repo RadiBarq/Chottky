@@ -61,17 +61,13 @@ class WelcomeViewController: UIViewController {
         }
     }
     
-    
-    
-    
-    
+
     @IBAction func onLoginPressed(_ sender: UIButton) {
         
         let mainStoryboard = UIStoryboard(name: "Main", bundle: nil)
         let loginViewController = mainStoryboard.instantiateViewController(withIdentifier: "signInViewController")
         self.present(loginViewController, animated: true, completion: nil)
     }
-    
     
     
     @IBAction func onSignUpClicked(_ sender: UIButton) {

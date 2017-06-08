@@ -14,8 +14,8 @@ import FirebaseStorageUI
 class MessagesTableViewController: UITableViewController {
     
     var usersKeys = [String]()
-    static var messageTo_Email = String()
-    static var messageTo_DisplayName = String()
+   // static var messageTo_Email = String()
+    //static var messageTo_DisplayName = String()
     var usersNames = [String]()
     var holdingRow = String()
     var holdingTouchIndex:IndexPath!
@@ -211,9 +211,7 @@ class MessagesTableViewController: UITableViewController {
                     
                     if childKey == "message"
                     {
-                        
                         cell.lastMessageLabel.text = childValue
-                        
                         
                     }
                         
@@ -261,9 +259,9 @@ class MessagesTableViewController: UITableViewController {
         FIRDatabase.database().reference().child("Users").child(UserClickedEmail).child("UserName").observeSingleEvent(of: .value, with: { (snapshot) in
 
             userName = (snapshot.value) as! String
-            MessagesTableViewController.messageTo_DisplayName = userName
-            MessagesTableViewController.messageTo_Email = self.usersKeys[indexPath.row]
-            
+            ChatCollectionViewController.messageFromDisplayName = userName
+            ChatCollectionViewController.messageToEmail = self.usersKeys[indexPath.row]
+
             let flowLayout = UICollectionViewFlowLayout()
             let chatLogController = ChatCollectionViewController(collectionViewLayout:flowLayout)
             self.navigationController?.pushViewController(chatLogController, animated: true)

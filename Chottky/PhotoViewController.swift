@@ -16,8 +16,7 @@ LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF
 import UIKit
 
 class PhotoViewController: UIViewController {
-    
-    
+
     override var prefersStatusBarHidden: Bool {
         get {
             
@@ -40,10 +39,11 @@ class PhotoViewController: UIViewController {
         
 	}
 
-	override func viewDidLoad() {
+    override func viewDidLoad() {
+        
         
 		super.viewDidLoad()
-		self.view.backgroundColor = UIColor.gray
+         		self.view.backgroundColor = UIColor.gray
 		let backgroundImageView = UIImageView(frame: view.frame)
 		backgroundImageView.contentMode = UIViewContentMode.scaleAspectFit
 		backgroundImageView.image = backgroundImage
@@ -60,42 +60,33 @@ class PhotoViewController: UIViewController {
         postButton.setTitle("مناسبة", for: UIControlState.normal)
         postButton.addTarget(self, action: #selector(post), for: .touchUpInside)
         view.addSubview(postButton)
-        
 	}
     
     
     override func viewWillAppear(_ animated: Bool) {
         
-        super.viewWillAppear(animated)
-        self.navigationController?.navigationBar.isHidden = true
-        UIApplication.shared.isStatusBarHidden = true
+            super.viewWillAppear(true)
+            self.navigationController?.navigationBar.isHidden = true
+            UIApplication.shared.isStatusBarHidden = true
+        
     }
-    
 	func cancel() {
         
         self.navigationController?.popViewController(animated: true)
 	}
+
     
     func post()
     {
             self.navigationController?.navigationBar.isHidden = false
             UIApplication.shared.isStatusBarHidden = false
-            let messagesStoryboard = UIStoryboard(name: "Main", bundle: nil)
-            let messagesViewController = messagesStoryboard.instantiateViewController(withIdentifier: "PostedItemViewController") as! PostedItemViewController
-            PostedItemViewController.imageClicked = backgroundImage
-        
-        
-            if (PostedItemViewController.isItFirstTimeOnThisView)
-            {
-                
-                self.navigationController?.pushViewController(messagesViewController, animated: true)
-            }
-        
-            else
-            {
-                
-               self.navigationController?.dismiss(animated: true, completion: nil)
-        }
+            let mainStoryboard = UIStoryboard(name: "Main", bundle: nil)
+            let postedItemViewController = mainStoryboard.instantiateViewController(withIdentifier: "PostedItemViewController") as! PostedItemViewController
+            PostedItemViewController.images[PostedItemViewController.imageClickedNumber] = backgroundImage
+            PostedItemViewController.imagesValid[PostedItemViewController.imageClickedNumber] = true
+            self.navigationController?.pushViewController(postedItemViewController, animated: true)
+           // CameraViewController.isThisTheFirstTime = false
+                //self.su.dismiss(animated: true, completion: nil)
             //let newVC = PostedItemViewController(image: backgroundImage)
            // self.navigationController?.pushViewController(newVC, animated: true)
     }

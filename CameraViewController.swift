@@ -15,12 +15,15 @@ class CameraViewController: SwiftyCamViewController, SwiftyCamViewControllerDele
     var flashButton: UIButton!
     var captureButton: SwiftyRecordButton!
     
+    static var isItFirstTimeOnThisView: Bool = true
+    //static var isThisTheFirstTime: Bool = true
     
     override func viewDidLoad() {
         
         super.viewDidLoad()
         cameraDelegate = self
         maximumVideoDuration = 10.0
+        CameraViewController.isItFirstTimeOnThisView = true
         addButtons()
         
     }
@@ -32,31 +35,18 @@ class CameraViewController: SwiftyCamViewController, SwiftyCamViewControllerDele
     
     func swiftyCam(_ swiftyCam: SwiftyCamViewController, didTake photo: UIImage) {
         
-        
-        if (PostedItemViewController.isItFirstTimeOnThisView)
-        {
             let newVC = PhotoViewController(image: photo)
             self.navigationController?.pushViewController(newVC, animated: true)
-
-        }
-            
-        else
-        {
-            
-            let newVC = PhotoViewController(image: photo)
-            self.present(newVC, animated: true, completion: nil)
-
-        }
-        
+            CameraViewController.isItFirstTimeOnThisView = false
     }
     
     override func viewWillAppear(_ animated: Bool) {
         
-        super.viewWillAppear(animated)
-        self.navigationController?.navigationBar.isHidden = true
-        //UIApplication.shared.setStatusBarHidden(true, with: .none)
-        UIApplication.shared.isStatusBarHidden = true
+            super.viewWillAppear(animated)
+            self.navigationController?.navigationBar.isHidden = true
+            UIApplication.shared.isStatusBarHidden = true
         
+            //UIApplication.shared.setStatusBarHidden(true, with: .none)
     }
     
    // func swiftyCam(_ swiftyCam: SwiftyCamViewController, didBeginRecordingVideo camera: SwiftyCamViewController.CameraSelection) {
@@ -152,9 +142,21 @@ class CameraViewController: SwiftyCamViewController, SwiftyCamViewControllerDele
         //UIApplication.shared.setStatusBarHidden(false, with: .none)
         UIApplication.shared.isStatusBarHidden = false
         self.navigationController?.navigationBar.isHidden = false
-        self.navigationController?.popViewController(animated: false)
+      
         
+        if (CameraViewController.isItFirstTimeOnThisView == true)
+        {
+             self.navigationController?.popViewController(animated: false)
+        }
+            
+        else
+        {
+            let mainStoryboard = UIStoryboard(name: "Main", bundle: nil)
+            let postedItemViewController = mainStoryboard.instantiateViewController(withIdentifier: "PostedItemViewController") as! PostedItemViewController
+            self.navigationController?.pushViewController(postedItemViewController, animated: true)
+        }
     }
+    
     
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -164,7 +166,6 @@ class CameraViewController: SwiftyCamViewController, SwiftyCamViewControllerDele
         self.navigationController?.navigationBar.isHidden = false
        // self.navigationController?.popViewController(animated: false)
     }
-    
     
     override var prefersStatusBarHidden: Bool {
         get {

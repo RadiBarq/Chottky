@@ -18,11 +18,9 @@ class BrowseCollectionViewController: UICollectionViewController, UICollectionVi
     static var browseNavigaionController: UINavigationController?
     var databaseRef: FIRDatabaseReference!
     var storageRef: FIRStorageReference!
-    
     //This the array were we should declare the items keys.
     var itemKeys = [String]()
-    var takePhotoButton = UIButton()
-    
+    var takePhotoButton = UIButton()    
     var indicator = UIActivityIndicatorView()
     
     override func viewWillAppear(_ animated: Bool) {
@@ -51,17 +49,14 @@ class BrowseCollectionViewController: UICollectionViewController, UICollectionVi
         SideMenuManager.MenuPresentMode.menuDissolveIn
         SideMenuManager.menuAnimationBackgroundColor = UIColor.white
         SideMenuManager.menuLeftNavigationController = menuLeftNavigationController
-        
         // UISideMenuNavigationController is a subclass of UINavigationController, so do any additional configuration
         // of it here like setting its viewControllers. If you're using storyboards, you'll want to do something like:
         // let menuRightNavigationController = storyboard!.instantiateViewController(withIdentifier: "RightMenuNavigationController") as! UISideMenuNavigationController
-        
         // Enable gestures. The left and/or right menus must be set up above for these to work.
         // Note that these continue to work on the Navigation Controller independent of the view controller it displays!
         SideMenuManager.menuAddPanGestureToPresent(toView: self.navigationController!.navigationBar)
         SideMenuManager.menuAddScreenEdgePanGesturesToPresent(toView: self.navigationController!.view)
-        
-        databaseRef = FIRDatabase.database().reference()
+        databaseRef = FIRDatabase.database().reference().child("items")
         storageRef = FIRStorage.storage().reference(withPath: "Items_Photos")
         getItems()
         
@@ -71,19 +66,23 @@ class BrowseCollectionViewController: UICollectionViewController, UICollectionVi
         
         self.navigationController?.navigationBar.tintColor = UIColor.white
         self.navigationController!.navigationBar.titleTextAttributes = [NSForegroundColorAttributeName: UIColor.white]
-        
         setupLefMenuProfileImage()
         
+        
+        
     }
+
     
-   
-   
+    
     func presseTakePhotoButton(button: UIButton) {
+        
         
         // At the end of this, remember to add this.
         let cameraStoryboard = UIStoryboard(name: "Main", bundle: nil)
         let cameraViewController = cameraStoryboard.instantiateViewController(withIdentifier: "cameraView") as! CameraViewController
         self.navigationController?.pushViewController(cameraViewController, animated: true)
+        
+        
     }
     
     func addSellItemButton()
@@ -115,7 +114,7 @@ class BrowseCollectionViewController: UICollectionViewController, UICollectionVi
     
     func getItems()
     {
-        databaseRef.child("items").observeSingleEvent(of: .value, with: { (snapshot) in
+        databaseRef.observeSingleEvent(of: .value, with: { (snapshot) in
             // Get user value
             
            for item in snapshot.children
@@ -127,9 +126,13 @@ class BrowseCollectionViewController: UICollectionViewController, UICollectionVi
 
             self.collectionView?.reloadData()
             // ...
-        }) { (error) in
+        })
+        
+        { (error) in
+            
             print(error.localizedDescription)
         }
+
     }
 
     override func didReceiveMemoryWarning() {
@@ -173,7 +176,7 @@ class BrowseCollectionViewController: UICollectionViewController, UICollectionVi
         
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: reuseIdentifier, for: indexPath) as! ItemsCell
         cell.backgroundColor = UIColor.yellow
-        let imageRef = storageRef.child(itemKeys[indexPath.row] + "/" + "1.jpg")
+        let imageRef = storageRef.child(itemKeys[indexPath.row]).child("1.jpeg")
        // let placeholderImage = UIImage(named: "placeholder.jpg")
         
         //var image = UIImage()
@@ -223,6 +226,7 @@ class BrowseCollectionViewController: UICollectionViewController, UICollectionVi
         
         return true
 
+        
     }
     
     override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
@@ -231,6 +235,7 @@ class BrowseCollectionViewController: UICollectionViewController, UICollectionVi
         let itemStoryBoard = UIStoryboard(name: "Main", bundle: nil)
         let itemViewController = itemStoryBoard.instantiateViewController(withIdentifier: "ItemViewController") as! ItemViewController
         self.navigationController?.pushViewController(itemViewController, animated: true)
+
     }
     
     //These for the number of items my lord

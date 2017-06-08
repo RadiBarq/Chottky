@@ -121,7 +121,7 @@ class SignInViewController: UIViewController, UITextFieldDelegate {
                            //    SideMenuManager.menuAddPanGestureToPresent(toView: self.navigationController!.navigationBar)
                 
                 let userEmail:String = (user?.email)!
-            
+                
                 let endEmailTextIndex = userEmail.index(userEmail.endIndex, offsetBy: -4)
                 var emailTruncatedDotCom = userEmail.substring(to: endEmailTextIndex)
 
@@ -137,7 +137,6 @@ class SignInViewController: UIViewController, UITextFieldDelegate {
                     let mainStoryboard = UIStoryboard(name: "Main", bundle: nil)
                     let browseNavigationViewController = mainStoryboard.instantiateViewController(withIdentifier: "browseNavigationController")
                     self.present(browseNavigationViewController, animated: true, completion: nil)
-                    
                     
                 })
                

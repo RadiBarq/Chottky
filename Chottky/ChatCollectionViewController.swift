@@ -19,12 +19,13 @@ class ChatCollectionViewController: UICollectionViewController, UICollectionView
     var messagesTexts = [String]()
     var messagesFrom = [String]()
     var messagesTimeStamps = [Float]()
+    static var messageToEmail = String()
+    static var messageFromDisplayName = String()
     
     var userPhotoUrl: URL!
     var userPhoto: UIImage = UIImage()
     var storageRef: FIRStorageReference!
     var indicator = UIActivityIndicatorView()
-    
     
     var theProgramJustOpened: Bool = true
     
@@ -36,12 +37,12 @@ class ChatCollectionViewController: UICollectionViewController, UICollectionView
         
         // Do any additional setup after loading the view.
         self.navigationController!.navigationBar.tintColor = UIColor.white
-        navigationItem.title = MessagesTableViewController.messageTo_DisplayName
+        navigationItem.title = ChatCollectionViewController.messageFromDisplayName
         self.navigationController!.navigationBar.titleTextAttributes = [NSForegroundColorAttributeName: UIColor.white]
         
         // Related to the titles on the navigation, my lord.
         self.navigationController?.navigationBar.topItem?.title = ""
-        self.title =  MessagesTableViewController.messageTo_DisplayName
+        self.title = ChatCollectionViewController.messageFromDisplayName
 
         
         //  textFieldCp.addTarget(self, action: "addDoneButtonOnKeyboard", for: UIControlEvents.touchDown
@@ -64,10 +65,8 @@ class ChatCollectionViewController: UICollectionViewController, UICollectionView
         initializeIndicatior()
         indicator.startAnimating()
         indicator.backgroundColor = UIColor.clear
-        
         storageRef = FIRStorage.storage().reference(withPath: "Profile_Pictures")
-        storageRef = storageRef.child(MessagesTableViewController.messageTo_Email + "/" + "Profile.jpg")
-    
+        storageRef = storageRef.child(ChatCollectionViewController.messageFromDisplayName + "/" + "Profile.jpg")
     }
     
     func setUpKeyboardObserver()
@@ -85,7 +84,6 @@ class ChatCollectionViewController: UICollectionViewController, UICollectionView
         {
             collectionView?.scrollToItem(at: indexPath as IndexPath, at: .top, animated: true)
         }
-        
         
     }
     
@@ -120,7 +118,6 @@ class ChatCollectionViewController: UICollectionViewController, UICollectionView
         indicator.activityIndicatorViewStyle = UIActivityIndicatorViewStyle.gray
         indicator.center = self.view.center
         self.view.addSubview(indicator)
-        
     }
     
     lazy var inputContainterView: UIView =
@@ -271,27 +268,26 @@ class ChatCollectionViewController: UICollectionViewController, UICollectionView
         seperatorLineView.widthAnchor.constraint(equalTo: containerView.widthAnchor).isActive = true
         seperatorLineView.heightAnchor.constraint(equalToConstant: 1).isActive = true
         
-        
     }
     
     func handleSend()
     {
         
         let timestamp = Int(NSDate().timeIntervalSince1970)
-        let ref = FIRDatabase.database().reference().child("Users").child(WelcomeViewController.user.getEmail()).child("chat").child(MessagesTableViewController.messageTo_Email).childByAutoId().updateChildValues(["messageText": inputTextField.text, "messageFrom": WelcomeViewController.user.displayName, "timestamp": timestamp])
+        let ref = FIRDatabase.database().reference().child("Users").child(WelcomeViewController.user.getEmail()).child("chat").child(ChatCollectionViewController.messageToEmail).childByAutoId().updateChildValues(["messageText": inputTextField.text, "messageFrom": WelcomeViewController.user.displayName, "timestamp": timestamp])
         
-        let ref2 = FIRDatabase.database().reference().child("Users").child(MessagesTableViewController.messageTo_Email).child("chat").child(WelcomeViewController.user.getEmail()).childByAutoId().updateChildValues(["messageText": inputTextField.text, "messageFrom": WelcomeViewController.user.displayName, "timestamp": timestamp])
+        let ref2 = FIRDatabase.database().reference().child("Users").child(ChatCollectionViewController.messageToEmail).child("chat").child(WelcomeViewController.user.getEmail()).childByAutoId().updateChildValues(["messageText": inputTextField.text, "messageFrom": WelcomeViewController.user.displayName, "timestamp": timestamp])
         
-        let newMessageRef = FIRDatabase.database().reference().child("Users").child(MessagesTableViewController.messageTo_Email).child("chat").child(WelcomeViewController.user.getEmail()).child("lastMessage").updateChildValues(["message": inputTextField.text, "time": timestamp])
+        let newMessageRef = FIRDatabase.database().reference().child("Users").child(ChatCollectionViewController.messageToEmail).child("chat").child(WelcomeViewController.user.getEmail()).child("lastMessage").updateChildValues(["message": inputTextField.text, "time": timestamp])
         
-        let newMessageRed2 = FIRDatabase.database().reference().child("Users").child(WelcomeViewController.user.getEmail()).child("chat").child(MessagesTableViewController.messageTo_Email).child("lastMessage").updateChildValues(["message": inputTextField.text, "time": timestamp])
+        let newMessageRed2 = FIRDatabase.database().reference().child("Users").child(WelcomeViewController.user.getEmail()).child("chat").child(ChatCollectionViewController.messageToEmail).child("lastMessage").updateChildValues(["message": inputTextField.text, "time": timestamp])
         // notificationReference.updateChildValues(["notified": true])
     }
     
     
     func observeMessages()
     {
-        let ovserveReference = FIRDatabase.database().reference().child("Users").child(WelcomeViewController.user.getEmail()).child("chat").child(MessagesTableViewController.messageTo_Email)
+        let ovserveReference = FIRDatabase.database().reference().child("Users").child(WelcomeViewController.user.getEmail()).child("chat").child(ChatCollectionViewController.messageToEmail)
         
         ovserveReference.observe(.value, with: {snapshot in
             
@@ -327,8 +323,8 @@ class ChatCollectionViewController: UICollectionViewController, UICollectionView
             print ("reload the data again")
             self.theProgramJustOpened = true
             self.collectionView?.reloadData()
-            
             self.inputTextField.text = nil
+            self.indicator.stopAnimating()
             
             // scroll to the last index
         })

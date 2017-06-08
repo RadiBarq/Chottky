@@ -14,17 +14,33 @@ import Lottie
 
 class ItemViewController: UIViewController, UICollectionViewDelegateFlowLayout, UICollectionViewDataSource {
     
+    
     public static var itemKey: String!
     var storageRef: FIRStorageReference!
     var databaseRef: FIRDatabaseReference!
     @IBOutlet weak var imagesCollectionView: UICollectionView!
     var clickedImageView: UIImageView?
     var clickedImage: UIImage?
-    
+    var itemValues: NSDictionary?
     var favouriteAnimationView = LOTAnimationView(name: "favorite_black")
     @IBOutlet weak var favouriteAnimationSuperView: UIView!
-    // This should be pressed when the image clicked
-
+    var loadedImages: [UIImage?] = [nil, nil, nil, nil]
+    var favouriteRef: FIRDatabaseReference!
+    var isThisFavouriteItem: Bool?
+    
+    var itemUserEmail = String()
+    var itemUserDisplayName = String()
+    
+    var numberOfPhotos:Int = 0
+    // This should be pressed when the image clicke
+    
+    @IBOutlet weak var titleLabel: UILabel!
+    @IBOutlet weak var profilePicture: UIImageView!
+    @IBOutlet weak var distanceLabel: UILabel!
+    @IBOutlet weak var descriptionLabel: UILabel!
+    @IBOutlet weak var contactButton: UIButton!
+    @IBOutlet weak var priceLabel: UILabel!
+    
     
     override func viewDidLoad() {
         
@@ -36,22 +52,122 @@ class ItemViewController: UIViewController, UICollectionViewDelegateFlowLayout, 
          self.navigationController?.navigationBar.isTranslucent = false
         //self.navigationController?.isNavigationBarHidden = true
         // Do any additional setup after loading the view.
-         databaseRef = FIRDatabase.database().reference()
+         databaseRef = FIRDatabase.database().reference().child("items").child(ItemViewController.itemKey)
          favouriteAnimationSuperView.backgroundColor = .clear
+         storageRef = FIRStorage.storage().reference(withPath: "Items_Photos").child(ItemViewController.itemKey)
+         favouriteRef = FIRDatabase.database().reference().child("Users").child(WelcomeViewController.user.getEmail()).child("favourites")
+        
          addFavouriteAnimationView()
        // playFavouriteAnimation()
+        getItemInformation()
+        
+        
+        checkIfThisIsFavouriteItem()        
+    }
+    
+    
+    func getItemInformation()
+    {
+        databaseRef.observe(.value, with: {
+        
+            (snapsot) in
+            
+            self.itemValues = snapsot.value as? NSDictionary
+            self.updateItemInformation()
+        })
+        
+        {(error) in
+            
+            
+            print(error.localizedDescription)
+        }
+    }
+    
+    
+    func checkIfThisIsFavouriteItem()
+    {
+        
+        favouriteRef.observe(.value, with: { (
+            
+            snapshot) in
+            
+            if snapshot.hasChild(ItemViewController.itemKey){
+                
+                self.isThisFavouriteItem = true
+                self.favouriteAnimationView?.animationProgress  = 0.9
+                
+            }
+            
+            else{
+                
+                self.isThisFavouriteItem = false
+                print("false room doesn't exist")
+                
+            }
+            
+        })
+    }
+    
+    
+    
+    @IBAction func contactButtonClicked(_ sender: UIButton) {
+        
+        ChatCollectionViewController.messageFromDisplayName = itemUserDisplayName
+        ChatCollectionViewController.messageToEmail = itemUserEmail
+        
+        let flowLayout = UICollectionViewFlowLayout()
+        let chatLogController = ChatCollectionViewController(collectionViewLayout:flowLayout)
+        self.navigationController?.pushViewController(chatLogController, animated: true)
+          //self.navigationController?.pushViewController(chatLogController, animated: true)
+        
+    }
+
+    
+    
+    
+    
+    
+    func updateItemInformation()
+    {
+          var title = itemValues?["title"] as! String
+          var description = itemValues?["description"] as! String
+          var price = itemValues?["price"] as! String
+          var currency = itemValues?["currency"] as! String
+          itemUserEmail = itemValues?["userEmail"] as! String
+          var timetamp = itemValues?["timestamp"] as! Float
+          var imageCount = itemValues?["imagesCount"] as! Int
+          var profilePictureRef = FIRStorage.storage().reference(withPath: "Profile_Pictures").child(itemUserEmail).child("Profile.jpg")
+          itemUserDisplayName = itemValues?["displayName"] as! String
+        
+          numberOfPhotos = imageCount
+          profilePicture.sd_setImage(with: profilePictureRef)
+          profilePicture.sd_setIndicatorStyle(.gray)
+          titleLabel.text = title
+          descriptionLabel.text = description
+          priceLabel.text = currency + " " + price
+          imagesCollectionView.reloadData()
     }
     
     @available(iOS 6.0, *)
     public func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         
-         storageRef = FIRStorage.storage().reference(withPath: "Items_Photos")
+       
         print(ItemViewController.itemKey)
-        let imageRef = storageRef.child(ItemViewController.itemKey + "/" + "1.jpg")
+        let imageRef = storageRef.child(String(indexPath.item + 1) + ".jpeg")
         var cell = imagesCollectionView.dequeueReusableCell(withReuseIdentifier: "imageCell", for: indexPath) as! ItemImageCell
-        cell.itemImageView.sd_setImage(with: imageRef)
-        cell.itemImageView.sd_showActivityIndicatorView()
-        cell.itemImageView.sd_setIndicatorStyle(.gray)
+        
+       // cell.itemImageView.sd_showActivityIndicatorView()
+        cell.itemImageView.sd_setShowActivityIndicatorView(true)
+        cell.itemImageView.sd_setIndicatorStyle(.whiteLarge)
+        cell.itemImageView.sd_addActivityIndicator()
+        cell.itemImageView.sd_setImage(with: imageRef,  placeholderImage: nil, completion:
+            
+            {  (image, error, cache, ref) in
+            
+                cell.itemImageView.sd_removeActivityIndicator()
+                self.loadedImages[indexPath.item] = image
+            
+            })
        // cell.addGestureRecognizer(tapGesture)
         return cell
     }
@@ -68,28 +184,33 @@ class ItemViewController: UIViewController, UICollectionViewDelegateFlowLayout, 
         favouriteAnimationView?.heightAnchor.constraint(equalToConstant: 175).isActive = true
         favouriteAnimationView?.translatesAutoresizingMaskIntoConstraints = false
     }
+
     
     func playFavouriteAnimation(_sender: UITapGestureRecognizer){
         
-        favouriteAnimationView?.animationProgress  = 0.4
+        
+        if (isThisFavouriteItem == false)
+        {
+            favouriteAnimationView?.animationProgress  = 0.4
          //favouriteAnimationView?.animationSpeed = 2
-        favouriteAnimationView?.loopAnimation = false
-        favouriteAnimationView?.play()
-        let when = DispatchTime.now() + 0.7 // change 2 to desired number of seconds
-        DispatchQueue.main.asyncAfter(deadline: when) {
-            
+            favouriteAnimationView?.loopAnimation = false
+            favouriteAnimationView?.play()
+            let when = DispatchTime.now() + 0.7 // change 2 to desired number of seconds
+            DispatchQueue.main.asyncAfter(deadline: when) {
+                
             self.favouriteAnimationView?.animationProgress  = 0.9
+            var itemKey = ItemViewController.itemKey!
+            self.favouriteRef.updateChildValues([itemKey : ""])
+            self.isThisFavouriteItem = true
+            }
         }
     }
-    
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         
         var cell = imagesCollectionView.dequeueReusableCell(withReuseIdentifier: "imageCell", for: indexPath) as! ItemImageCell
         clickedImage = cell.itemImageView.image
-        imageTapped(c: cell)
-        
-        
+        imageTapped(c: cell, index: indexPath.item)
     }
     
     override func didReceiveMemoryWarning() {
@@ -100,7 +221,7 @@ class ItemViewController: UIViewController, UICollectionViewDelegateFlowLayout, 
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         
-        return 3
+        return numberOfPhotos
     }
 
     func collectionView(_ collectionView: UICollectionView,
@@ -124,13 +245,13 @@ class ItemViewController: UIViewController, UICollectionViewDelegateFlowLayout, 
         return 0
     }
     
-    func imageTapped(c: ItemImageCell) {
+    func imageTapped(c: ItemImageCell, index: Int) {
+
         
         // What to do here i like the following my little lord
         let cell = c
-        
         clickedImageView = UIImageView()
-        clickedImageView?.image = self.clickedImage
+        clickedImageView?.image = self.loadedImages[index]
         clickedImageView?.frame = UIScreen.main.bounds
         clickedImageView?.backgroundColor = .black
         clickedImageView?.contentMode = .scaleAspectFit
@@ -142,7 +263,6 @@ class ItemViewController: UIViewController, UICollectionViewDelegateFlowLayout, 
         cancelButton.setImage(#imageLiteral(resourceName: "cancel"), for: UIControlState())
         cancelButton.addTarget(self, action: #selector(dismissFullscreenImage(_:)), for: .touchUpInside)
         clickedImageView?.alpha = 0
-        
         
         UIView.animate(withDuration: 0.3, animations: {
            
@@ -176,5 +296,9 @@ class ItemViewController: UIViewController, UICollectionViewDelegateFlowLayout, 
         // self.navigationController?.popViewController(animated: false)
         
     }
+    
+    
+    
+    
     
 }
