@@ -7,15 +7,20 @@
 //
 
 import UIKit
+import Firebase
+import FirebaseStorageUI
+import SDWebImage
 
 class SellingViewController: UIViewController, UICollectionViewDelegateFlowLayout, UICollectionViewDataSource{
-
     
     @IBOutlet weak var itemsCollectionView: UICollectionView!
+    var databaseRef: FIRDatabaseReference!
+    var storageRef:  FIRStorageReference!
+    var itemKeys = [String]()
+    var indicator = UIActivityIndicatorView()
     
-   var staticArray = [String]()
     
-    
+    //var staticArray = [String]()
     override func viewDidLoad() {
         super.viewDidLoad()
     
@@ -23,8 +28,59 @@ class SellingViewController: UIViewController, UICollectionViewDelegateFlowLayou
         itemsCollectionView.delegate = self
         itemsCollectionView.dataSource = self
         // Do any additional setup after loading the view.
+        
+        if (ProfileViewController.isItMyProfile == true)
+        {
+            databaseRef = FIRDatabase.database().reference().child("Users").child(WelcomeViewController.user.getEmail()).child("items")
+        }
+        
+        else
+        {
+            databaseRef = FIRDatabase.database().reference().child("Users").child(ProfileViewController.userEmail).child("items")
+        }
+        
+        storageRef = FIRStorage.storage().reference(withPath: "Items_Photos")
+        getItems()
+        initializeIndicator()
+        indicator.startAnimating()
     }
 
+    // Here the code where we can get the items
+    func getItems()
+    {
+        databaseRef.observeSingleEvent(of: .value, with: { (snapshot) in
+            // Get user value
+            for item in snapshot.children
+            {
+                let itemKey = String(describing: (item as! FIRDataSnapshot).key)
+                self.itemKeys.append(itemKey)
+                //print(itemKey)
+            }
+            
+            if (self.itemKeys.count == 0)
+            {
+                self.indicator.stopAnimating()
+                self.indicator.hidesWhenStopped = true
+            }
+            
+            self.itemsCollectionView.reloadData()
+            // ...
+        })
+            
+        { (error) in
+            
+            print(error.localizedDescription)
+        }
+    }
+    func initializeIndicator()
+    {
+        indicator = UIActivityIndicatorView(frame: CGRect(x: 0, y: 0, width: 40, height: 40))
+        indicator.color = Constants.FirstColor
+        indicator.backgroundColor = UIColor.clear
+        indicator.center = self.view.center
+        self.view.addSubview(indicator)
+    }
+    
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
@@ -40,9 +96,19 @@ class SellingViewController: UIViewController, UICollectionViewDelegateFlowLayou
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "cellId", for: indexPath) as! ProfileItemsCell
-        cell.setupImage(image: UIImage(named: staticArray[indexPath.item])!)
+        cell.backgroundColor = UIColor.white
+        let imageRef = storageRef.child(itemKeys[indexPath.row]).child("1.jpeg")
+        cell.itemImageView.sd_setImage(with: imageRef)
+
+        if (indexPath.row == itemKeys.count - 1)
+        {
+            self.indicator.stopAnimating()
+            self.indicator.hidesWhenStopped = true
+        }
+        
         return cell
     }
+    
     
    func numberOfSections(in collectionView: UICollectionView) -> Int {
         // #warning Incomplete implementation, return the number of sections
@@ -63,26 +129,13 @@ class SellingViewController: UIViewController, UICollectionViewDelegateFlowLayou
     }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-    
         
         //This is temporary
-        if (staticArray.count == 0)
-        {
-            showNoItemLabel()
-            return 0
-            
-        }
-
-    
-        // #warning Incomplete implementation, return the number of items
-        return staticArray.count
+        return itemKeys.count
     }
-    
-    
     
     func showNoItemLabel()
     {
-        
         var noItemLabel = UILabel()
         self.view.addSubview(noItemLabel)
         noItemLabel.translatesAutoresizingMaskIntoConstraints = false

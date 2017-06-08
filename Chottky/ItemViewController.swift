@@ -27,10 +27,8 @@ class ItemViewController: UIViewController, UICollectionViewDelegateFlowLayout, 
     var loadedImages: [UIImage?] = [nil, nil, nil, nil]
     var favouriteRef: FIRDatabaseReference!
     var isThisFavouriteItem: Bool?
-    
     var itemUserEmail = String()
     var itemUserDisplayName = String()
-    
     var numberOfPhotos:Int = 0
     // This should be pressed when the image clicke
     
@@ -60,9 +58,19 @@ class ItemViewController: UIViewController, UICollectionViewDelegateFlowLayout, 
          addFavouriteAnimationView()
        // playFavouriteAnimation()
         getItemInformation()
+        checkIfThisIsFavouriteItem()
         
+          // Add the gesture to the photo
+          let profilePictureTapGesture = UITapGestureRecognizer(target: self, action: #selector(profilePictureClicked))
+          profilePicture.addGestureRecognizer(profilePictureTapGesture)
+          profilePicture.isUserInteractionEnabled = true
         
-        checkIfThisIsFavouriteItem()        
+         //UIApplication.shared.setStatusBarHidden(false, with: .none)
+         self.navigationController?.navigationBar.isTranslucent = true
+         //UIApplication.shared.isStatusBarHidden = false
+        // self.navigationController?.navigationBar.isHidden = false
+         //self.navigationController?.isNavigationBarHidden = false
+
     }
     
     
@@ -84,6 +92,17 @@ class ItemViewController: UIViewController, UICollectionViewDelegateFlowLayout, 
     }
     
     
+    func profilePictureClicked()
+    {
+        let profileStoryboard = UIStoryboard(name: "Main", bundle: nil)
+        let profileViewController = profileStoryboard.instantiateViewController(withIdentifier: "ProfileViewController") as! ProfileViewController
+        self.navigationController?.pushViewController(profileViewController, animated: true)
+        ProfileViewController.isItMyProfile = false
+
+        ProfileViewController.userDisplayName = itemUserDisplayName
+        ProfileViewController.userEmail = itemUserEmail
+    }
+    
     func checkIfThisIsFavouriteItem()
     {
         
@@ -96,19 +115,18 @@ class ItemViewController: UIViewController, UICollectionViewDelegateFlowLayout, 
                 self.isThisFavouriteItem = true
                 self.favouriteAnimationView?.animationProgress  = 0.9
                 
+                
             }
             
             else{
                 
                 self.isThisFavouriteItem = false
                 print("false room doesn't exist")
-                
+
             }
-            
+
         })
     }
-    
-    
     
     @IBAction func contactButtonClicked(_ sender: UIButton) {
         
@@ -119,12 +137,7 @@ class ItemViewController: UIViewController, UICollectionViewDelegateFlowLayout, 
         let chatLogController = ChatCollectionViewController(collectionViewLayout:flowLayout)
         self.navigationController?.pushViewController(chatLogController, animated: true)
           //self.navigationController?.pushViewController(chatLogController, animated: true)
-        
     }
-
-    
-    
-    
     
     
     func updateItemInformation()
@@ -151,7 +164,6 @@ class ItemViewController: UIViewController, UICollectionViewDelegateFlowLayout, 
     @available(iOS 6.0, *)
     public func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         
-       
         print(ItemViewController.itemKey)
         let imageRef = storageRef.child(String(indexPath.item + 1) + ".jpeg")
         var cell = imagesCollectionView.dequeueReusableCell(withReuseIdentifier: "imageCell", for: indexPath) as! ItemImageCell
@@ -246,7 +258,6 @@ class ItemViewController: UIViewController, UICollectionViewDelegateFlowLayout, 
     }
     
     func imageTapped(c: ItemImageCell, index: Int) {
-
         
         // What to do here i like the following my little lord
         let cell = c
@@ -274,6 +285,7 @@ class ItemViewController: UIViewController, UICollectionViewDelegateFlowLayout, 
         self.navigationController?.isNavigationBarHidden = true
         self.clickedImageView?.addSubview(cancelButton)
         UIApplication.shared.isStatusBarHidden = true
+        
     }
     func dismissFullscreenImage(_ sender: UITapGestureRecognizer) {
         
@@ -287,18 +299,23 @@ class ItemViewController: UIViewController, UICollectionViewDelegateFlowLayout, 
         })
     }
     
-    override func viewWillDisappear(_ animated: Bool) {
+    
+    override func viewWillAppear(_ animated: Bool) {
         
-        //UIApplication.shared.setStatusBarHidden(false, with: .none)
-        self.navigationController?.navigationBar.isTranslucent = true
-        UIApplication.shared.isStatusBarHidden = false
-        self.navigationController?.navigationBar.isHidden = false
-        // self.navigationController?.popViewController(animated: false)
+        super.viewWillAppear(true)
+        self.navigationController?.isNavigationBarHidden = false
+        
         
     }
     
-    
-    
-    
-    
+    override func viewWillDisappear(_ animated: Bool) {
+        
+        //UIApplication.shared.setStatusBarHidden(false, with: .none)
+        //self.navigationController?.navigationBar.isTranslucent = true
+       // UIApplication.shared.isStatusBarHidden = false
+        //self.navigationController?.navigationBar.isHidden = false
+       // self.navigationController?.isNavigationBarHidden = fals
+        //self.navigationController?.popViewController(animated: false
+        
+    }
 }

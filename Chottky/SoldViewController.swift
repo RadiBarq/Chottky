@@ -79,7 +79,6 @@ class SoldViewController: UIViewController, UICollectionViewDelegateFlowLayout, 
     
     func showNoItemLabel()
     {
-        
         var noItemLabel = UILabel()
         self.view.addSubview(noItemLabel)
         noItemLabel.translatesAutoresizingMaskIntoConstraints = false
@@ -90,6 +89,8 @@ class SoldViewController: UIViewController, UICollectionViewDelegateFlowLayout, 
         noItemLabel.centerXAnchor.constraint(equalTo: self.view.centerXAnchor).isActive = true
         noItemLabel.widthAnchor.constraint(equalToConstant: 150).isActive = true
         noItemLabel.heightAnchor.constraint(equalToConstant: 20).isActive = true
+        
+        
     }
     
     /*

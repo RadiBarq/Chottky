@@ -35,8 +35,8 @@ class LeftMenuTableViewController: UITableViewController{
         self.navigationController?.navigationBar.tintColor = UIColor.white
         self.navigationController!.navigationBar.titleTextAttributes = [NSForegroundColorAttributeName: UIColor.white]
       // self.tableView.register(BrowseCollectionViewController(, forCellReuseIdentifier: "leftMenuBarCell")
+        
     }
-    
     override func viewWillAppear(_ animated: Bool) {
         
          UIApplication.shared.isStatusBarHidden = true
@@ -130,8 +130,7 @@ class LeftMenuTableViewController: UITableViewController{
         let profileStoryboard = UIStoryboard(name: "Main", bundle: nil)
         let profileViewController = profileStoryboard.instantiateViewController(withIdentifier: "ProfileViewController") as! ProfileViewController
         self.navigationController?.pushViewController(profileViewController, animated: true)
-        
-        
+        ProfileViewController.isItMyProfile = true
     }
     
     func addThePhoto(cell: MenuBarCell, indexPath: Int) -> UITableViewCell
@@ -234,29 +233,29 @@ class LeftMenuTableViewController: UITableViewController{
             let messagesViewController = messagesStoryboard.instantiateViewController(withIdentifier: "MessagesTableViewController") as! MessagesTableViewController
             self.navigationController?.pushViewController(messagesViewController, animated: true)
         }
-        
+            
+            
         else if(indexPath.item == 3)
         {
-            
             let collectionsStoryboard = UIStoryboard(name: "Main", bundle: nil)
             let collectionsViewController = collectionsStoryboard.instantiateViewController(withIdentifier: "CollectionsCollectionViewController") as! CollectionsCollectionViewController
             self.navigationController?.pushViewController(collectionsViewController, animated: true)
-        
         }
         
         else if (indexPath.item == 4)
         {
-            
             let notificationsStoryboard = UIStoryboard(name: "Main", bundle: nil)
             let notificationsViewController = notificationsStoryboard.instantiateViewController(withIdentifier: "NotificationsTableViewController") as! NotificationsTableViewController
             self.navigationController?.pushViewController(notificationsViewController, animated: true)
         }
-        
+            
+            
         else if (indexPath.item == 5)
         {
             let profileStoryboard = UIStoryboard(name: "Main", bundle: nil)
             let profileViewController = profileStoryboard.instantiateViewController(withIdentifier: "ProfileViewController") as! ProfileViewController
             self.navigationController?.pushViewController(profileViewController, animated: true)
+            ProfileViewController.isItMyProfile = true
         }
     }
 }

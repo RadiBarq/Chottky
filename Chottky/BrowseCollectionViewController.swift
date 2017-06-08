@@ -23,6 +23,7 @@ class BrowseCollectionViewController: UICollectionViewController, UICollectionVi
     var takePhotoButton = UIButton()    
     var indicator = UIActivityIndicatorView()
     
+    
     override func viewWillAppear(_ animated: Bool) {
         
         super.viewWillAppear(animated)
@@ -67,21 +68,14 @@ class BrowseCollectionViewController: UICollectionViewController, UICollectionVi
         self.navigationController?.navigationBar.tintColor = UIColor.white
         self.navigationController!.navigationBar.titleTextAttributes = [NSForegroundColorAttributeName: UIColor.white]
         setupLefMenuProfileImage()
-        
-        
-        
     }
 
-    
-    
     func presseTakePhotoButton(button: UIButton) {
-        
         
         // At the end of this, remember to add this.
         let cameraStoryboard = UIStoryboard(name: "Main", bundle: nil)
         let cameraViewController = cameraStoryboard.instantiateViewController(withIdentifier: "cameraView") as! CameraViewController
         self.navigationController?.pushViewController(cameraViewController, animated: true)
-        
         
     }
     
@@ -139,6 +133,7 @@ class BrowseCollectionViewController: UICollectionViewController, UICollectionVi
         
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
+
     }
     
     
@@ -225,9 +220,8 @@ class BrowseCollectionViewController: UICollectionViewController, UICollectionVi
     override func collectionView(_ collectionView: UICollectionView, canPerformAction action: Selector, forItemAt indexPath: IndexPath, withSender sender: Any?) -> Bool {
         
         return true
-
-        
     }
+    
     
     override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         
