@@ -9,10 +9,6 @@
 import UIKit
 import Firebase
 
-
-
-
-
 //#FFCB2A The main color in hash
 
 @UIApplicationMain
@@ -25,11 +21,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Override point for customization after application launch.
         FIRApp.configure()
         
-        UINavigationBar.appearance().barTintColor = UIColor.rgb(red: 51, green: 204, blue: 255)
+        UINavigationBar.appearance().barTintColor = UIColor.rgb(red: 41, green: 121, blue: 255)
     
         //application.statusBarStyle = .lightContent
         
-       // UINavigationBar.appearance().barStyle = .blackOpaque
+        UINavigationBar.appearance().barStyle = .blackOpaque
+        
+        self.window?.backgroundColor = .white;
         
         
      //   application.statusBarStyle = .lightContent
@@ -38,18 +36,16 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         //statusBarBackgroundView.backgroundColor = UIColor.orange
 
-        
         //window?.addSubview(statusBarBackgroundView)
         //window?.addConstraintsWithFormat(format: "H:|[v0]|", views: statusBarBackgroundView)
         //window?.addConstraintsWithFormat(format: "V:|[v0(20)]", views: statusBarBackgroundView)
-        
-
-        
-        UIApplication.shared.statusBarStyle = .lightContent
+ 
+      //  UIApplication.shared.statusBarStyle = .lightContent
         UINavigationBar.appearance().clipsToBounds = true
-        let statusBar: UIView = UIApplication.shared.value(forKey: "statusBar") as! UIView
-        statusBar.backgroundColor = UIColor.rgb(red: 51, green: 204, blue: 255)
+      //  let statusBar: UIView = UIApplication.shared.value(forKey: "statusBar") as! UIView
+       // statusBar.backgroundColor = UIColor.rgb(red: 41, green: 121, blue: 255)
         return true
+        
     }
 
     func applicationWillResignActive(_ application: UIApplication) {

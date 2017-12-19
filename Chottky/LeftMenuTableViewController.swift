@@ -15,6 +15,8 @@ class LeftMenuTableViewController: UITableViewController{
 
     var menus = [String]()
     public static var profileImageView: UIImageView = UIImageView()
+    let userID = FIRAuth.auth()!.currentUser!.uid
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -25,35 +27,33 @@ class LeftMenuTableViewController: UITableViewController{
         // self.navigationItem.rightBarButtonItem = self.editButtonItem()
         intitializeMenusArray()
         self.tableView.backgroundColor = UIColor.white
-        self.navigationController?.navigationBar.barTintColor = UIColor.green
-        navigationController?.navigationBar.isHidden = true
+        //self.navigationController?.navigationBar.barTintColor = Constants.FirstColor
+       // navigationController?.navigationBar.isHidden = true
         tableView.separatorColor = UIColor.white
         tableView.register(MenuBarCell.self, forCellReuseIdentifier: "cellId")
-        UIApplication.shared.isStatusBarHidden = true
+        self.navigationController?.navigationBar.isTranslucent = false
+       // UIApplication.shared.isStatusBarHidden = true
         self.tableView.isScrollEnabled = false
         
-        self.navigationController?.navigationBar.tintColor = UIColor.white
+        self.navigationController?.navigationBar.isHidden = true
+        self.navigationController?.navigationBar.tintColor = Constants.FirstColor
         self.navigationController!.navigationBar.titleTextAttributes = [NSForegroundColorAttributeName: UIColor.white]
       // self.tableView.register(BrowseCollectionViewController(, forCellReuseIdentifier: "leftMenuBarCell")
         
     }
     override func viewWillAppear(_ animated: Bool) {
         
-         UIApplication.shared.isStatusBarHidden = true
+         //UIApplication.shared.isStatusBarHidden = true
     }
     
     func intitializeMenusArray()
     {
-        menus.append("تصفح")
         menus.append("بيع المنتجات الخاصة بك")
-        menus.append("الرسائل")
-        menus.append("التصنيفات")
-        menus.append("الاشعارات")
+        menus.append("اكتشف")
         menus.append("الصفحة الشخصية")
         menus.append("ادعو اصحاب الفيسبوك")
         menus.append("بحاجة الى مساعدة")
     }
-    
     
     override func viewDidDisappear(_ animated: Bool) {
         
@@ -78,7 +78,7 @@ class LeftMenuTableViewController: UITableViewController{
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         
         // #warning Incomplete implementation, return the number of rows
-        return 8
+        return 5
     }
     
     override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
@@ -127,30 +127,34 @@ class LeftMenuTableViewController: UITableViewController{
     func imageTapped(gesture: UIGestureRecognizer) {
         // What to do here is like the following my little lord
         
+        ProfileViewController.userId = userID
+        ProfileViewController.userDisplayName = WelcomeViewController.user.displayName
+        
         let profileStoryboard = UIStoryboard(name: "Main", bundle: nil)
         let profileViewController = profileStoryboard.instantiateViewController(withIdentifier: "ProfileViewController") as! ProfileViewController
         self.navigationController?.pushViewController(profileViewController, animated: true)
-        ProfileViewController.isItMyProfile = true
+    
     }
     
     func addThePhoto(cell: MenuBarCell, indexPath: Int) -> UITableViewCell
     {
         if (indexPath == 0)
         {
-            cell.initializeImageView(name: "ic_shopping_basket")
+            cell.initializeImageView(name: "ic_photo_camera")
+
         }
         
         else if (indexPath == 1)
         {
             
-             cell.initializeImageView(name: "ic_photo_camera")
+            cell.initializeImageView(name: "ic_dashboard")
             
         }
         
         else if (indexPath == 2)
         {
             
-             cell.initializeImageView(name: "ic_chat")
+            cell.initializeImageView(name: "ic_account_box")
             
         }
         
@@ -158,35 +162,15 @@ class LeftMenuTableViewController: UITableViewController{
         {
             
             
-             cell.initializeImageView(name: "ic_dashboard")
-            
+            cell.initializeImageView(name: "ic_supervisor_account")
         }
         
         
         else if (indexPath == 4)
         {
             
-            cell.initializeImageView(name: "ic_notifications")
-            
-        }
-        
-        else if (indexPath == 5)
-        {
-            
-            cell.initializeImageView(name: "ic_account_box")
-            
-        }
-        
-        else if (indexPath == 6)
-        {
-            
-            cell.initializeImageView(name: "ic_supervisor_account")
-            
-        }
-        
-        else if (indexPath == 7)
-        {
             cell.initializeImageView(name: "ic_help")
+            
         }
         
         return cell
@@ -211,13 +195,6 @@ class LeftMenuTableViewController: UITableViewController{
         // Here where we just test the items
         if (indexPath.item == 0)
         {
-            let messagesStoryboard = UIStoryboard(name: "Main", bundle: nil)
-            let messagesViewController = messagesStoryboard.instantiateViewController(withIdentifier: "PostedItemViewController") as! PostedItemViewController
-            self.navigationController?.pushViewController(messagesViewController, animated: true)
-        }
-            
-        else if (indexPath.item == 1)
-        {
             self.navigationController?.popViewController(animated: true)
             dismiss(animated: true, completion: nil)
             // At the end of this, remember to add this.
@@ -226,13 +203,21 @@ class LeftMenuTableViewController: UITableViewController{
             BrowseCollectionViewController.browseNavigaionController?.pushViewController(cameraViewController, animated: true)
         }
             
+        else if (indexPath.item == 1)
+        {
+            let collectionsStoryboard = UIStoryboard(name: "Main", bundle: nil)
+            let collectionsViewController = collectionsStoryboard.instantiateViewController(withIdentifier: "CollectionsCollectionViewController") as! CollectionsCollectionViewController
+            self.navigationController?.pushViewController(collectionsViewController, animated: true)
+        }
+            
         else if (indexPath.item == 2)
         {
-
-            let messagesStoryboard = UIStoryboard(name: "Main", bundle: nil)
-            let messagesViewController = messagesStoryboard.instantiateViewController(withIdentifier: "MessagesTableViewController") as! MessagesTableViewController
-            self.navigationController?.pushViewController(messagesViewController, animated: true)
-        }
+            
+            ProfileViewController.userId = userID
+            ProfileViewController.userDisplayName = WelcomeViewController.user.displayName
+            let profileStoryboard = UIStoryboard(name: "Main", bundle: nil)
+            let profileViewController = profileStoryboard.instantiateViewController(withIdentifier: "ProfileViewController") as! ProfileViewController
+            self.navigationController?.pushViewController(profileViewController, animated: true)        }
             
             
         else if(indexPath.item == 3)
@@ -240,22 +225,6 @@ class LeftMenuTableViewController: UITableViewController{
             let collectionsStoryboard = UIStoryboard(name: "Main", bundle: nil)
             let collectionsViewController = collectionsStoryboard.instantiateViewController(withIdentifier: "CollectionsCollectionViewController") as! CollectionsCollectionViewController
             self.navigationController?.pushViewController(collectionsViewController, animated: true)
-        }
-        
-        else if (indexPath.item == 4)
-        {
-            let notificationsStoryboard = UIStoryboard(name: "Main", bundle: nil)
-            let notificationsViewController = notificationsStoryboard.instantiateViewController(withIdentifier: "NotificationsTableViewController") as! NotificationsTableViewController
-            self.navigationController?.pushViewController(notificationsViewController, animated: true)
-        }
-            
-            
-        else if (indexPath.item == 5)
-        {
-            let profileStoryboard = UIStoryboard(name: "Main", bundle: nil)
-            let profileViewController = profileStoryboard.instantiateViewController(withIdentifier: "ProfileViewController") as! ProfileViewController
-            self.navigationController?.pushViewController(profileViewController, animated: true)
-            ProfileViewController.isItMyProfile = true
         }
     }
 }

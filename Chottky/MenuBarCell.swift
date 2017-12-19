@@ -29,7 +29,6 @@ class MenuBarCell: UITableViewCell {
         imageView.contentMode = .scaleAspectFill
         imageView.layer.masksToBounds = true
         return imageView
-        
     }()
     
     

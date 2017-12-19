@@ -13,7 +13,9 @@ import FBSDKLoginKit
 
 class WelcomeViewController: UIViewController {
     
+    @IBOutlet weak var backgroundView: UIView!
     public static var user = User()
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -25,21 +27,33 @@ class WelcomeViewController: UIViewController {
         // Do any additional setup after loading the view.
         
        // setUpMenuBar()
+    
+        self.view.backgroundColor = UIColor.clear
+        var backgroundImage = UIImageView()
+        backgroundImage.image = UIImage(named: "1")
+        backgroundImage.frame = self.view.bounds
+        self.backgroundView.addSubview(backgroundImage)
+        UIApplication.shared.isStatusBarHidden = true
+     
+       // let blurEffect = UIBlurEffect(style: UIBlurEffectStyle.light)
+      //  let blurEffectView = UIVisualEffectView(effect: blurEffect)
+        //always fill the view
+       // blurEffectView.frame = self.view.bounds
+       // blurEffectView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+       // self.backgroundView.addSubview(blurEffectView)
     }
-
+    
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
     
-    
     @IBAction func onFacebookButtonClicked(_ sender: UIButton) {
         
         let loginManager = LoginManager()
-        
         loginManager.logIn([ .publicProfile ], viewController: self) { loginResult in
                 switch loginResult {
-        
+                    
                         case .failed(let error):
                         print(error)
                         case .cancelled:
@@ -50,7 +64,8 @@ class WelcomeViewController: UIViewController {
                         FIRAuth.auth()?.signIn(with: credential) { (user, error) in
                             // ...
                             if let error = error {
-                    
+                                
+                                print(error)
                                 return
                             }
                             
@@ -66,7 +81,7 @@ class WelcomeViewController: UIViewController {
         
         let mainStoryboard = UIStoryboard(name: "Main", bundle: nil)
         let loginViewController = mainStoryboard.instantiateViewController(withIdentifier: "signInViewController")
-        self.present(loginViewController, animated: true, completion: nil)
+        self.present(loginViewController, animated: false, completion: nil)
     }
     
     
@@ -78,15 +93,5 @@ class WelcomeViewController: UIViewController {
         
     }
    
-    
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destinationViewController.
-        // Pass the selected object to the new view controller.
-    }
-    */
     
 }

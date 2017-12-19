@@ -18,8 +18,9 @@ class SellingViewController: UIViewController, UICollectionViewDelegateFlowLayou
     var storageRef:  FIRStorageReference!
     var itemKeys = [String]()
     var indicator = UIActivityIndicatorView()
+    let userID = FIRAuth.auth()!.currentUser!.uid
     
-    
+
     //var staticArray = [String]()
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -27,22 +28,34 @@ class SellingViewController: UIViewController, UICollectionViewDelegateFlowLayou
         itemsCollectionView.register(ProfileItemsCell.self, forCellWithReuseIdentifier: "cellId")
         itemsCollectionView.delegate = self
         itemsCollectionView.dataSource = self
+        
+         //itemsCollectionView.backgroundColor = UIColor(red: 241/255, green: 241/255, blue: 241/255, alpha: 1)
         // Do any additional setup after loading the view.
         
         if (ProfileViewController.isItMyProfile == true)
         {
-            databaseRef = FIRDatabase.database().reference().child("Users").child(WelcomeViewController.user.getEmail()).child("items")
+            databaseRef = FIRDatabase.database().reference().child("Users").child(userID).child("items")
         }
         
         else
         {
-            databaseRef = FIRDatabase.database().reference().child("Users").child(ProfileViewController.userEmail).child("items")
+            databaseRef = FIRDatabase.database().reference().child("Users").child(userID).child("items")
         }
         
         storageRef = FIRStorage.storage().reference(withPath: "Items_Photos")
         getItems()
         initializeIndicator()
         indicator.startAnimating()
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        
+        ItemViewController.itemKey = itemKeys[indexPath.item]
+        ItemViewController.isItOpenedFromProfileView = true
+        let itemStoryBoard = UIStoryboard(name: "Main", bundle: nil)
+        let itemViewController = itemStoryBoard.instantiateViewController(withIdentifier: "ItemViewController") as! ItemViewController
+        ProfileViewController.profileNavigationController?.pushViewController(itemViewController, animated: true)
+
     }
 
     // Here the code where we can get the items
@@ -60,6 +73,7 @@ class SellingViewController: UIViewController, UICollectionViewDelegateFlowLayou
             if (self.itemKeys.count == 0)
             {
                 self.indicator.stopAnimating()
+                 self.showNoItemLabel()
                 self.indicator.hidesWhenStopped = true
             }
             
@@ -72,6 +86,8 @@ class SellingViewController: UIViewController, UICollectionViewDelegateFlowLayou
             print(error.localizedDescription)
         }
     }
+    
+    
     func initializeIndicator()
     {
         indicator = UIActivityIndicatorView(frame: CGRect(x: 0, y: 0, width: 40, height: 40))
@@ -90,7 +106,7 @@ class SellingViewController: UIViewController, UICollectionViewDelegateFlowLayou
                         layout collectionViewLayout: UICollectionViewLayout,
                         sizeForItemAt indexPath: IndexPath) -> CGSize {
         
-        return CGSize(width: itemsCollectionView.bounds.size.width/2 - 16, height: itemsCollectionView.bounds.size.height/2)
+        return CGSize(width: itemsCollectionView.bounds.size.width/2 - 16, height: itemsCollectionView.bounds.size.height/2 - 16)
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
@@ -115,7 +131,6 @@ class SellingViewController: UIViewController, UICollectionViewDelegateFlowLayou
         return 1
     }
     
-    
     func collectionView(_ collectionView: UICollectionView,
                         layout collectionViewLayout: UICollectionViewLayout,
                         minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
@@ -130,7 +145,7 @@ class SellingViewController: UIViewController, UICollectionViewDelegateFlowLayou
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         
-        //This is temporary
+        // #warning Incomplete implementation, return the number of items
         return itemKeys.count
     }
     
@@ -147,7 +162,6 @@ class SellingViewController: UIViewController, UICollectionViewDelegateFlowLayou
         noItemLabel.widthAnchor.constraint(equalToConstant: 150).isActive = true
         noItemLabel.heightAnchor.constraint(equalToConstant: 20).isActive = true
     }
-    
     /*
     // MARK: - Navigation
 

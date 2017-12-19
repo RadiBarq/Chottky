@@ -13,17 +13,18 @@ import FirebaseStorageUI
 
 class MessagesTableViewController: UITableViewController {
     
+    
     var usersKeys = [String]()
-   // static var messageTo_Email = String()
+   // static var messageTo_Email = String()f
     //static var messageTo_DisplayName = String()
     var usersNames = [String]()
     var holdingRow = String()
     var holdingTouchIndex:IndexPath!
-    
+    let userID = FIRAuth.auth()!.currentUser!.uid
     var storageRef: FIRStorageReference!
     @IBOutlet var holdView: UIView!
-    
     var indicator = UIActivityIndicatorView()
+    
     
     override func viewWillAppear(_ animated: Bool) {
         
@@ -48,17 +49,22 @@ class MessagesTableViewController: UITableViewController {
         indicator.startAnimating()
         indicator.backgroundColor = UIColor.white
         title = "الرسائل"
+        
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        
+        super.viewWillDisappear(animated)
+        title = ""
     }
     
     override func viewDidLoad() {
-        
         super.viewDidLoad()
         // Uncomment the following line to preserve selection between presentations
         // self.clearsSelectionOnViewWillAppear = false
         // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
         // self.navigationItem.rightBarButtonItem = self.editButtonItem()
         storageRef = FIRStorage.storage().reference(withPath: "Profile_Pictures")
-        
     }
     
     @IBAction func closeView(_ sender: UIButton) {
@@ -68,14 +74,15 @@ class MessagesTableViewController: UITableViewController {
     
     @IBAction func deleteView(_ sender: UIButton) {
         
-        var reference = FIRDatabase.database().reference().child("Users").child(WelcomeViewController.user.getEmail()).child("chat").child(holdingRow).removeValue()
+        var reference = FIRDatabase.database().reference().child("Users").child(userID).child("chat").child(holdingRow).removeValue()
         removeView()
+        
     }
     
     @IBAction func blockUser(_ sender: UIButton) {
         
-        var blockReference = FIRDatabase.database().reference().child("Users").child(WelcomeViewController.user.getEmail()).child("block").child(holdingRow).setValue("true")
-        var deleteReference = FIRDatabase.database().reference().child("Users").child(WelcomeViewController.user.getEmail()).child("chat").child(holdingRow).removeValue()
+        var blockReference = FIRDatabase.database().reference().child("Users").child(userID).child("block").child(holdingRow).setValue("true")
+        var deleteReference = FIRDatabase.database().reference().child("Users").child(userID).child("chat").child(holdingRow).removeValue()
         removeView()
     }
     
@@ -101,6 +108,7 @@ class MessagesTableViewController: UITableViewController {
             }
         }
     }
+    
     
     func addView()
     {
@@ -129,16 +137,15 @@ class MessagesTableViewController: UITableViewController {
     
     @IBAction func handlelDelete(_ sender: UIButton) {
         
-        var reference = FIRDatabase.database().reference().child("Users").child(WelcomeViewController.user.getEmail()).child("chat").child(holdingRow).removeValue()
+        var reference = FIRDatabase.database().reference().child("Users").child(userID).child("chat").child(holdingRow).removeValue()
         removeView()
-        
     }
     
     @IBAction func handleBlock(_ sender: UIButton) {
         
-        var blockReference = FIRDatabase.database().reference().child("Users").child(WelcomeViewController.user.getEmail()).child("block").child(holdingRow).setValue("true")
+        var blockReference = FIRDatabase.database().reference().child("Users").child(userID).child("block").child(holdingRow).setValue("true")
         
-        var deleteReference = FIRDatabase.database().reference().child("Users").child(WelcomeViewController.user.getEmail()).child("chat").child(holdingRow).removeValue()
+        var deleteReference = FIRDatabase.database().reference().child("Users").child(userID).child("chat").child(holdingRow).removeValue()
 
         removeView()
     }
@@ -146,7 +153,6 @@ class MessagesTableViewController: UITableViewController {
     @IBAction func handleClose(_ sender: UIButton) {
         
         removeView()
-        
     }
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -161,7 +167,7 @@ class MessagesTableViewController: UITableViewController {
         let ref = FIRDatabase.database().reference()
         usersKeys = [String]()
         
-        let handle = ref.child("Users").child(WelcomeViewController.user.getEmail()).child("chat").observeSingleEvent(of: .value , with: { snapshot in
+        let handle = ref.child("Users").child(userID).child("chat").observeSingleEvent(of: .value , with: { snapshot in
             
             for user in snapshot.children
             {
@@ -198,32 +204,30 @@ class MessagesTableViewController: UITableViewController {
         var userName = String()
         let UserClickedEmail =  usersKeys[indexPath.row]
         
-        FIRDatabase.database().reference().child("Users").child(UserClickedEmail).child("UserName").observeSingleEvent(of: .value, with: { (snapshot) in
-            
-            FIRDatabase.database().reference().child("Users").child(WelcomeViewController.user.getEmail()).child("chat").child(UserClickedEmail).child("lastMessage").observeSingleEvent(of: .value, with: {(snapshot1) in
+            FIRDatabase.database().reference().child("Users").child(UserClickedEmail).child("UserName").observeSingleEvent(of: .value, with: { (snapshot) in
+            FIRDatabase.database().reference().child("Users").child(self.userID).child("chat").child(UserClickedEmail).child("lastMessage").observeSingleEvent(of: .value, with: {(snapshot1) in
                 
                 for element in snapshot1.children
                 {
                     let childValue = String(describing: (element as! FIRDataSnapshot).value!) // Remeber this value maybe value.
-                    
                     let childKey = String(describing: (element as! FIRDataSnapshot).key)
                     
                     
                     if childKey == "message"
                     {
                         cell.lastMessageLabel.text = childValue
-                        
                     }
                         
                     else if childKey == "time"
                     {
-                        
                          //childValue = Double(childValue)!
                          let date = Date(timeIntervalSince1970: TimeInterval(Double(childValue)!))
                          let dateFormatter = DateFormatter()
-                         dateFormatter.locale = Locale(identifier: "en_US")
-                         dateFormatter.dateStyle = .medium
+                         dateFormatter.locale = Locale(identifier: "ar_JO")
+                         dateFormatter.dateStyle = .short
                          cell.lastMessageTimeLabel.text =  dateFormatter.string(from: date)
+                        
+                        
                     }
                 }
     
@@ -260,14 +264,14 @@ class MessagesTableViewController: UITableViewController {
 
             userName = (snapshot.value) as! String
             ChatCollectionViewController.messageFromDisplayName = userName
-            ChatCollectionViewController.messageToEmail = self.usersKeys[indexPath.row]
-
+            ChatCollectionViewController.messageToId = self.usersKeys[indexPath.row]
+            
             let flowLayout = UICollectionViewFlowLayout()
+        
             let chatLogController = ChatCollectionViewController(collectionViewLayout:flowLayout)
             self.navigationController?.pushViewController(chatLogController, animated: true)
             //    users = [String]()
         })
-        
         
         ///This is related to move the controller()
         // let storyboard = UIStoryboard(name: "Main", bundle: nil)
@@ -320,9 +324,10 @@ class MessagesTableViewController: UITableViewController {
      */
     
     // MARK: - Navigation
-    
+
     // In a storyboard-based application, you will often want to do a little preparation before navigation
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        
         
     }
 }
@@ -386,11 +391,15 @@ class UserCell: UITableViewCell
         // Related to the last message label
         addSubview(lastMessageLabel)
         
+        
+        lastMessageLabel.textColor = Constants.SecondColor
         lastMessageLabel.rightAnchor.constraint(equalTo: self.profileImageView.leftAnchor, constant: -10).isActive = true
         lastMessageLabel.centerYAnchor.constraint(equalTo: self.profileImageView.centerYAnchor, constant: 10).isActive = true
         lastMessageLabel.widthAnchor.constraint(equalToConstant: self.frame.width - 50).isActive = true
         lastMessageLabel.heightAnchor.constraint(equalToConstant: 21).isActive = true
         addSubview(lastMessageTimeLabel)
+        
+        
         
         lastMessageTimeLabel.leftAnchor.constraint(equalTo: self.leftAnchor, constant: 2).isActive = true
         lastMessageTimeLabel.centerYAnchor.constraint(equalTo: self.profileImageView.centerYAnchor, constant: -10).isActive = true
@@ -406,16 +415,4 @@ class UserCell: UITableViewCell
     }
 }
 
-extension Double {
-    
-        func getDateStringFromUTC() -> String {
-        let date = Date(timeIntervalSince1970: self)
-        
-            
-        let dateFormatter = DateFormatter()
-        dateFormatter.locale = Locale(identifier: "ar_JO")
-        dateFormatter.dateStyle = .medium
-        
-        return dateFormatter.string(from: date)
-    }
-}
+

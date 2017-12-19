@@ -12,29 +12,45 @@ private let reuseIdentifier = "Cell"
 
 class CollectionsCollectionViewController: UICollectionViewController,  UICollectionViewDelegateFlowLayout {
 
+    
+    
+     var categriesPhotosArray = ["category-car", "phone-category", "category-aparment", "category-home", "category-dog", "category-sport", "category-clothes", "category-kids", "category-books", "category-others"]
+    
+        let categorisTextArray = ["سيارات","الكترونيات","شقق و اراضي","البيت و الحديقة","حيوانات","الرياضة و الالعاب","ملابس و اكسسوارات","الاطفال","افلام، كتب و اغاني","اغراض اخرى"]
+    
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 
         // Uncomment the following line to preserve selection between presentations
         // self.clearsSelectionOnViewWillAppear = false
-        
-        title = "التصنيفات"
-        
+    
+
         // Register cell classes
         self.collectionView!.register(CollectionsCell.self, forCellWithReuseIdentifier: reuseIdentifier)
 
         // Do any additional setup after loading the view.
     }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
 
+        title = "اكتشف"
+    }
+    
     override func didReceiveMemoryWarning() {
-        
+
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
     
-    
-    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        
+        title = " "
+    }
 
+    
     /*
     // MARK: - Navigation
 
@@ -55,13 +71,16 @@ class CollectionsCollectionViewController: UICollectionViewController,  UICollec
 
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         // #warning Incomplete implementation, return the number of items
-        return 9
+        return categriesPhotosArray.count
     }
 
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: reuseIdentifier, for: indexPath) as! CollectionsCell
     
-        cell.setImage(image: UIImage(named: "test_phone")!)
+    
+        
+        cell.setImage(image: UIImage(named: categriesPhotosArray[indexPath.row])!)
+        cell.setUpLabel(text: categorisTextArray[indexPath.row])
         // Configure the cell
     
         return cell
@@ -96,11 +115,6 @@ class CollectionsCollectionViewController: UICollectionViewController,  UICollec
                         minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
         return 1
     }
-    
-    
-    
-    
-    
     
     func collectionView(_ collectionView: UICollectionView,
                         layout collectionViewLayout: UICollectionViewLayout,

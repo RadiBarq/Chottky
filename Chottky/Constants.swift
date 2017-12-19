@@ -11,13 +11,12 @@ import UIKit
 
 public class Constants
 {
-    
-    
     //Her we can add constants to the program
-    public static let FirstColor = UIColor(red: 51/255, green: 204/255, blue: 255/255, alpha: 1)
-    public static let SecondColor = UIColor(red: 44/255, green: 57/255, blue: 100/255, alpha: 1)
+    public static let FirstColor = UIColor(red: 48/255, green: 125/255, blue: 251/255, alpha: 1)
+    public static let SecondColor = UIColor(red: 48/255, green: 79/255, blue: 254/255, alpha: 1)
+    public static let notificationDiscardedText = "تم حذف المنتج الخاص بك لعدم مطابقة الصور للمواصفات، الرجاءاعد المحاولة"
+    public static let notificationFavouriteText =  " تم الاعجاب بمنتجك من قبل"
     
-
 }
 
 

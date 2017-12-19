@@ -19,15 +19,18 @@ class ChatCollectionViewController: UICollectionViewController, UICollectionView
     var messagesTexts = [String]()
     var messagesFrom = [String]()
     var messagesTimeStamps = [Float]()
-    static var messageToEmail = String()
+    static var messageToId = String()
     static var messageFromDisplayName = String()
+    
+    let userID = FIRAuth.auth()!.currentUser!.uid
     
     var userPhotoUrl: URL!
     var userPhoto: UIImage = UIImage()
     var storageRef: FIRStorageReference!
     var indicator = UIActivityIndicatorView()
-    
     var theProgramJustOpened: Bool = true
+    
+    
     
     //var notificationReference = FIRDatabase.database().reference().child("Users").child(WelcomeViewController.messageTo_DisplayName)
     
@@ -69,11 +72,30 @@ class ChatCollectionViewController: UICollectionViewController, UICollectionView
         storageRef = storageRef.child(ChatCollectionViewController.messageFromDisplayName + "/" + "Profile.jpg")
     }
     
+    
+    
+    
+   override func viewWillAppear(_ animated: Bool) {
+        
+        super.viewWillAppear(true)
+        self.tabBarController?.tabBar.isHidden = true
+        
+    }
+    
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(true)
+         self.tabBarController?.tabBar.isHidden = false
+    }
+    
     func setUpKeyboardObserver()
     {
         
         
     }
+    
+    
+    
     
     func handleKeyBoardDidShow(notification: NSNotification)
     {
@@ -84,9 +106,7 @@ class ChatCollectionViewController: UICollectionViewController, UICollectionView
         {
             collectionView?.scrollToItem(at: indexPath as IndexPath, at: .top, animated: true)
         }
-        
     }
-    
     
     func handleKeyboardWillHideNotification(notification: NSNotification)
     {
@@ -124,7 +144,7 @@ class ChatCollectionViewController: UICollectionViewController, UICollectionView
         {
             
             let containerView = UIView()
-            containerView.frame = CGRect(x: 0, y: 0, width: self.view.frame.width, height: 45)
+            containerView.frame = CGRect(x: 0, y: 0, width: self.view.frame.width, height: 60)
             containerView.backgroundColor = UIColor.white
             
             // This code to add the button
@@ -177,12 +197,11 @@ class ChatCollectionViewController: UICollectionViewController, UICollectionView
     override var inputAccessoryView: UIView?
         {
         
-        get
-        {
+            get
+            {
+                return inputContainterView
             
-            return inputContainterView
-            
-        }
+            }
     }
     
     override var canBecomeFirstResponder: Bool
@@ -267,27 +286,26 @@ class ChatCollectionViewController: UICollectionViewController, UICollectionView
         seperatorLineView.topAnchor.constraint(equalTo: containerView.topAnchor).isActive = true
         seperatorLineView.widthAnchor.constraint(equalTo: containerView.widthAnchor).isActive = true
         seperatorLineView.heightAnchor.constraint(equalToConstant: 1).isActive = true
-        
     }
     
     func handleSend()
     {
         
         let timestamp = Int(NSDate().timeIntervalSince1970)
-        let ref = FIRDatabase.database().reference().child("Users").child(WelcomeViewController.user.getEmail()).child("chat").child(ChatCollectionViewController.messageToEmail).childByAutoId().updateChildValues(["messageText": inputTextField.text, "messageFrom": WelcomeViewController.user.displayName, "timestamp": timestamp])
+        let ref = FIRDatabase.database().reference().child("Users").child(userID).child("chat").child(ChatCollectionViewController.messageToId).childByAutoId().updateChildValues(["messageText": inputTextField.text, "messageFrom": WelcomeViewController.user.displayName, "timestamp": timestamp])
         
-        let ref2 = FIRDatabase.database().reference().child("Users").child(ChatCollectionViewController.messageToEmail).child("chat").child(WelcomeViewController.user.getEmail()).childByAutoId().updateChildValues(["messageText": inputTextField.text, "messageFrom": WelcomeViewController.user.displayName, "timestamp": timestamp])
+        let ref2 = FIRDatabase.database().reference().child("Users").child(ChatCollectionViewController.messageToId).child("chat").child(userID).childByAutoId().updateChildValues(["messageText": inputTextField.text, "messageFrom": WelcomeViewController.user.displayName, "timestamp": timestamp])
         
-        let newMessageRef = FIRDatabase.database().reference().child("Users").child(ChatCollectionViewController.messageToEmail).child("chat").child(WelcomeViewController.user.getEmail()).child("lastMessage").updateChildValues(["message": inputTextField.text, "time": timestamp])
+        let newMessageRef = FIRDatabase.database().reference().child("Users").child(ChatCollectionViewController.messageToId).child("chat").child(userID).child("lastMessage").updateChildValues(["message": inputTextField.text, "time": timestamp])
         
-        let newMessageRed2 = FIRDatabase.database().reference().child("Users").child(WelcomeViewController.user.getEmail()).child("chat").child(ChatCollectionViewController.messageToEmail).child("lastMessage").updateChildValues(["message": inputTextField.text, "time": timestamp])
+        let newMessageRed2 = FIRDatabase.database().reference().child("Users").child(userID).child("chat").child(ChatCollectionViewController.messageToId).child("lastMessage").updateChildValues(["message": inputTextField.text, "time": timestamp])
         // notificationReference.updateChildValues(["notified": true])
     }
     
-    
     func observeMessages()
     {
-        let ovserveReference = FIRDatabase.database().reference().child("Users").child(WelcomeViewController.user.getEmail()).child("chat").child(ChatCollectionViewController.messageToEmail)
+        
+        let ovserveReference = FIRDatabase.database().reference().child("Users").child(userID).child("chat").child(ChatCollectionViewController.messageToId)
         
         ovserveReference.observe(.value, with: {snapshot in
             
@@ -325,7 +343,6 @@ class ChatCollectionViewController: UICollectionViewController, UICollectionView
             self.collectionView?.reloadData()
             self.inputTextField.text = nil
             self.indicator.stopAnimating()
-            
             // scroll to the last index
         })
     }
@@ -460,6 +477,7 @@ class ChatCollectionViewController: UICollectionViewController, UICollectionView
         self.messagesTimeStamps = [Float]()
         self.messagesTexts =  [String]()
         self.messagesFrom = [String]()
+        
         
     }
 }

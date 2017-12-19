@@ -11,12 +11,9 @@ import Firebase
 
 class SignUpViewController: UIViewController, UITextFieldDelegate
 {
-    
-    
     @IBOutlet weak var passwordTextField: UITextField!
     @IBOutlet weak var emailTextField: UITextField!
     @IBOutlet weak var userNameTextField: UITextField!
-    
     let passwordMaxLength  = 20
     let emailMaxLength = 30
     let userNameLength = 20
@@ -28,11 +25,13 @@ class SignUpViewController: UIViewController, UITextFieldDelegate
         emailTextField.delegate = self
         passwordTextField.delegate = self
         userNameTextField.delegate = self
+        UIApplication.shared.isStatusBarHidden = false
+     //   UIApplication.shared.statusBarStyle = .lightContent
         
-        // Do any additional setup after loading the view.
     }
 
     override func didReceiveMemoryWarning() {
+        
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
@@ -62,16 +61,13 @@ class SignUpViewController: UIViewController, UITextFieldDelegate
             let newString: NSString = currentString.replacingCharacters(in: range, with: string) as NSString
             return newString.length <= userNameLength
         }
-        
     }
+    
     
     @IBAction func onClickSignUp(_ sender: UIButton) {
         
         signUp()
-        
     }
-    
-    
     
     func signUp()
     {
@@ -94,24 +90,16 @@ class SignUpViewController: UIViewController, UITextFieldDelegate
             alertEmailController = UIAlertController(title: "كلمة السر قصيرة جدا", message: "الرجاء اعد المحاولة", preferredStyle: .alert)
             
             present(alertEmailController, animated: true, completion: nil)
-
-            
         }
-      
-        
+            
         else
         {
-            
             authenticateWithFirebase(email: emailText, password: passwordText)
-            
         }
-        
     }
-    
     
     func authenticateWithFirebase(email:String, password:String)
     {
-        
             FIRAuth.auth()?.createUser(withEmail: email, password: password) { (user, error) in
 
             var alertEmailController:UIAlertController = UIAlertController()
@@ -120,9 +108,7 @@ class SignUpViewController: UIViewController, UITextFieldDelegate
             {
                 if (error!.localizedDescription == "The email address is already in use by another account.")
                 {
-                    
                     alertEmailController = UIAlertController(title: "عذرا", message: "هاذا البريد الالكتروني تم تسجيله مسبقا", preferredStyle: .alert)
-              
                 }
                 
                 else if (error!.localizedDescription == "Network error (such as timeout, interrupted connection or unreachable host) has occurred.")
@@ -132,7 +118,6 @@ class SignUpViewController: UIViewController, UITextFieldDelegate
                 
                 else
                 {
-                    
                     alertEmailController = UIAlertController(title: "عذرا", message: "حدث خطأ ما الرجاء اعد المحاولة", preferredStyle: .alert)
                 }
                 
@@ -140,27 +125,27 @@ class SignUpViewController: UIViewController, UITextFieldDelegate
                 let defaultAction = UIAlertAction(title: "موافق", style: .default, handler: nil)
                 alertEmailController.addAction(defaultAction)
                 self.present(alertEmailController, animated: true, completion: nil)
-                
             }
                 
             else
             {
-
-                self.addNewUserInformationToFirebase(emailText: self.emailTextField.text!, userNameText:  self.userNameTextField.text!, passwordText: self.passwordTextField.text!)
                 
+                let userId = FIRAuth.auth()!.currentUser!.uid
+                self.addNewUserInformationToFirebase(emailText: self.emailTextField.text!, userNameText:  self.userNameTextField.text!, passwordText: self.passwordTextField.text!, userId: userId)
             }
         
         }
     }
     
+    // all the work here
     
-    
-    func addNewUserInformationToFirebase(emailText: String, userNameText:String, passwordText:String)
+    func addNewUserInformationToFirebase(emailText: String, userNameText:String, passwordText:String, userId: String)
     {
         let endEmailTextIndex = emailText.index(emailText.endIndex, offsetBy: -4)
-        var emailTruncatedDotCom = emailText.substring(to: endEmailTextIndex)
-        let user = ["Email":emailText, "UserName":userNameText] // Here TODO The Location Name
-        FIRDatabase.database().reference().child("Users").child(emailTruncatedDotCom).setValue(user)
+        let emailTruncatedDotCom = emailText.substring(to: endEmailTextIndex)
+        let user = ["Email":emailText, "UserName":userNameText, "UserId": userId, "ProfilePicture": "false"] // Here TODO The Location Name
+        FIRDatabase.database().reference().child("Users").child(userId).setValue(user)
+        
     }
     
     
@@ -172,16 +157,6 @@ class SignUpViewController: UIViewController, UITextFieldDelegate
         
     }
     
-    
-    
-    
-    
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-   // override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destinationViewController.
-        // Pass the selected object to the new view controller.
-   // }
+   
 
 }

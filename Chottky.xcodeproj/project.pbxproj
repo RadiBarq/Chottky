@@ -7,6 +7,11 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		CD0B1E201EEC822B00DD9BC6 /* UserNotification.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD0B1E1F1EEC822B00DD9BC6 /* UserNotification.swift */; };
+		CD11DBED1F580B2F00B46B84 /* TabViewProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD11DBEC1F580B2F00B46B84 /* TabViewProvider.swift */; };
+		CD11DBEF1F583A9900B46B84 /* MainNavigationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD11DBEE1F583A9900B46B84 /* MainNavigationController.swift */; };
+		CD11DBF11F583FCD00B46B84 /* TabBarViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD11DBF01F583FCD00B46B84 /* TabBarViewController.swift */; };
+		CD11DBF31F59FF2B00B46B84 /* BrowseSettingsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD11DBF21F59FF2B00B46B84 /* BrowseSettingsTableViewController.swift */; };
 		CD26B7851E69F9800016AF8C /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD26B7841E69F9800016AF8C /* AppDelegate.swift */; };
 		CD26B78A1E69F9800016AF8C /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CD26B7881E69F9800016AF8C /* Main.storyboard */; };
 		CD26B78C1E69F9800016AF8C /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CD26B78B1E69F9800016AF8C /* Assets.xcassets */; };
@@ -35,6 +40,7 @@
 		CD6E2C0D1E70C1B400D11EC0 /* SignUpViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD6E2C0C1E70C1B400D11EC0 /* SignUpViewController.swift */; };
 		CD6E2C111E7148E900D11EC0 /* SignInViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD6E2C101E7148E900D11EC0 /* SignInViewController.swift */; };
 		CD772D2B1ECCD7980016ADF7 /* ProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD772D2A1ECCD7980016ADF7 /* ProfileViewController.swift */; };
+		CD9C62881F61EDC300A465A7 /* BrowseSettingsTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD9C62871F61EDC300A465A7 /* BrowseSettingsTableViewCell.swift */; };
 		CDDB3D061EC89A3D0083D722 /* CollectionsCollectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDDB3D051EC89A3D0083D722 /* CollectionsCollectionViewController.swift */; };
 		CDDB3D081EC89D9B0083D722 /* CollectionsCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDDB3D071EC89D9B0083D722 /* CollectionsCell.swift */; };
 		CDDB3D0C1EC900730083D722 /* NotificationsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDDB3D0B1EC900730083D722 /* NotificationsTableViewController.swift */; };
@@ -55,6 +61,11 @@
 		0E1CD3B2D092C3D62B8E72A5 /* Pods-Chottky.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Chottky.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Chottky/Pods-Chottky.debug.xcconfig"; sourceTree = "<group>"; };
 		6A88B34502A326C899433715 /* Pods-Chottky.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Chottky.release.xcconfig"; path = "Pods/Target Support Files/Pods-Chottky/Pods-Chottky.release.xcconfig"; sourceTree = "<group>"; };
 		959F088FBAE3FC003F527D20 /* Pods_Chottky.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Chottky.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		CD0B1E1F1EEC822B00DD9BC6 /* UserNotification.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserNotification.swift; sourceTree = "<group>"; };
+		CD11DBEC1F580B2F00B46B84 /* TabViewProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TabViewProvider.swift; sourceTree = "<group>"; };
+		CD11DBEE1F583A9900B46B84 /* MainNavigationController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MainNavigationController.swift; sourceTree = "<group>"; };
+		CD11DBF01F583FCD00B46B84 /* TabBarViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TabBarViewController.swift; sourceTree = "<group>"; };
+		CD11DBF21F59FF2B00B46B84 /* BrowseSettingsTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BrowseSettingsTableViewController.swift; sourceTree = "<group>"; };
 		CD26B7811E69F9800016AF8C /* Chottky.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Chottky.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		CD26B7841E69F9800016AF8C /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		CD26B7891E69F9800016AF8C /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
@@ -85,6 +96,7 @@
 		CD6E2C0C1E70C1B400D11EC0 /* SignUpViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SignUpViewController.swift; sourceTree = "<group>"; };
 		CD6E2C101E7148E900D11EC0 /* SignInViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SignInViewController.swift; sourceTree = "<group>"; };
 		CD772D2A1ECCD7980016ADF7 /* ProfileViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProfileViewController.swift; sourceTree = "<group>"; };
+		CD9C62871F61EDC300A465A7 /* BrowseSettingsTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BrowseSettingsTableViewCell.swift; sourceTree = "<group>"; };
 		CDDB3D051EC89A3D0083D722 /* CollectionsCollectionViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CollectionsCollectionViewController.swift; sourceTree = "<group>"; };
 		CDDB3D071EC89D9B0083D722 /* CollectionsCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CollectionsCell.swift; sourceTree = "<group>"; };
 		CDDB3D0B1EC900730083D722 /* NotificationsTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NotificationsTableViewController.swift; sourceTree = "<group>"; };
@@ -127,6 +139,15 @@
 				959F088FBAE3FC003F527D20 /* Pods_Chottky.framework */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		CD11DBE91F57E96000B46B84 /* TabView */ = {
+			isa = PBXGroup;
+			children = (
+				CD11DBEE1F583A9900B46B84 /* MainNavigationController.swift */,
+				CD11DBF01F583FCD00B46B84 /* TabBarViewController.swift */,
+			);
+			name = TabView;
 			sourceTree = "<group>";
 		};
 		CD26B7781E69F9800016AF8C = {
@@ -172,6 +193,7 @@
 		CD26B79D1E6A42FC0016AF8C /* Controller */ = {
 			isa = PBXGroup;
 			children = (
+				CD11DBE91F57E96000B46B84 /* TabView */,
 				CD381A6C1ECF678700B95AF1 /* Posted Item */,
 				CD772D291ECCD76D0016ADF7 /* Profile */,
 				CDDB3D281ECA4D200083D722 /* Nearby People */,
@@ -220,6 +242,8 @@
 			children = (
 				CD6E2C021E7000EC00D11EC0 /* PeopleCell.swift */,
 				CDE135CA1E75E81C00ED6F72 /* User.swift */,
+				CD11DBEC1F580B2F00B46B84 /* TabViewProvider.swift */,
+				CD9C62871F61EDC300A465A7 /* BrowseSettingsTableViewCell.swift */,
 			);
 			name = Model;
 			sourceTree = "<group>";
@@ -262,6 +286,7 @@
 			children = (
 				CDDB3D0B1EC900730083D722 /* NotificationsTableViewController.swift */,
 				CDDB3D0F1EC9031A0083D722 /* NotificationsCell.swift */,
+				CD0B1E1F1EEC822B00DD9BC6 /* UserNotification.swift */,
 			);
 			name = Notifications;
 			sourceTree = "<group>";
@@ -293,6 +318,7 @@
 				CD3BD7071E74062500693BAA /* LeftMenuTableViewController.swift */,
 				CD3BD7051E736F6D00693BAA /* BrowseCollectionViewController.swift */,
 				CD381A6A1ECF376800B95AF1 /* ItemsCell.swift */,
+				CD11DBF21F59FF2B00B46B84 /* BrowseSettingsTableViewController.swift */,
 			);
 			name = Browse;
 			sourceTree = "<group>";
@@ -487,6 +513,7 @@
 				CD6565CF1EAAAC4400C6353A /* SwiftyRecordButton.swift in Sources */,
 				CD3BD70E1E7422C800693BAA /* MenuBarCell.swift in Sources */,
 				CD381A6E1ECF683900B95AF1 /* PostedItemViewController.swift in Sources */,
+				CD11DBF31F59FF2B00B46B84 /* BrowseSettingsTableViewController.swift in Sources */,
 				CD6E2C111E7148E900D11EC0 /* SignInViewController.swift in Sources */,
 				CDDB3D171EC9F6750083D722 /* ItemViewController.swift in Sources */,
 				CDDB3D061EC89A3D0083D722 /* CollectionsCollectionViewController.swift in Sources */,
@@ -506,17 +533,22 @@
 				CD6E2C0D1E70C1B400D11EC0 /* SignUpViewController.swift in Sources */,
 				CDDB3D0C1EC900730083D722 /* NotificationsTableViewController.swift in Sources */,
 				CDDB3D1B1ECA1E450083D722 /* ItemImageCell.swift in Sources */,
+				CD0B1E201EEC822B00DD9BC6 /* UserNotification.swift in Sources */,
 				CD381A6B1ECF376800B95AF1 /* ItemsCell.swift in Sources */,
 				CD3BD7061E736F6D00693BAA /* BrowseCollectionViewController.swift in Sources */,
+				CD11DBED1F580B2F00B46B84 /* TabViewProvider.swift in Sources */,
 				CD3C308D1ED1E67500A1C349 /* Constants.swift in Sources */,
+				CD11DBEF1F583A9900B46B84 /* MainNavigationController.swift in Sources */,
 				CD26B79F1E6A43610016AF8C /* MenuBar.swift in Sources */,
 				CDDB3D081EC89D9B0083D722 /* CollectionsCell.swift in Sources */,
 				CDE135C71E75E33300ED6F72 /* MessagesTableViewController.swift in Sources */,
 				CD6E2C031E7000EC00D11EC0 /* PeopleCell.swift in Sources */,
+				CD11DBF11F583FCD00B46B84 /* TabBarViewController.swift in Sources */,
 				CD381A721ECF996A00B95AF1 /* PostedImageCell.swift in Sources */,
 				CD6E2C001E6FFD3000D11EC0 /* NearbyPeopleTableViewController.swift in Sources */,
 				CDE135C91E75E50000ED6F72 /* ChatCollectionViewController.swift in Sources */,
 				CD26B7851E69F9800016AF8C /* AppDelegate.swift in Sources */,
+				CD9C62881F61EDC300A465A7 /* BrowseSettingsTableViewCell.swift in Sources */,
 				CD26B7A31E6B6F420016AF8C /* WelcomeViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -680,7 +712,7 @@
 					"\"${PODS_ROOT}/Headers/Public/GoogleSignIn\"",
 				);
 				INFOPLIST_FILE = Chottky/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = RadiBarq.Chottky;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -734,7 +766,7 @@
 					"\"${PODS_ROOT}/Headers/Public/GoogleSignIn\"",
 				);
 				INFOPLIST_FILE = Chottky/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = RadiBarq.Chottky;
 				PRODUCT_NAME = "$(TARGET_NAME)";

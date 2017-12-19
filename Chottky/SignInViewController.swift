@@ -12,6 +12,7 @@ import Firebase
 
 class SignInViewController: UIViewController, UITextFieldDelegate {
     
+    @IBOutlet weak var backgroundView: UIView!
     @IBOutlet weak var emailTextField: UITextField!
     @IBOutlet weak var passwordTextField: UITextField!
     
@@ -19,19 +20,37 @@ class SignInViewController: UIViewController, UITextFieldDelegate {
     let emailMaxLength = 30
     
     override func viewDidLoad() {
+        
         super.viewDidLoad()
 
         emailTextField.delegate = self
         passwordTextField.delegate = self
         
+        self.view.backgroundColor = UIColor.clear
+        var backgroundImage = UIImageView()
+        backgroundImage.image = UIImage(named: "house-photo")
+        backgroundImage.frame = self.view.bounds
+        self.backgroundView.addSubview(backgroundImage)
+        emailTextField.underlined()
+        passwordTextField.underlined()
+        
+        emailTextField.attributedPlaceholder = NSAttributedString(string: "البريد الاكتروني", attributes: [NSForegroundColorAttributeName: UIColor.white])
+        
+        passwordTextField.attributedPlaceholder = NSAttributedString(string: "كلمة المرور", attributes: [NSForegroundColorAttributeName: UIColor.white])
+       //  emailTextField.text = nil
+        // passwordTextField.text = nil
+    //
+        //emailTextField.placeholder = "البريد الاكتروني"
+       // passwordTextField.placeholder = "كلمة المرور"
+
         // Do any additional setup after loading the view.
     }
-
+    
+    
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
-    
     
     func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
         
@@ -41,13 +60,11 @@ class SignInViewController: UIViewController, UITextFieldDelegate {
          return newString.length <= passwordMaxLength
     }
     
-    
     @IBAction func onClickSingIn(_ sender: UIButton) {
         
         signIn()
         
     }
-    
     
     func signIn()
     {
@@ -72,7 +89,6 @@ class SignInViewController: UIViewController, UITextFieldDelegate {
             
         }
     }
-    
     
     func authenticateWithFirebase(email:String, password:String)
     {
@@ -112,22 +128,23 @@ class SignInViewController: UIViewController, UITextFieldDelegate {
             let defaultAction = UIAlertAction(title: "موافق", style: .default, handler: nil)
             alertEmailController.addAction(defaultAction)
             self.present(alertEmailController, animated: true, completion: nil)
+            
         }
                 
             // Nothing Happened Here
             else
             {
-
-                           //    SideMenuManager.menuAddPanGestureToPresent(toView: self.navigationController!.navigationBar)
-                
                 let userEmail:String = (user?.email)!
                 
                 let endEmailTextIndex = userEmail.index(userEmail.endIndex, offsetBy: -4)
                 var emailTruncatedDotCom = userEmail.substring(to: endEmailTextIndex)
-
+                let userId = user?.uid as! String
+                
                 WelcomeViewController.user.setUserEmail(email: emailTruncatedDotCom)
                 
-                let ref = FIRDatabase.database().reference().child("Users").child(emailTruncatedDotCom).child("UserName")
+                WelcomeViewController.user.setUpUserId(userId: userId)
+                
+                let ref = FIRDatabase.database().reference().child("Users").child(userId).child("UserName")
                 
                 let userName = ref.observeSingleEvent(of: .value, with: { (FIRDataSnapshot) in
                     
@@ -135,9 +152,8 @@ class SignInViewController: UIViewController, UITextFieldDelegate {
                 WelcomeViewController.user.setUserDisplayName(name: (FIRDataSnapshot.value) as! String)
                     
                     let mainStoryboard = UIStoryboard(name: "Main", bundle: nil)
-                    let browseNavigationViewController = mainStoryboard.instantiateViewController(withIdentifier: "browseNavigationController")
-                    self.present(browseNavigationViewController, animated: true, completion: nil)
-                    
+                    let tabViewController = mainStoryboard.instantiateViewController(withIdentifier: "tabBarViewController")
+                    self.present(tabViewController, animated: true, completion: nil)
                 })
                
             }
@@ -152,7 +168,6 @@ class SignInViewController: UIViewController, UITextFieldDelegate {
         let welcomeViewController = mainStoryboard.instantiateViewController(withIdentifier: "WelcomeViewController")
         self.present(welcomeViewController, animated: true, completion: nil)
     }
-    
 
     
     /*
@@ -165,3 +180,26 @@ class SignInViewController: UIViewController, UITextFieldDelegate {
     */
 
 }
+
+
+
+extension UITextField {
+    
+    
+    func underlined(){
+        
+        let border = CALayer()
+        let width = CGFloat(0.5)
+        border.borderColor = UIColor.white.cgColor
+        border.frame = CGRect(x: 0, y: self.frame.size.height - width, width:  self.frame.size.width, height: self.frame.size.height)
+        border.borderWidth = width
+        self.layer.addSublayer(border)
+        self.layer.masksToBounds = true
+        
+        
+    }
+    
+    
+    // Next step here
+}
+

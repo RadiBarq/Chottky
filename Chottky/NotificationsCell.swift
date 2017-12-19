@@ -9,17 +9,21 @@
 import UIKit
 
 class NotificationsCell: UITableViewCell {
-
-    @IBOutlet weak var notificationImage: UIImageView!
+    
+    @IBOutlet weak var  notificationImage: UIImageView!
     @IBOutlet weak var notificationTime: UILabel!
     @IBOutlet weak var notificationLabel: UILabel!
-    
+
     
     override func awakeFromNib() {
+        
         super.awakeFromNib()
         // Initialization code
     }
 
+
+    
+    
     override func setSelected(_ selected: Bool, animated: Bool) {
         
         super.setSelected(selected, animated: animated)
@@ -28,11 +32,8 @@ class NotificationsCell: UITableViewCell {
     
     func setupImage(image: UIImage)
     {
-        
-        
         notificationImage.image = image
         notificationImage.layer.masksToBounds = true
         notificationImage.layer.cornerRadius = 5
-        
     }
 }

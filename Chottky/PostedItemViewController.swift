@@ -89,10 +89,8 @@ class PostedItemViewController: UIViewController, UICollectionViewDataSource, UI
         // PostedItemViewController.images[PostedItemViewController.imageClickedNumber] = (PostedItemViewController.imageClicked!)
         //  PostedItemViewController.imagesValid[PostedItemViewController.imageClickedNumber] = true
         self.imagesCollectionView.reloadData()
-        
+
     }
-    
-    
     
     func initializeIndicator()
     {
@@ -119,7 +117,6 @@ class PostedItemViewController: UIViewController, UICollectionViewDataSource, UI
             
             textView.text = "الوصف"
             textView.textColor = UIColor(red: 203/255, green: 202/255, blue: 203/255, alpha: 1)
-            
         }
     }
     
@@ -249,7 +246,6 @@ class PostedItemViewController: UIViewController, UICollectionViewDataSource, UI
     
     @IBAction func handlePost(_ sender: UIButton) {
         
-        
         if descriptionTextView.text == "" || titleField.text == "" || priceField.text == ""
         {
             let alertEmailController = UIAlertController(title: "المعلومات المدخلة غير مكتملة", message: "الرجاء اعد المحاولة", preferredStyle: .alert)
@@ -287,8 +283,8 @@ class PostedItemViewController: UIViewController, UICollectionViewDataSource, UI
                             self.present(alertEmailController, animated: true, completion: nil)
                             self.indicatior.stopAnimating()
                             return
-                            
                         }
+                            
                             
                         else
                         {
@@ -313,6 +309,7 @@ class PostedItemViewController: UIViewController, UICollectionViewDataSource, UI
         }
     }
 }
+    
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
         

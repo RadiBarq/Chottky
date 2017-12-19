@@ -13,7 +13,8 @@ import SDWebImage
 import FirebaseStorageUI
 private let reuseIdentifier = "itemCell"
 
-class BrowseCollectionViewController: UICollectionViewController, UICollectionViewDelegateFlowLayout {
+class BrowseCollectionViewController: UICollectionViewController, UICollectionViewDelegateFlowLayout, UITabBarControllerDelegate {
+
     
     static var browseNavigaionController: UINavigationController?
     var databaseRef: FIRDatabaseReference!
@@ -22,6 +23,7 @@ class BrowseCollectionViewController: UICollectionViewController, UICollectionVi
     var itemKeys = [String]()
     var takePhotoButton = UIButton()    
     var indicator = UIActivityIndicatorView()
+    let userID = FIRAuth.auth()!.currentUser!.uid
     
     
     override func viewWillAppear(_ animated: Bool) {
@@ -29,18 +31,22 @@ class BrowseCollectionViewController: UICollectionViewController, UICollectionVi
         super.viewWillAppear(animated)
         UIApplication.shared.setStatusBarHidden(false, with: .none)
         self.navigationController?.isNavigationBarHidden = false
-        self.navigationController?.navigationBar.isTranslucent = true
+        self.navigationController?.navigationBar.isTranslucent = false
+        
+        let statusBar: UIView = UIApplication.shared.value(forKey: "statusBar") as! UIView
+        statusBar.backgroundColor = UIColor.rgb(red: 41, green: 121, blue: 255)
+        
     }
     
-    
     override func viewDidLoad() {
-
+        
         super.viewDidLoad()
         // Uncomment the following line to preserve selection between presentations
         // self.clearsSelectionOnViewWillAppear = false
         // Register cell classes
         self.collectionView!.register(ItemsCell.self, forCellWithReuseIdentifier: reuseIdentifier)
         BrowseCollectionViewController.browseNavigaionController = self.navigationController
+      
         
         let menuLeftNavigationController = UISideMenuNavigationController(rootViewController: LeftMenuTableViewController())
         menuLeftNavigationController.leftSide = true
@@ -68,8 +74,36 @@ class BrowseCollectionViewController: UICollectionViewController, UICollectionVi
         self.navigationController?.navigationBar.tintColor = UIColor.white
         self.navigationController!.navigationBar.titleTextAttributes = [NSForegroundColorAttributeName: UIColor.white]
         setupLefMenuProfileImage()
+        setupNavigationBarItems()
+       // self.present(TabViewProvider.customStyle(), animated: true, completion: nil)
     }
 
+    
+    func setupNavigationBarItems()
+    {
+        var image = UIImage(named: "ic_filter_list_white.png")
+        image = image?.withRenderingMode(UIImageRenderingMode.alwaysOriginal)
+        self.navigationItem.rightBarButtonItem = UIBarButtonItem(image: image, style: UIBarButtonItemStyle.plain, target: self, action: #selector(onClickBrowseSettings))
+        
+        
+        var searchBar = UISearchBar()
+        searchBar.placeholder = "ابحث في جايلك"
+        
+        searchBar.tintColor = Constants.FirstColor
+        //searchBar.frame(forAlignmentRect: CGRect(x: 0, y: 0, width: 40, height: 40))
+        // Create your search bar
+        self.navigationItem.titleView = searchBar
+    }
+    
+    
+    func onClickBrowseSettings()
+    {
+        let mainStoryboard = UIStoryboard(name: "Main", bundle: nil)
+        let browseSetttingsController = mainStoryboard.instantiateViewController(withIdentifier: "browseSettingsTableViewController") as! BrowseSettingsTableViewController
+        self.navigationController?.pushViewController(browseSetttingsController, animated: true)
+
+    }
+    
     func presseTakePhotoButton(button: UIButton) {
         
         // At the end of this, remember to add this.
@@ -139,23 +173,14 @@ class BrowseCollectionViewController: UICollectionViewController, UICollectionVi
     
     func setupLefMenuProfileImage()
     {
+        
         var imageStorageRef: FIRStorageReference = FIRStorage.storage().reference(withPath: "Profile_Pictures")
-        imageStorageRef = imageStorageRef.child(WelcomeViewController.user.getEmail() + "/" + "Profile.jpg")
+        imageStorageRef = imageStorageRef.child(userID + "/" + "Profile.jpg")
         LeftMenuTableViewController.profileImageView.sd_setImage(with: imageStorageRef)
+        
     }
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using [segue destinationViewController].
-        // Pass the selected object to the new view controller.
-    }
-    */
-
-    // MARK: UICollectionViewDataSource
-
+    
+    
     override func numberOfSections(in collectionView: UICollectionView) -> Int {
         // #warning Incomplete implementation, return the number of sections
         return 1
@@ -183,7 +208,7 @@ class BrowseCollectionViewController: UICollectionViewController, UICollectionVi
         {
             self.indicator.stopAnimating()
             self.indicator.hidesWhenStopped = true
-            
+
         }
         
         return cell
@@ -225,10 +250,16 @@ class BrowseCollectionViewController: UICollectionViewController, UICollectionVi
     
     override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         
+        //self.navigationController?.navigationBar.isTranslucent = false
+ 
+        
         ItemViewController.itemKey = itemKeys[indexPath.item]
         let itemStoryBoard = UIStoryboard(name: "Main", bundle: nil)
+        //self.navigationController?.navigationBar.isTranslucent = true
         let itemViewController = itemStoryBoard.instantiateViewController(withIdentifier: "ItemViewController") as! ItemViewController
         self.navigationController?.pushViewController(itemViewController, animated: true)
+        
+        ItemViewController.isItOpenedFromProfileView = false
 
     }
     
@@ -237,7 +268,7 @@ class BrowseCollectionViewController: UICollectionViewController, UICollectionVi
                         layout collectionViewLayout: UICollectionViewLayout,
                         sizeForItemAt indexPath: IndexPath) -> CGSize {
         
-        return CGSize(width: collectionView.bounds.size.width/2 - 16, height: collectionView.bounds.size.height/4)
+        return CGSize(width: collectionView.bounds.size.width/2 - 16, height: collectionView.bounds.size.height/3 - 16)
         
     }
     

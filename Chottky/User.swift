@@ -14,8 +14,8 @@ class User
     var email = String()
     var displayName = String()
     var userImage:URL?
+    var userId = String()
     
-
     
     public func setUserEmail(email:String)
     {
@@ -27,6 +27,13 @@ class User
     {
         self.displayName = name
     
+    }
+    
+    
+    public func setUpUserId(userId: String)
+    {
+        
+            self.userId = userId
     }
     
     
