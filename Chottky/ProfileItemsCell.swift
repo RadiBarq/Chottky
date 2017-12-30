@@ -10,7 +10,6 @@ import UIKit
 
 class ProfileItemsCell: UICollectionViewCell {
     
-    
     var itemImageView: UIImageView = {
         
         var image = UIImageView()

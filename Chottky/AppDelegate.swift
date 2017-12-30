@@ -15,6 +15,7 @@ import Firebase
 class AppDelegate: UIResponder, UIApplicationDelegate {
     
     var window: UIWindow?
+
     
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
@@ -25,12 +26,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
         //application.statusBarStyle = .lightContent
         
-        UINavigationBar.appearance().barStyle = .blackOpaque
+     //   UINavigationBar.appearance().barStyle = .blackOpaque
         
         self.window?.backgroundColor = .white;
         
         
-     //   application.statusBarStyle = .lightContent
+       application.statusBarStyle = .lightContent
         
        // let statusBarBackgroundView = UIView()
         

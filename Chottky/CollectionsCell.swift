@@ -21,18 +21,15 @@ class CollectionsCell: UICollectionViewCell {
         
         var label = UILabel(frame: CGRect(x: 0, y: 0, width: 30, height: 10))
         label.textAlignment = .right
-        label.textColor = Constants.SecondColor
+        label.textColor = UIColor(red: 59/255, green: 59/255, blue: 59/255, alpha: 1)
         return label
         
     }()
     
-    
     override init (frame: CGRect)
     {
-        
         super.init(frame: frame)
         setupViews()
-        
     }
     
     
@@ -40,26 +37,24 @@ class CollectionsCell: UICollectionViewCell {
         
         fatalError("init(coder:) has not been implemented")
     }
-
+    
     
     func setupViews()
     {
-        
         imageView.frame = CGRect(x: 0, y: 0, width: 80, height: 80)
         self.addSubview(imageView)
         imageView.translatesAutoresizingMaskIntoConstraints = false
         imageView.widthAnchor.constraint(equalToConstant: 80).isActive = true
         imageView.heightAnchor.constraint(equalToConstant: 80).isActive = true
         imageView.centerXAnchor.constraint(equalTo: self.centerXAnchor).isActive = true
-        imageView.centerYAnchor.constraint(equalTo: self.centerYAnchor).isActive = true
-        
+        imageView.centerYAnchor.constraint(equalTo: self.centerYAnchor, constant: -20).isActive = true
         
         self.addSubview(categoryLable)
         categoryLable.translatesAutoresizingMaskIntoConstraints = false
        // categoryLable.widthAnchor.constraint(equalToConstant: 100).isActive = true
         categoryLable.heightAnchor.constraint(equalToConstant: 10).isActive = true
         categoryLable.centerXAnchor.constraint(equalTo: self.centerXAnchor).isActive = true
-        categoryLable.bottomAnchor.constraint(equalTo: self.bottomAnchor, constant: -20).isActive = true
+        categoryLable.topAnchor.constraint(equalTo: imageView.bottomAnchor, constant: 20).isActive = true
     }
     
     

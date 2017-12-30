@@ -14,19 +14,43 @@ class SignUpViewController: UIViewController, UITextFieldDelegate
     @IBOutlet weak var passwordTextField: UITextField!
     @IBOutlet weak var emailTextField: UITextField!
     @IBOutlet weak var userNameTextField: UITextField!
-    let passwordMaxLength  = 20
-    let emailMaxLength = 30
+    let passwordMaxLength  = 1000
+    let emailMaxLength = 1000
     let userNameLength = 20
+    var differenceChecker: Bool?
+
+    @IBOutlet weak var topImageConstraint: NSLayoutConstraint!
+    @IBOutlet weak var signInButton: UIButton!
     
+    override func viewWillAppear(_ animated: Bool) {
+        
+        super.viewWillAppear(animated)
+        UIApplication.shared.isStatusBarHidden = true
+        
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        
+        super.viewWillDisappear(animated)
+        UIApplication.shared.isStatusBarHidden = false
+        
+    }
     
     override func viewDidLoad() {
-        super.viewDidLoad()
         
+        super.viewDidLoad()
+        differenceChecker = true
         emailTextField.delegate = self
         passwordTextField.delegate = self
         userNameTextField.delegate = self
+        
+        emailTextField.tag = 0
+        passwordTextField.tag = 1
+        userNameTextField.tag = 2
         UIApplication.shared.isStatusBarHidden = false
      //   UIApplication.shared.statusBarStyle = .lightContent
+        NotificationCenter.default.addObserver(self, selector: #selector(self.keyboardWillShow), name: NSNotification.Name.UIKeyboardWillShow, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(self.keyboardWillHide), name: NSNotification.Name.UIKeyboardWillHide, object: nil)
         
     }
 
@@ -34,6 +58,83 @@ class SignUpViewController: UIViewController, UITextFieldDelegate
         
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
+    }
+    
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool
+    {
+        // Try to find next responder
+        if let nextField = textField.superview?.viewWithTag(textField.tag + 1) as? UITextField {
+            nextField.becomeFirstResponder()
+        } else {
+            // Not found, so remove keyboard.
+            textField.resignFirstResponder()
+        }
+        // Do not add a line break
+        return false
+    }
+    
+    func keyboardWillShow(notification: NSNotification) {
+        
+      if let keyboardFrame: NSValue = notification.userInfo?[UIKeyboardFrameEndUserInfoKey] as? NSValue {
+            
+            
+            let keyboardRectangle = keyboardFrame.cgRectValue
+            let keyboardHeight = keyboardRectangle.height
+            
+            
+            print(self.signInButton.frame.origin.y.magnitude)
+            print(keyboardHeight)
+            print(self.view.frame.size.height)
+
+        
+                var differentSpace = self.view.frame.size.height - self.signInButton.frame.origin.y.magnitude - keyboardHeight
+  
+                    self.differenceChecker = true
+                    UIView.animate(withDuration: 0.5, delay: 0.4, options: [],
+                           animations: {
+    
+                            
+                            self.topImageConstraint.constant =    differentSpace
+                            
+                            self.view.layoutIfNeeded()
+                            
+                        
+            },
+                           completion: nil
+            )
+        }
+
+        
+    }
+    
+    
+    func keyboardWillHide(notification: NSNotification) {
+        
+            if let keyboardSize = (notification.userInfo?[UIKeyboardFrameBeginUserInfoKey] as? NSValue)?.cgRectValue {
+        
+                
+                var differentSpace = self.view.frame.size.height - self.signInButton.frame.origin.y
+                
+                if (self.differenceChecker == true)
+                {
+                    self.differenceChecker = false
+                    
+                    
+                     UIView.animate(withDuration: 0.5, delay: 0.4, options: [],
+                           animations: {
+
+                                    
+                                    self.topImageConstraint.constant = 40
+                                    self.view.layoutIfNeeded()
+                                    
+                            
+       
+            },
+                
+                           completion: nil
+            )
+        }
+        }
     }
     
     
@@ -101,7 +202,6 @@ class SignUpViewController: UIViewController, UITextFieldDelegate
     func authenticateWithFirebase(email:String, password:String)
     {
             FIRAuth.auth()?.createUser(withEmail: email, password: password) { (user, error) in
-
             var alertEmailController:UIAlertController = UIAlertController()
             
             if ((error) != nil)
@@ -143,20 +243,44 @@ class SignUpViewController: UIViewController, UITextFieldDelegate
     {
         let endEmailTextIndex = emailText.index(emailText.endIndex, offsetBy: -4)
         let emailTruncatedDotCom = emailText.substring(to: endEmailTextIndex)
-        let user = ["Email":emailText, "UserName":userNameText, "UserId": userId, "ProfilePicture": "false"] // Here TODO The Location Name
-        FIRDatabase.database().reference().child("Users").child(userId).setValue(user)
+        let user = ["Email":emailText, "UserName":userNameText, "UserId": userId] // Here TODO The Location Name
+       
         
+        let storageRef = FIRStorage.storage().reference().child("Profile_Pictures").child(userId).child("Profile.jpg")
+        
+        if let uploadData = UIImageJPEGRepresentation(#imageLiteral(resourceName: "profile-picture") , 0.5)
+        {
+            
+             storageRef.put(uploadData, metadata: nil)
+             {
+                
+                (metadata, error) in
+                
+                if (error != nil)
+                {
+                    print (error?.localizedDescription)
+                    let alertEmailController = UIAlertController(title: "حدث خطأ ما", message: "الرجاء اعد المحاولة لاحقا", preferredStyle: .alert)
+                    alertEmailController.view.tintColor = Constants.FirstColor
+                    let defaultAction = UIAlertAction(title: "موافق", style: .default, handler: nil)
+                    alertEmailController.addAction(defaultAction)
+                    self.present(alertEmailController, animated: true, completion: nil)
+                }
+                
+                else
+                {
+                      FIRDatabase.database().reference().child("Users").child(userId).setValue(user)
+
+                }
+                
+            }
+
+        }
     }
-    
     
     @IBAction func onClickSignIn(_ sender: UIButton) {
       
         let mainStoryboard = UIStoryboard(name: "Main", bundle: nil)
         let welcomeViewController = mainStoryboard.instantiateViewController(withIdentifier: "WelcomeViewController")
         self.present(welcomeViewController, animated: true, completion: nil)
-        
     }
-    
-   
-
 }

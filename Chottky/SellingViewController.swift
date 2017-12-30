@@ -19,8 +19,9 @@ class SellingViewController: UIViewController, UICollectionViewDelegateFlowLayou
     var itemKeys = [String]()
     var indicator = UIActivityIndicatorView()
     let userID = FIRAuth.auth()!.currentUser!.uid
-    
+    var counter = 0
 
+    
     //var staticArray = [String]()
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -39,13 +40,12 @@ class SellingViewController: UIViewController, UICollectionViewDelegateFlowLayou
         
         else
         {
-            databaseRef = FIRDatabase.database().reference().child("Users").child(userID).child("items")
+            databaseRef = FIRDatabase.database().reference().child("Users").child(ProfileViewController.userId).child("items")
         }
         
         storageRef = FIRStorage.storage().reference(withPath: "Items_Photos")
         getItems()
         initializeIndicator()
-        indicator.startAnimating()
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
@@ -54,8 +54,8 @@ class SellingViewController: UIViewController, UICollectionViewDelegateFlowLayou
         ItemViewController.isItOpenedFromProfileView = true
         let itemStoryBoard = UIStoryboard(name: "Main", bundle: nil)
         let itemViewController = itemStoryBoard.instantiateViewController(withIdentifier: "ItemViewController") as! ItemViewController
+        //    self.navigationController?.isNavigationBarHidden = false
         ProfileViewController.profileNavigationController?.pushViewController(itemViewController, animated: true)
-
     }
 
     // Here the code where we can get the items
@@ -63,6 +63,8 @@ class SellingViewController: UIViewController, UICollectionViewDelegateFlowLayou
     {
         databaseRef.observeSingleEvent(of: .value, with: { (snapshot) in
             // Get user value
+            self.indicator.startAnimating()
+            
             for item in snapshot.children
             {
                 let itemKey = String(describing: (item as! FIRDataSnapshot).key)
@@ -72,11 +74,11 @@ class SellingViewController: UIViewController, UICollectionViewDelegateFlowLayou
             
             if (self.itemKeys.count == 0)
             {
-                self.indicator.stopAnimating()
                  self.showNoItemLabel()
-                self.indicator.hidesWhenStopped = true
             }
             
+            self.indicator.stopAnimating()
+            self.indicator.hidesWhenStopped = true
             self.itemsCollectionView.reloadData()
             // ...
         })
@@ -87,13 +89,13 @@ class SellingViewController: UIViewController, UICollectionViewDelegateFlowLayou
         }
     }
     
-    
     func initializeIndicator()
     {
         indicator = UIActivityIndicatorView(frame: CGRect(x: 0, y: 0, width: 40, height: 40))
         indicator.color = Constants.FirstColor
         indicator.backgroundColor = UIColor.clear
         indicator.center = self.view.center
+        indicator.stopAnimating()
         self.view.addSubview(indicator)
     }
     
@@ -114,17 +116,26 @@ class SellingViewController: UIViewController, UICollectionViewDelegateFlowLayou
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "cellId", for: indexPath) as! ProfileItemsCell
         cell.backgroundColor = UIColor.white
         let imageRef = storageRef.child(itemKeys[indexPath.row]).child("1.jpeg")
-        cell.itemImageView.sd_setImage(with: imageRef)
-
-        if (indexPath.row == itemKeys.count - 1)
-        {
-            self.indicator.stopAnimating()
-            self.indicator.hidesWhenStopped = true
-        }
+        
+        cell.itemImageView.sd_setShowActivityIndicatorView(true)
+        cell.itemImageView.sd_setIndicatorStyle(.gray)
+        cell.itemImageView.sd_addActivityIndicator()
+        cell.itemImageView.sd_setImage(with: imageRef,  placeholderImage: nil, completion:
+            
+            {  (image, error, cache, ref) in
+                
+                cell.itemImageView.sd_removeActivityIndicator()
+        })
+        
         
         return cell
     }
-    
+  
+    override func viewDidAppear(_ animated: Bool) {
+        
+        self.indicator.stopAnimating()
+        self.indicator.hidesWhenStopped = true
+    }
     
    func numberOfSections(in collectionView: UICollectionView) -> Int {
         // #warning Incomplete implementation, return the number of sections
@@ -159,16 +170,7 @@ class SellingViewController: UIViewController, UICollectionViewDelegateFlowLayou
         noItemLabel.textAlignment = .right
         noItemLabel.topAnchor.constraint(equalTo: self.view.topAnchor, constant: 50).isActive = true
         noItemLabel.centerXAnchor.constraint(equalTo: self.view.centerXAnchor).isActive = true
-        noItemLabel.widthAnchor.constraint(equalToConstant: 150).isActive = true
+        noItemLabel.widthAnchor.constraint(equalToConstant: 160).isActive = true
         noItemLabel.heightAnchor.constraint(equalToConstant: 20).isActive = true
     }
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destinationViewController.
-        // Pass the selected object to the new view controller.
-    }
-    */
 }

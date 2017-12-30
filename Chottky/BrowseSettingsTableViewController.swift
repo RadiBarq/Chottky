@@ -12,7 +12,6 @@ class BrowseSettingsTableViewController: UITableViewController {
 
     @IBOutlet var resetButton: UIButton!
     @IBOutlet var applyButton: UIButton!
-
     
     let sectionHeaderTitleArray = ["التصنيفات", "تم نشر المنتج من مدة", "المسافة", "الترتيب حسب"]
     let categoriesArray = ["سيارات","الكترونيات","شقق و اراضي","البيت و الحديقة","حيوانات","الرياضة و الالعاب","ملابس و اكسسوارات","الاطفال","افلام، كتب و اغاني","اغراض اخرى"]
@@ -20,36 +19,30 @@ class BrowseSettingsTableViewController: UITableViewController {
     let distanceArray = ["قريب جدا (١ كم)", "في الاحياء القريبة (٥كم)", "في مدينيتي (١٠كم)", "في مدينيتي (١٠كم)", "لم يحدد"]
     let sortedByArray = ["الاقرب اولا", "السعر من الاعلى الى الاقل", "السعر من الاقل  الى الاعلى", "الاجدد اولا"]
     
-    
     var selectedCategoriesIndexes: Array? = []
     var selectedPostedWithInIndex: Int?
     var selectedDistanceIndex: Int?
     var selectedsortedByIndex: Int?
-    
+
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-
         // Uncomment the following line to preserve selection between presentations
         // self.clearsSelectionOnViewWillAppear = false
 
         // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
         // self.navigationItem.rightBarButtonItem = self.editButtonItem()
-       
         
-        
+       self.navigationController?.navigationBar.topItem?.title = ""
     }
     
-    
-    
     override func viewWillAppear(_ animated: Bool) {
+        
         super.viewWillAppear(animated)
+       // self.navigationController?.navigationBar.topItem?.title = "اعدادات التصفح"
+        self.navigationController?.navigationBar.isTranslucent = false
         
-        self.navigationController?.navigationBar.topItem?.title = "اعدادات التصفح"
-        
-         self.navigationController?.navigationBar.isTranslucent = false
-        
+       // self.tableView.reloadData()
         
     }
     override func viewWillDisappear(_ animated: Bool) {
@@ -79,10 +72,8 @@ class BrowseSettingsTableViewController: UITableViewController {
         label.textAlignment = .right
         returnedView.addSubview(label)
         return returnedView
-        
     }
-
-
+    
     override func tableView(_ tableView: UITableView, didDeselectRowAt indexPath: IndexPath) {
         
         let selectedCell =  tableView.cellForRow(at: indexPath) as! BrowseSettingsTableViewCell
@@ -99,7 +90,6 @@ class BrowseSettingsTableViewController: UITableViewController {
         let row = indexPath.row  // this is the row number.
         let selectedCell =  tableView.cellForRow(at: indexPath) as! BrowseSettingsTableViewCell
         
-        
         if (section == 0)
         {
             
@@ -109,7 +99,7 @@ class BrowseSettingsTableViewController: UITableViewController {
             
         }
         
-            
+
         else if (section == 1)
         {
             
@@ -118,7 +108,6 @@ class BrowseSettingsTableViewController: UITableViewController {
             unselectRowsInSection(rowsCount: numberOfRowsInSection, section: sectionNumber)
             selectedCell.addImageView()
             selectedPostedWithInIndex = row
-            
     
         }
         
@@ -130,7 +119,6 @@ class BrowseSettingsTableViewController: UITableViewController {
             unselectRowsInSection(rowsCount: numberOfRowsInSection, section: sectionNumber)
             selectedCell.addImageView()
             selectedDistanceIndex = row
-            
         }
         
         else
@@ -180,56 +168,9 @@ class BrowseSettingsTableViewController: UITableViewController {
                 
             else
             {
-                
                 cell.removeImageView()
-                
+
             }
         }
     }
-    
-    /*
-    // Override to support conditional editing of the table view.
-    override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
-        // Return false if you do not want the specified item to be editable.
-        return true
-    }
-    */
-
-    /*
-    // Override to support editing the table view.
-    override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
-        if editingStyle == .delete {
-            // Delete the row from the data source
-            tableView.deleteRows(at: [indexPath], with: .fade)
-        } else if editingStyle == .insert {
-            // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
-        }    
-    }
-    */
-
-    /*
-    // Override to support rearranging the table view.
-    override func tableView(_ tableView: UITableView, moveRowAt fromIndexPath: IndexPath, to: IndexPath) {
-
-    }
-    */
-
-    /*
-    // Override to support conditional rearranging of the table view.
-    override func tableView(_ tableView: UITableView, canMoveRowAt indexPath: IndexPath) -> Bool {
-        // Return false if you do not want the item to be re-orderable.
-        return true
-    }
-    */
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destinationViewController.
-        // Pass the selected object to the new view controller.
-    }
-    */
-
 }

@@ -33,6 +33,7 @@ class CollectionsCollectionViewController: UICollectionViewController,  UICollec
     }
     
     override func viewWillAppear(_ animated: Bool) {
+        
         super.viewWillAppear(animated)
 
         title = "اكتشف"
@@ -119,6 +120,7 @@ class CollectionsCollectionViewController: UICollectionViewController,  UICollec
     func collectionView(_ collectionView: UICollectionView,
                         layout collectionViewLayout: UICollectionViewLayout,
                         sizeForItemAt indexPath: IndexPath) -> CGSize {
+        
         return CGSize(width: collectionView.bounds.size.width/2 - 0.5, height: collectionView.bounds.size.height/4)
         
     }

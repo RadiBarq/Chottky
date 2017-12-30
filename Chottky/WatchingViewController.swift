@@ -32,7 +32,7 @@ class WatchingViewController: UIViewController, UICollectionViewDelegateFlowLayo
         itemsCollectionView.delegate = self
         itemsCollectionView.dataSource = self
         
-      //  itemsCollectionView.backgroundColor = UIColor(red: 241/255, green: 241/255, blue: 241/255, alpha: 1)
+        //itemsCollectionView.backgroundColor = UIColor(red: 241/255, green: 241/255, blue: 241/255, alpha: 1)
         
         if (ProfileViewController.isItMyProfile == true)
         {
@@ -45,7 +45,6 @@ class WatchingViewController: UIViewController, UICollectionViewDelegateFlowLayo
             databaseRef = FIRDatabase.database().reference().child("Users").child(ProfileViewController.userId).child("favourites")
         }
         
-        
         storageRef = FIRStorage.storage().reference(withPath: "Items_Photos")
         getItems()
         initializeIndicator()
@@ -53,16 +52,15 @@ class WatchingViewController: UIViewController, UICollectionViewDelegateFlowLayo
         // Do any additional setup after loading the view.
     }
     
-    
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         
         ItemViewController.itemKey = itemKeys[indexPath.item]
         ItemViewController.isItOpenedFromProfileView = true
         let itemStoryBoard = UIStoryboard(name: "Main", bundle: nil)
         let itemViewController = itemStoryBoard.instantiateViewController(withIdentifier: "ItemViewController") as! ItemViewController
+       // self.navigationController?.isNavigationBarHidden = false
         ProfileViewController.profileNavigationController?.pushViewController(itemViewController, animated: true)
         ProfileViewController.isItMyProfile = false
-
     }
     
     func initializeIndicator()
@@ -72,14 +70,14 @@ class WatchingViewController: UIViewController, UICollectionViewDelegateFlowLayo
         indicator.backgroundColor = UIColor.clear
         indicator.center = self.view.center
         self.view.addSubview(indicator)
-        
     }
-
+    
     // Here the code where we can get the items
     func getItems()
     {
         databaseRef.observeSingleEvent(of: .value, with: { (snapshot) in
-            // Get user value
+            
+             self.indicator.startAnimating()
             for item in snapshot.children
             {
                 let itemKey = String(describing: (item as! FIRDataSnapshot).key)
@@ -89,11 +87,11 @@ class WatchingViewController: UIViewController, UICollectionViewDelegateFlowLayo
             
             if (self.itemKeys.count == 0)
             {
-                self.indicator.stopAnimating()
                 self.showNoItemLabel()
-                self.indicator.hidesWhenStopped = true
+
             }
             
+            self.indicator.stopAnimating()
             self.itemsCollectionView.reloadData()
             // ...
         })
@@ -103,12 +101,12 @@ class WatchingViewController: UIViewController, UICollectionViewDelegateFlowLayo
             print(error.localizedDescription)
         }
     }
-
+    
     func collectionView(_ collectionView: UICollectionView,
                         layout collectionViewLayout: UICollectionViewLayout,
                         sizeForItemAt indexPath: IndexPath) -> CGSize {
         
-        return CGSize(width: itemsCollectionView.bounds.size.width/2 - 16, height: itemsCollectionView.bounds.size.height/2 - 16)
+        return CGSize(width: itemsCollectionView.bounds.size.width/2 - 16, height: itemsCollectionView.bounds.size.height/2 - 16 )
         
     }
     
@@ -117,7 +115,18 @@ class WatchingViewController: UIViewController, UICollectionViewDelegateFlowLayo
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "cellId", for: indexPath) as! ProfileItemsCell
         cell.backgroundColor = UIColor.white
         let imageRef = storageRef.child(itemKeys[indexPath.row]).child("1.jpeg")
-        cell.itemImageView.sd_setImage(with: imageRef)
+       
+        cell.itemImageView.sd_setShowActivityIndicatorView(true)
+        cell.itemImageView.sd_setIndicatorStyle(.gray)
+        cell.itemImageView.sd_addActivityIndicator()
+        cell.itemImageView.sd_setImage(with: imageRef,  placeholderImage: nil, completion:
+            
+            {  (image, error, cache, ref) in
+                
+                cell.itemImageView.sd_removeActivityIndicator()
+        })
+        
+        
         
         if (indexPath.row == itemKeys.count - 1)
         {
@@ -127,7 +136,6 @@ class WatchingViewController: UIViewController, UICollectionViewDelegateFlowLayo
         
         return cell
     }
-    
     
     func numberOfSections(in collectionView: UICollectionView) -> Int {
         // #warning Incomplete implementation, return the number of sections
@@ -159,7 +167,6 @@ class WatchingViewController: UIViewController, UICollectionViewDelegateFlowLayo
         // Dispose of any resources that can be recreated.
     }
     
-    
     func showNoItemLabel()
     {
         noItemLabel = UILabel()
@@ -170,18 +177,7 @@ class WatchingViewController: UIViewController, UICollectionViewDelegateFlowLayo
         noItemLabel.textAlignment = .right
         noItemLabel.topAnchor.constraint(equalTo: self.view.topAnchor, constant: 50).isActive = true
         noItemLabel.centerXAnchor.constraint(equalTo: self.view.centerXAnchor).isActive = true
-        noItemLabel.widthAnchor.constraint(equalToConstant: 150).isActive = true
+        noItemLabel.widthAnchor.constraint(equalToConstant: 160).isActive = true
         noItemLabel.heightAnchor.constraint(equalToConstant: 20).isActive = true
     }
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destinationViewController.
-        // Pass the selected object to the new view controller.
-    }
-    */
-
 }

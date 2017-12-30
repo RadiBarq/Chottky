@@ -17,7 +17,15 @@ class WelcomeViewController: UIViewController {
     public static var user = User()
     
     
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        UIApplication.shared.isStatusBarHidden = false
+        
+    }
+    
     override func viewDidLoad() {
+        
         super.viewDidLoad()
     
        // let loginButton = LoginButton(readPermissions: [.publicProfile])
@@ -27,14 +35,15 @@ class WelcomeViewController: UIViewController {
         // Do any additional setup after loading the view.
         
        // setUpMenuBar()
-    
+        
         self.view.backgroundColor = UIColor.clear
         var backgroundImage = UIImageView()
         backgroundImage.image = UIImage(named: "1")
         backgroundImage.frame = self.view.bounds
         self.backgroundView.addSubview(backgroundImage)
-        UIApplication.shared.isStatusBarHidden = true
-     
+
+        let statusBar: UIView = UIApplication.shared.value(forKey: "statusBar") as! UIView
+        statusBar.backgroundColor = UIColor.clear
        // let blurEffect = UIBlurEffect(style: UIBlurEffectStyle.light)
       //  let blurEffectView = UIVisualEffectView(effect: blurEffect)
         //always fill the view
@@ -76,7 +85,6 @@ class WelcomeViewController: UIViewController {
         }
     }
     
-
     @IBAction func onLoginPressed(_ sender: UIButton) {
         
         let mainStoryboard = UIStoryboard(name: "Main", bundle: nil)

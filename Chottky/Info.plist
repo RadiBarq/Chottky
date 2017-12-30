@@ -72,5 +72,7 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>لتسهيل على الاخرين ايجاد المنتجات القريبه منهم جايلك يريد استخدام خدمة المواقع مع العلم  انه لن يتم عرض موقعك لاي مستخدم اخر وانما المسافة عن الستخدمين الاخرين</string>
 </dict>
 </plist>

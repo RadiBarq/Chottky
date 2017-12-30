@@ -27,7 +27,6 @@ class PostedImageCell: UICollectionViewCell {
         //insideImage.isHidden = true
     }
     
-    
     public func setUpEmptyImage()
     {
         //self.backgroundColor = UIColor.clear
@@ -37,7 +36,7 @@ class PostedImageCell: UICollectionViewCell {
         //itemImageView.heightAnchor.constraint(equalToConstant: 30).isActive = true
         //insideImage.isHidden = false
         
-        itemImageView.backgroundColor = UIColor(red:51/255.0 , green: 204/255.0, blue: 255/255.0, alpha: 1)
+        itemImageView.backgroundColor = Constants.FirstColor
         itemImageView.image = nil
         // itemImageView.centerYAnchor.constraint(equalTo: self.centerYAnchor).isActive = true
         //temImageView.centerXAnchor.constraint(equalTo: self.centerXAnchor).isActive = true

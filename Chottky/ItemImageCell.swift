@@ -22,8 +22,8 @@ class ItemImageCell: UICollectionViewCell {
     {
         
         super.init(frame: frame)
-        itemImageView.frame = CGRect(x: 0, y: 10, width: self.frame.width, height: self.frame.height - 10)
-        itemImageView.contentMode = .scaleToFill
+        itemImageView.frame = CGRect(x: 0, y: -110, width: self.frame.width, height: self.frame.height + 100)
+       // itemImageView.contentMode = .scaleToFill
         itemImageView.layer.masksToBounds = true
         addSubview(itemImageView)
         

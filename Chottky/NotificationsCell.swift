@@ -13,16 +13,14 @@ class NotificationsCell: UITableViewCell {
     @IBOutlet weak var  notificationImage: UIImageView!
     @IBOutlet weak var notificationTime: UILabel!
     @IBOutlet weak var notificationLabel: UILabel!
-
+    @IBOutlet weak var notificationUser: UIImageView!
+    
     
     override func awakeFromNib() {
         
         super.awakeFromNib()
         // Initialization code
     }
-
-
-    
     
     override func setSelected(_ selected: Bool, animated: Bool) {
         
@@ -35,5 +33,12 @@ class NotificationsCell: UITableViewCell {
         notificationImage.image = image
         notificationImage.layer.masksToBounds = true
         notificationImage.layer.cornerRadius = 5
+    }
+    
+    func setupUserImage(image: UIImage)
+    {
+        notificationUser.image = image
+        notificationUser.layer.masksToBounds = true
+        notificationUser.layer.cornerRadius = 5
     }
 }

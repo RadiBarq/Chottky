@@ -12,7 +12,7 @@ import FirebaseStorageUI
 import SDWebImage
 
 class SoldViewController: UIViewController, UICollectionViewDelegateFlowLayout, UICollectionViewDataSource {
-    
+
     
     @IBOutlet weak var itemsCollectionView: UICollectionView!
       var staticArray = ["nike_shoes-1", "nike_shoes-1", "nike_shoes", "nike_shoes-1", "nike_shoes-1", "nike_shoes-1", "nike_shoes-1", "nike_shoes-1", "nike_shoes-1", "nike_shoes-1", "nike_shoes-1", "nike_shoes-1" , "nike_shoes-1", "nike_shoes-1", "nike_shoes-1", "nike_shoes-1", "nike_shoes-1", "nike_shoes-1", "nike_shoes-1", "nike_shoes-1"]
@@ -22,7 +22,7 @@ class SoldViewController: UIViewController, UICollectionViewDelegateFlowLayout, 
     var itemKeys = [String]()
     var indicator = UIActivityIndicatorView()
     let userID = FIRAuth.auth()!.currentUser!.uid
-
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -31,7 +31,7 @@ class SoldViewController: UIViewController, UICollectionViewDelegateFlowLayout, 
         itemsCollectionView.delegate = self
         itemsCollectionView.dataSource = self
         
-       // itemsCollectionView.backgroundColor = UIColor(red: 241/255, green: 241/255, blue: 241/255, alpha: 1)
+        // itemsCollectionView.backgroundColor = UIColor(red: 241/255, green: 241/255, blue: 241/255, alpha: 1)
         
         if (ProfileViewController.isItMyProfile == true)
         {
@@ -47,7 +47,6 @@ class SoldViewController: UIViewController, UICollectionViewDelegateFlowLayout, 
         getItems()
     }
     
-    
     func initializeIndicator()
     {
         indicator = UIActivityIndicatorView(frame: CGRect(x: 0, y: 0, width: 40, height: 40))
@@ -62,6 +61,9 @@ class SoldViewController: UIViewController, UICollectionViewDelegateFlowLayout, 
     {
         databaseRef.observeSingleEvent(of: .value, with: { (snapshot) in
             // Get user value
+            
+            self.indicator.startAnimating()
+            
             for item in snapshot.children
             {
                 let itemKey = String(describing: (item as! FIRDataSnapshot).key)
@@ -71,11 +73,11 @@ class SoldViewController: UIViewController, UICollectionViewDelegateFlowLayout, 
             
             if (self.itemKeys.count == 0)
             {
-                self.indicator.stopAnimating()
-                self.indicator.hidesWhenStopped = true
+       
                 self.showNoItemLabel()
             }
             
+             self.indicator.stopAnimating()
             self.itemsCollectionView.reloadData()
             // ...
         })
@@ -85,7 +87,6 @@ class SoldViewController: UIViewController, UICollectionViewDelegateFlowLayout, 
             print(error.localizedDescription)
         }
     }
-    
     
     func collectionView(_ collectionView: UICollectionView,
                         layout collectionViewLayout: UICollectionViewLayout,
@@ -100,7 +101,15 @@ class SoldViewController: UIViewController, UICollectionViewDelegateFlowLayout, 
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "cellId", for: indexPath) as! ProfileItemsCell
         cell.backgroundColor = UIColor.white
         let imageRef = storageRef.child(itemKeys[indexPath.row]).child("1.jpeg")
-        cell.itemImageView.sd_setImage(with: imageRef)
+        cell.itemImageView.sd_setShowActivityIndicatorView(true)
+        cell.itemImageView.sd_setIndicatorStyle(.gray)
+        cell.itemImageView.sd_addActivityIndicator()
+        cell.itemImageView.sd_setImage(with: imageRef,  placeholderImage: nil, completion:
+            
+            {  (image, error, cache, ref) in
+                
+                cell.itemImageView.sd_removeActivityIndicator()
+        })
         
         if (indexPath.row == itemKeys.count - 1)
         {
@@ -151,30 +160,21 @@ class SoldViewController: UIViewController, UICollectionViewDelegateFlowLayout, 
         noItemLabel.textAlignment = .right
         noItemLabel.topAnchor.constraint(equalTo: self.view.topAnchor, constant: 50).isActive = true
         noItemLabel.centerXAnchor.constraint(equalTo: self.view.centerXAnchor).isActive = true
-        noItemLabel.widthAnchor.constraint(equalToConstant: 150).isActive = true
+        noItemLabel.widthAnchor.constraint(equalToConstant: 160).isActive = true
         noItemLabel.heightAnchor.constraint(equalToConstant: 20).isActive = true
     }
     
     
+    // here if the user did click an item
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         
-        ItemViewController.itemKey = itemKeys[indexPath.item]
-        ItemViewController.isItOpenedFromProfileView = true
-        let itemStoryBoard = UIStoryboard(name: "Main", bundle: nil)
-        let itemViewController = itemStoryBoard.instantiateViewController(withIdentifier: "ItemViewController") as! ItemViewController
-        ProfileViewController.profileNavigationController?.pushViewController(itemViewController, animated: true)
+        //ItemViewController.itemKey = itemKeys[indexPath.item]
+        //ItemViewController.isItOpenedFromProfileView = true
+        //et itemStoryBoard = UIStoryboard(name: "Main", bundle: nil)
+        //let itemViewController = itemStoryBoard.instantiateViewController(withIdentifier: "ItemViewController") as! ItemViewController
+        //self.navigationController?.isNavigationBarHidden = false
+        //ProfileViewController.profileNavigationController?.pushViewController(itemViewController, animated: true)
+    
     }
     
-
-    
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destinationViewController.
-        // Pass the selected object to the new view controller.
-    }
-    */
-
 }

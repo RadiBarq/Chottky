@@ -16,8 +16,10 @@ class SignInViewController: UIViewController, UITextFieldDelegate {
     @IBOutlet weak var emailTextField: UITextField!
     @IBOutlet weak var passwordTextField: UITextField!
     
-    let passwordMaxLength  = 30
-    let emailMaxLength = 30
+    override func viewWillAppear(_ animated: Bool) {
+         super.viewWillAppear(animated)
+        UIApplication.shared.isStatusBarHidden = false
+    }
     
     override func viewDidLoad() {
         
@@ -25,7 +27,6 @@ class SignInViewController: UIViewController, UITextFieldDelegate {
 
         emailTextField.delegate = self
         passwordTextField.delegate = self
-        
         self.view.backgroundColor = UIColor.clear
         var backgroundImage = UIImageView()
         backgroundImage.image = UIImage(named: "house-photo")
@@ -35,8 +36,13 @@ class SignInViewController: UIViewController, UITextFieldDelegate {
         passwordTextField.underlined()
         
         emailTextField.attributedPlaceholder = NSAttributedString(string: "البريد الاكتروني", attributes: [NSForegroundColorAttributeName: UIColor.white])
-        
+
         passwordTextField.attributedPlaceholder = NSAttributedString(string: "كلمة المرور", attributes: [NSForegroundColorAttributeName: UIColor.white])
+        
+        
+        emailTextField.tag = 0
+        passwordTextField.tag = 1
+        
        //  emailTextField.text = nil
         // passwordTextField.text = nil
     //
@@ -46,19 +52,25 @@ class SignInViewController: UIViewController, UITextFieldDelegate {
         // Do any additional setup after loading the view.
     }
     
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool
+    {
+        // Try to find next responder
+        if let nextField = textField.superview?.viewWithTag(textField.tag + 1) as? UITextField {
+            nextField.becomeFirstResponder()
+        } else {
+            // Not found, so remove keyboard.
+            textField.resignFirstResponder()
+        }
+        // Do not add a line break
+        return false
+    }
     
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
     
-    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
-        
-        let currentString: NSString = textField.text! as NSString
-        let newString: NSString = currentString.replacingCharacters(in: range, with: string) as NSString
-        
-         return newString.length <= passwordMaxLength
-    }
+ 
     
     @IBAction func onClickSingIn(_ sender: UIButton) {
         
@@ -84,6 +96,7 @@ class SignInViewController: UIViewController, UITextFieldDelegate {
             
         else
         {
+            
             
             authenticateWithFirebase(email: emailText, password: passwordText)
             
@@ -130,7 +143,8 @@ class SignInViewController: UIViewController, UITextFieldDelegate {
             self.present(alertEmailController, animated: true, completion: nil)
             
         }
-                
+            
+            
             // Nothing Happened Here
             else
             {
@@ -148,12 +162,13 @@ class SignInViewController: UIViewController, UITextFieldDelegate {
                 
                 let userName = ref.observeSingleEvent(of: .value, with: { (FIRDataSnapshot) in
                     
+                  WelcomeViewController.user.setUserDisplayName(name: (FIRDataSnapshot.value) as! String)
                     
-                WelcomeViewController.user.setUserDisplayName(name: (FIRDataSnapshot.value) as! String)
+                     let mainStoryboard = UIStoryboard(name: "Main", bundle: nil)
+                     let tabViewController = mainStoryboard.instantiateViewController(withIdentifier: "tabBarViewController")
+                     let addItemViewController = mainStoryboard.instantiateViewController(withIdentifier: "PostedItemViewController")
+                     self.present(addItemViewController, animated: true, completion: nil)
                     
-                    let mainStoryboard = UIStoryboard(name: "Main", bundle: nil)
-                    let tabViewController = mainStoryboard.instantiateViewController(withIdentifier: "tabBarViewController")
-                    self.present(tabViewController, animated: true, completion: nil)
                 })
                
             }
@@ -169,19 +184,7 @@ class SignInViewController: UIViewController, UITextFieldDelegate {
         self.present(welcomeViewController, animated: true, completion: nil)
     }
 
-    
-    /*
-    // MARK: - Navigation
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destinationViewController.
-        // Pass the selected object to the new view controller.
-    }
-    */
-
 }
-
-
 
 extension UITextField {
     

@@ -17,7 +17,6 @@ class LeftMenuTableViewController: UITableViewController{
     public static var profileImageView: UIImageView = UIImageView()
     let userID = FIRAuth.auth()!.currentUser!.uid
     
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         // Uncomment the following line to preserve selection between presentations
@@ -39,7 +38,6 @@ class LeftMenuTableViewController: UITableViewController{
         self.navigationController?.navigationBar.tintColor = Constants.FirstColor
         self.navigationController!.navigationBar.titleTextAttributes = [NSForegroundColorAttributeName: UIColor.white]
       // self.tableView.register(BrowseCollectionViewController(, forCellReuseIdentifier: "leftMenuBarCell")
-        
     }
     override func viewWillAppear(_ animated: Bool) {
         
@@ -217,9 +215,12 @@ class LeftMenuTableViewController: UITableViewController{
             ProfileViewController.userDisplayName = WelcomeViewController.user.displayName
             let profileStoryboard = UIStoryboard(name: "Main", bundle: nil)
             let profileViewController = profileStoryboard.instantiateViewController(withIdentifier: "ProfileViewController") as! ProfileViewController
-            self.navigationController?.pushViewController(profileViewController, animated: true)        }
+            self.navigationController?.pushViewController(profileViewController, animated: true)
             
+
+        }
             
+
         else if(indexPath.item == 3)
         {
             let collectionsStoryboard = UIStoryboard(name: "Main", bundle: nil)

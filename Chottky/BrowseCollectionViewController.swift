@@ -28,14 +28,19 @@ class BrowseCollectionViewController: UICollectionViewController, UICollectionVi
     
     override func viewWillAppear(_ animated: Bool) {
         
-        super.viewWillAppear(animated)
-        UIApplication.shared.setStatusBarHidden(false, with: .none)
-        self.navigationController?.isNavigationBarHidden = false
-        self.navigationController?.navigationBar.isTranslucent = false
+         super.viewWillAppear(animated)
+     //   UIApplication.shared.setStatusBarHidden(false, with: .none)
+         self.navigationController?.isNavigationBarHidden = false
+   //
+         UIApplication.shared.isStatusBarHidden = false
+         self.navigationController?.navigationBar.isTranslucent = false
+//        navigationController??.navigationBar.barTintColor = .orange
         
         let statusBar: UIView = UIApplication.shared.value(forKey: "statusBar") as! UIView
-        statusBar.backgroundColor = UIColor.rgb(red: 41, green: 121, blue: 255)
+         statusBar.backgroundColor = UIColor.rgb(red: 41, green: 121, blue: 255)
         
+        setupLefMenuProfileImage()
+    
     }
     
     override func viewDidLoad() {
@@ -46,8 +51,12 @@ class BrowseCollectionViewController: UICollectionViewController, UICollectionVi
         // Register cell classes
         self.collectionView!.register(ItemsCell.self, forCellWithReuseIdentifier: reuseIdentifier)
         BrowseCollectionViewController.browseNavigaionController = self.navigationController
-      
         
+        self.navigationController?.navigationBar.isTranslucent = false
+        let statusBar: UIView = UIApplication.shared.value(forKey: "statusBar") as! UIView
+        statusBar.backgroundColor = UIColor.rgb(red: 41, green: 121, blue: 255)
+         //statusBar.tintColor = UIColor.white
+      
         let menuLeftNavigationController = UISideMenuNavigationController(rootViewController: LeftMenuTableViewController())
         menuLeftNavigationController.leftSide = true
         // UISideMenuNavigationController is a subclass of UINavigationController, so do any additional configuration
@@ -73,11 +82,12 @@ class BrowseCollectionViewController: UICollectionViewController, UICollectionVi
         
         self.navigationController?.navigationBar.tintColor = UIColor.white
         self.navigationController!.navigationBar.titleTextAttributes = [NSForegroundColorAttributeName: UIColor.white]
-        setupLefMenuProfileImage()
+      
         setupNavigationBarItems()
+        
        // self.present(TabViewProvider.customStyle(), animated: true, completion: nil)
+        
     }
-
     
     func setupNavigationBarItems()
     {
@@ -195,12 +205,22 @@ class BrowseCollectionViewController: UICollectionViewController, UICollectionVi
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: reuseIdentifier, for: indexPath) as! ItemsCell
-        cell.backgroundColor = UIColor.yellow
+        cell.backgroundColor = UIColor.white
         let imageRef = storageRef.child(itemKeys[indexPath.row]).child("1.jpeg")
        // let placeholderImage = UIImage(named: "placeholder.jpg")
         
         //var image = UIImage()
-        cell.itemImageView.sd_setImage(with: imageRef)
+        cell.itemImageView.sd_setShowActivityIndicatorView(true)
+        cell.itemImageView.sd_setIndicatorStyle(.gray)
+        cell.itemImageView.sd_addActivityIndicator()
+        cell.itemImageView.sd_setImage(with: imageRef,  placeholderImage: nil, completion:
+            
+            {  (image, error, cache, ref) in
+                
+                cell.itemImageView.sd_removeActivityIndicator()
+              //  self.loadedImages[indexPath.item] = image
+        })
+        
         //cell.itemImageView.sd_showActivityIndicatorView()
         //cell.itemImageView.sd_setIndicatorStyle(.gray)
         
@@ -208,7 +228,6 @@ class BrowseCollectionViewController: UICollectionViewController, UICollectionVi
         {
             self.indicator.stopAnimating()
             self.indicator.hidesWhenStopped = true
-
         }
         
         return cell
@@ -216,8 +235,7 @@ class BrowseCollectionViewController: UICollectionViewController, UICollectionVi
     
     @IBAction func onClickShowMenu(_ sender: UIButton) {
 
-        present(SideMenuManager.menuLeftNavigationController!, animated: true, completion: nil)        
-        
+        present(SideMenuManager.menuLeftNavigationController!, animated: true, completion: nil)
     }
     
     // MARK: UICollectionViewDelegate
@@ -241,26 +259,22 @@ class BrowseCollectionViewController: UICollectionViewController, UICollectionVi
        return true
         
     }
-
+    
     override func collectionView(_ collectionView: UICollectionView, canPerformAction action: Selector, forItemAt indexPath: IndexPath, withSender sender: Any?) -> Bool {
         
         return true
     }
     
-    
     override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         
         //self.navigationController?.navigationBar.isTranslucent = false
- 
         
         ItemViewController.itemKey = itemKeys[indexPath.item]
         let itemStoryBoard = UIStoryboard(name: "Main", bundle: nil)
         //self.navigationController?.navigationBar.isTranslucent = true
         let itemViewController = itemStoryBoard.instantiateViewController(withIdentifier: "ItemViewController") as! ItemViewController
         self.navigationController?.pushViewController(itemViewController, animated: true)
-        
         ItemViewController.isItOpenedFromProfileView = false
-
     }
     
     //These for the number of items my lord

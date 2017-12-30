@@ -15,6 +15,7 @@ private let reuseIdentifier = "Cell"
 
 class ChatCollectionViewController: UICollectionViewController, UICollectionViewDelegateFlowLayout {
     
+    
     let inputTextField = UITextField()
     var messagesTexts = [String]()
     var messagesFrom = [String]()
@@ -29,15 +30,12 @@ class ChatCollectionViewController: UICollectionViewController, UICollectionView
     var storageRef: FIRStorageReference!
     var indicator = UIActivityIndicatorView()
     var theProgramJustOpened: Bool = true
-    
-    
-    
+
     //var notificationReference = FIRDatabase.database().reference().child("Users").child(WelcomeViewController.messageTo_DisplayName)
     
     override func viewDidLoad() {
     
         super.viewDidLoad()
-        
         // Do any additional setup after loading the view.
         self.navigationController!.navigationBar.tintColor = UIColor.white
         navigationItem.title = ChatCollectionViewController.messageFromDisplayName
@@ -73,12 +71,12 @@ class ChatCollectionViewController: UICollectionViewController, UICollectionView
     }
     
     
-    
-    
    override func viewWillAppear(_ animated: Bool) {
         
         super.viewWillAppear(true)
         self.tabBarController?.tabBar.isHidden = true
+        UIApplication.shared.isStatusBarHidden = false
+        self.navigationController?.isNavigationBarHidden = false
         
     }
     
@@ -94,12 +92,8 @@ class ChatCollectionViewController: UICollectionViewController, UICollectionView
         
     }
     
-    
-    
-    
     func handleKeyBoardDidShow(notification: NSNotification)
     {
-        
         let indexPath = NSIndexPath(item: self.messagesTexts.count - 1, section: 0)
         
         if self.messagesFrom.isEmpty == false
@@ -112,7 +106,6 @@ class ChatCollectionViewController: UICollectionViewController, UICollectionView
     {
         
         let keyBoardDuration = ((notification.userInfo?[UIKeyboardAnimationDurationUserInfoKey]) as! AnyObject).doubleValue
-        
         containerViewBottomAnchor?.constant = 0
         
         
@@ -160,7 +153,6 @@ class ChatCollectionViewController: UICollectionViewController, UICollectionView
             sendButton.centerYAnchor.constraint(equalTo: containerView.centerYAnchor).isActive = true
             sendButton.widthAnchor.constraint(equalToConstant: 80).isActive = true
             sendButton.heightAnchor.constraint(equalTo: containerView.heightAnchor).isActive = true
-            
             
             self.inputTextField.textColor = UIColor.black
             self.inputTextField.placeholder = "اكتب الرسالة"
@@ -234,7 +226,7 @@ class ChatCollectionViewController: UICollectionViewController, UICollectionView
     
     func setupInputComponents()
     {
-        
+    
         let containerView = UIView()
         containerView.backgroundColor = UIColor.white
         containerView.translatesAutoresizingMaskIntoConstraints = false
@@ -254,8 +246,6 @@ class ChatCollectionViewController: UICollectionViewController, UICollectionView
         sendButton.setTitle("Send", for: .normal)
         sendButton.translatesAutoresizingMaskIntoConstraints = false
         sendButton.addTarget(self, action: #selector(handleSend), for: .touchUpInside)
-        
-        
         containerView.addSubview(sendButton)
         
         //x,y,w,h
@@ -267,7 +257,6 @@ class ChatCollectionViewController: UICollectionViewController, UICollectionView
         inputTextField.textColor = UIColor.orange
         inputTextField.placeholder = "اكتب الرسالة"
         inputTextField.translatesAutoresizingMaskIntoConstraints = false
-        
         
         containerView.addSubview(inputTextField)
         //x,y,w,h
@@ -291,15 +280,25 @@ class ChatCollectionViewController: UICollectionViewController, UICollectionView
     func handleSend()
     {
         
-        let timestamp = Int(NSDate().timeIntervalSince1970)
-        let ref = FIRDatabase.database().reference().child("Users").child(userID).child("chat").child(ChatCollectionViewController.messageToId).childByAutoId().updateChildValues(["messageText": inputTextField.text, "messageFrom": WelcomeViewController.user.displayName, "timestamp": timestamp])
+        var messagesTexts = inputTextField.text?.trimmingCharacters(in: .whitespacesAndNewlines)
+        if (messagesTexts != "")
+        {
+            let timestamp = Int(NSDate().timeIntervalSince1970)
+            let ref = FIRDatabase.database().reference().child("Users").child(userID).child("chat").child(ChatCollectionViewController.messageToId).childByAutoId().updateChildValues(["messageText": inputTextField.text, "messageFrom": WelcomeViewController.user.displayName, "timestamp": timestamp])
         
-        let ref2 = FIRDatabase.database().reference().child("Users").child(ChatCollectionViewController.messageToId).child("chat").child(userID).childByAutoId().updateChildValues(["messageText": inputTextField.text, "messageFrom": WelcomeViewController.user.displayName, "timestamp": timestamp])
+            let ref2 = FIRDatabase.database().reference().child("Users").child(ChatCollectionViewController.messageToId).child("chat").child(userID).childByAutoId().updateChildValues(["messageText": inputTextField.text, "messageFrom": WelcomeViewController.user.displayName, "timestamp": timestamp])
         
-        let newMessageRef = FIRDatabase.database().reference().child("Users").child(ChatCollectionViewController.messageToId).child("chat").child(userID).child("lastMessage").updateChildValues(["message": inputTextField.text, "time": timestamp])
-        
-        let newMessageRed2 = FIRDatabase.database().reference().child("Users").child(userID).child("chat").child(ChatCollectionViewController.messageToId).child("lastMessage").updateChildValues(["message": inputTextField.text, "time": timestamp])
-        // notificationReference.updateChildValues(["notified": true])
+        FIRDatabase.database().reference().child("Users").child(ChatCollectionViewController.messageToId).child("chat").child(userID).child("lastMessage").updateChildValues(["message": inputTextField.text, "time": timestamp])
+         FIRDatabase.database().reference().child("Users").child(userID).child("chat").child(ChatCollectionViewController.messageToId).child("lastMessage").updateChildValues(["message": inputTextField.text, "time": timestamp])
+                // notificationReference.updateChildValues(["notified": true])
+            
+        FIRDatabase.database().reference().child("Users").child(ChatCollectionViewController.messageToId).child("chat").child(userID).child("lastMessage").updateChildValues(["new": "true"])
+            
+        FIRDatabase.database().reference().child("Users").child(userID).child("chat").child(ChatCollectionViewController.messageToId).child("lastMessage").updateChildValues(["new": "false"])
+            
+            
+        }
+
     }
     
     func observeMessages()
@@ -429,15 +428,7 @@ class ChatCollectionViewController: UICollectionViewController, UICollectionView
         return NSString(string: text).boundingRect(with: size, options: options, attributes: [NSFontAttributeName:UIFont.systemFont(ofSize: 16)], context: nil)
     }
     
-    /*
-     // MARK: - Navigation
-     
-     // In a storyboard-based application, you will often want to do a little preparation before navigation
-     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-     // Get the new view controller using segue.destinationViewController.
-     // Pass the selected object to the new view controller.
-     }
-     */
+    
     
     func hexStringToUIColor (hex:String) -> UIColor {
         

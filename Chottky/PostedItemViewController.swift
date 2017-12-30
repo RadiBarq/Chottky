@@ -5,12 +5,12 @@
 //  Created by Radi Barq on 5/19/17.
 //  Copyright © 2017 Chottky. All rights reserved.
 //
-
 import UIKit
 import Firebase
+import GeoFire
+import CoreLocation
 
-
-class PostedItemViewController: UIViewController, UICollectionViewDataSource, UITextViewDelegate, UITextFieldDelegate, UICollectionViewDelegateFlowLayout, UINavigationControllerDelegate, UIImagePickerControllerDelegate{
+class PostedItemViewController: UIViewController, UICollectionViewDataSource, UITextViewDelegate, UITextFieldDelegate, UICollectionViewDelegateFlowLayout, UINavigationControllerDelegate, UIImagePickerControllerDelegate, CLLocationManagerDelegate{
     
     
     var cellId = "cellId"
@@ -35,8 +35,14 @@ class PostedItemViewController: UIViewController, UICollectionViewDataSource, UI
     @IBOutlet weak var descriptionTextView: UITextView!
     @IBOutlet weak var priceField: UITextField!
     
+    let userID = FIRAuth.auth()!.currentUser!.uid
     
-     var indicatior = UIActivityIndicatorView()
+    var locationManager: CLLocationManager = CLLocationManager()
+
+    var indicatior = UIActivityIndicatorView()
+    
+    var stringLocation = String()
+    
     
     override func viewDidLoad() {
         
@@ -60,7 +66,6 @@ class PostedItemViewController: UIViewController, UICollectionViewDataSource, UI
         self.descriptionTextView.inputAccessoryView = toolBar
         self.priceField.inputAccessoryView = toolBar
         
-        
         imagesCollectionView.delegate = self
         imagesCollectionView.dataSource = self
         
@@ -73,23 +78,60 @@ class PostedItemViewController: UIViewController, UICollectionViewDataSource, UI
         descriptionTextView.text = "الوصف"
         descriptionTextView.textColor = UIColor(red: 203/255, green: 202/255, blue: 203/255, alpha: 1)
         PostedItemViewController.isItFirstTimeOnThisView = false
-        
         initializeIndicator()
+        self.titleField.tag = 0
+        imageLibraryController.navigationBar.isTranslucent = false
+        imageLibraryController.navigationBar.tintColor = UIColor.white
+        
+        
+        self.locationManager.desiredAccuracy = kCLLocationAccuracyBest
+        self.locationManager.delegate = self
+        self.locationManager.requestWhenInUseAuthorization()
+        self.locationManager.startUpdatingLocation()
     }
-    
     
     func doneClicked()
     {
         view.endEditing(true)
         
     }
+
+    public func locationManager(_ manager: CLLocationManager, didUpdateLocations locations:[CLLocation])
+    {
+        let latestLocation: CLLocation = locations[locations.count - 1]
+        stringLocation = String(latestLocation.coordinate.latitude)  + " " + String(latestLocation.coordinate.longitude)
+        print(stringLocation)
+        // print (AddPokemonViewController.stringLocation)
+    }
+    
+
+    public func locationManager(_ manager: CLLocationManager, didFailWithError error: Error)
+    {
+        //Todo if the location is not available
+        //TODO Also with the location concerns
+        print("Error getting the location")
+        
+    }
+    
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool
+    {
+        // Try to find next responder
+        if let nextField = textField.superview?.viewWithTag(textField.tag + 1) as? UITextField {
+            nextField.becomeFirstResponder()
+        } else {
+            // Not found, so remove keyboard.
+            textField.resignFirstResponder()
+        }
+        // Do not add a line break
+        return false
+    }
+    
     
     override func viewWillAppear(_ animated: Bool) {
         
         // PostedItemViewController.images[PostedItemViewController.imageClickedNumber] = (PostedItemViewController.imageClicked!)
         //  PostedItemViewController.imagesValid[PostedItemViewController.imageClickedNumber] = true
         self.imagesCollectionView.reloadData()
-
     }
     
     func initializeIndicator()
@@ -131,7 +173,7 @@ class PostedItemViewController: UIViewController, UICollectionViewDataSource, UI
         
         if (textField == titleField)
         {
-            let maxLength = 30
+            let maxLength = 40
             let currentString: NSString = titleField.text! as NSString
             let newString: NSString =
                 currentString.replacingCharacters(in: range, with: string) as NSString
@@ -140,7 +182,6 @@ class PostedItemViewController: UIViewController, UICollectionViewDataSource, UI
             
         else
         {
-            
             let maxLength = 9
             let currentString: NSString = priceField.text! as NSString
             let newString: NSString =
@@ -150,7 +191,7 @@ class PostedItemViewController: UIViewController, UICollectionViewDataSource, UI
     }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        
+    
         return 4
     }
     
@@ -177,7 +218,6 @@ class PostedItemViewController: UIViewController, UICollectionViewDataSource, UI
                 
             }
         }))
-        
         
         alert.addAction(UIAlertAction(title: "اغلاق", style: .cancel, handler: { (action) in
             //execute some code when this option is selected
@@ -220,7 +260,6 @@ class PostedItemViewController: UIViewController, UICollectionViewDataSource, UI
         imageLibraryController.dismiss(animated: true, completion: nil)
     }
     
-    
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         
         var cell = imagesCollectionView.dequeueReusableCell(withReuseIdentifier: cellId, for: indexPath) as! PostedImageCell
@@ -229,7 +268,6 @@ class PostedItemViewController: UIViewController, UICollectionViewDataSource, UI
         {
             
             cell.setUpImage(image: PostedItemViewController.images[indexPath.item]!)
-            
         }
             
         else
@@ -243,29 +281,66 @@ class PostedItemViewController: UIViewController, UICollectionViewDataSource, UI
         return cell
     }
     
+    func checkIfThereIsAvailablePhotos()->Bool
+    {
+     
+        var checker = false
+
+        for item in PostedItemViewController.images
+        {
+            
+            if item != nil
+            {
+                checker = true
+            }
+            
+        }
+    
+        return checker
+    }
     
     @IBAction func handlePost(_ sender: UIButton) {
         
-        if descriptionTextView.text == "" || titleField.text == "" || priceField.text == ""
+
+        var isThereIsPhotos = checkIfThereIsAvailablePhotos()
+        
+        if descriptionTextView.text == "" || titleField.text == "" || priceField.text == "" || isThereIsPhotos == false
         {
             let alertEmailController = UIAlertController(title: "المعلومات المدخلة غير مكتملة", message: "الرجاء اعد المحاولة", preferredStyle: .alert)
             let defaultAction = UIAlertAction(title: "موافق", style: .default, handler: nil)
             alertEmailController.addAction(defaultAction)
             present(alertEmailController, animated: true, completion: nil)
         }
-            
+        
         else
         {
             indicatior.startAnimating()
             var storageCounter = 1
             var dataBaseCounter = 1
-            let databaseRef = FIRDatabase.database().reference().child("items").childByAutoId()
             
-            for image in test_images
+            
+            for image in PostedItemViewController.images
+            {
+                if (image != nil)
+                {
+                    
+                    dataBaseCounter = dataBaseCounter + 1
+                    
+                }
+            }
+            
+            let databaseRef = FIRDatabase.database().reference().child("items").childByAutoId()
+
+            for image in PostedItemViewController.images
             {
                 //What I will do basically the follwowing.
                 let storageRef = FIRStorage.storage().reference().child("Items_Photos").child(databaseRef.key).child(String(storageCounter) + ".jpeg")
-            
+                
+                if (image == nil)
+                {
+                    continue
+                }
+
                 if let uploadData = UIImageJPEGRepresentation(image!, 0.5)
                 {
                     storageRef.put(uploadData, metadata: nil)
@@ -284,38 +359,44 @@ class PostedItemViewController: UIViewController, UICollectionViewDataSource, UI
                             self.indicatior.stopAnimating()
                             return
                         }
-                            
-                            
+                        
                         else
                         {
-                             //There everything is good and fine.
-                            if (dataBaseCounter == self.test_images.count)
+                            //There everything is good and fine.
+                            if (dataBaseCounter == storageCounter)
                             {
                                 let timestamp = Int(NSDate().timeIntervalSince1970)
-                                databaseRef.updateChildValues(["title": self.titleField.text, "description":self.descriptionTextView.text, "price": self.priceField.text, "currency": self.currencySegemnted.titleForSegment(at: self.currencySegemnted.selectedSegmentIndex) , "userEmail":
-                                WelcomeViewController.user.getEmail(),"imagesCount": self.test_images.count,  "timestamp": timestamp, "displayName": WelcomeViewController.user.getUserDisplayName()])
-                                FIRDatabase.database().reference().child("Users").child(WelcomeViewController.user.getEmail()).child("items").updateChildValues([databaseRef.key :""])
-                                
+                                databaseRef.updateChildValues(["title": self.titleField.text, "description":self.descriptionTextView.text, "price": self.priceField.text, "currency": self.currencySegemnted.titleForSegment(at: self.currencySegemnted.selectedSegmentIndex) , "userId":
+                                    self.userID,"imagesCount": dataBaseCounter - 1,  "timestamp": timestamp, "displayName": WelcomeViewController.user.getUserDisplayName()])
+                                FIRDatabase.database().reference().child("Users").child(self.userID).child("items").updateChildValues([databaseRef.key :""])
                                 print (metadata)
+                                
+                                
+                                // here the work of the geofire
+                                let geofireRef = FIRDatabase.database().reference().child("Pokemons Location")
+                                let geoFire = GeoFire(firebaseRef: geofireRef)
+                                
+                                
+                                
                                 self.indicatior.stopAnimating()
                                 self.backTapped()
+                                
                             }
                         }
                         
-                    dataBaseCounter = dataBaseCounter + 1
+                       // dataBaseCounter = dataBaseCounter + 1
+                    }
                 }
-            }
                 storageCounter = storageCounter + 1
+            }
         }
     }
-}
     
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
         
         return 10
     }
-    
     
     func backTapped() {
         
@@ -340,5 +421,10 @@ class PostedItemViewController: UIViewController, UICollectionViewDataSource, UI
         // let mainStoryboard = UIStoryboard(name: "Main", bundle: nil)
         //let browseNavigationViewController = mainStoryboard.instantiateViewController(withIdentifier: "BrowseCollectionViewController")
         //self.navigationController?.pushViewController(browseNavigationViewController, animated: true)
+        
+        
+        
+        
     }
+    
 }

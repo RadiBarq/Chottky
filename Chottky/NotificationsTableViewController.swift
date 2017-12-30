@@ -23,7 +23,6 @@ class NotificationsTableViewController: UITableViewController{
     let userID = FIRAuth.auth()!.currentUser!.uid
 
     
-    
     override func viewDidLoad() {
         
         super.viewDidLoad()
@@ -37,25 +36,51 @@ class NotificationsTableViewController: UITableViewController{
         itemsStorageRef = FIRStorage.storage().reference().child("Items_Photos")
         self.navigationController?.navigationBar.topItem?.title = ""
         initializeIndicator()
+        fetchNotifications()
+        
     }
     
+     override func viewDidAppear(_ animated: Bool) {
+        
+        if (notifications.isEmpty == true)
+        {
+            self.indicator.stopAnimating()
+        }
+    }
     
     override func viewWillAppear(_ animated: Bool) {
-        
-        indicator.startAnimating()
-        fetchNotifications()
+
         title = "الاشعارات"
     }
     
     
     override func viewWillDisappear(_ animated: Bool) {
+        
         super.viewWillDisappear(animated)
+        makeNotificationsOld()
         title = ""
     }
+
+    
+    func makeNotificationsOld()
+    {
+        for notification in notifications
+        {
+            let notificationId = notification?.value(forKey: "itemId") as! String
+            let isItNew = notification?.value(forKey: "new") as! String
+            
+            if (isItNew == "true")
+            {
+                FIRDatabase.database().reference().child("Users").child(userID).child("notifications").child(notificationId).updateChildValues(["new": "false"])
+            }
+        }
+    }
+    
     
     func fetchNotifications()
     {
-        notificationsRef.observe(.value, with: { (
+          indicator.startAnimating()
+          notificationsRef.observe(.value, with: { (
             snapshot) in
             
             self.notifications = []
@@ -67,8 +92,8 @@ class NotificationsTableViewController: UITableViewController{
             
             self.notifications.reverse()
             self.tableView.reloadData()
-            
         })
+        
     }
     
     func initializeIndicator()
@@ -107,21 +132,24 @@ class NotificationsTableViewController: UITableViewController{
 
         if (notifications.count != 0)
         {
-            cell.setupImage(image: UIImage(named: "radibarq")!)
-            // Configure the cell...
+           // cell.setupImage(image: UIImage(named: "radibarq")!)
             var notification = notifications[indexPath.item]
-            var storageRef: FIRStorageReference!
+            var profilePictureRef: FIRStorageReference!
+            var itemPictureRef: FIRStorageReference!
+            
             
             if notification!["type"] as! String == "discarded"
             {
                 cell.notificationLabel.text = Constants.notificationDiscardedText
-                storageRef = itemsStorageRef.child((notification!["itemId"] as! String)).child("1.jpeg")
+                itemPictureRef = itemsStorageRef.child((notification!["itemId"] as! String)).child("1.jpeg")
+                profilePictureRef = FIRStorage.storage().reference().child("Icons").child("discarded_notification.png")
             }
                 
             else
             {
                 cell.notificationLabel.text = Constants.notificationFavouriteText + " " + ((notification!["userName"]) as! String)
-                storageRef = profilePicturesStorageRef.child((notification!["email"]) as! String).child("Profile.jpg")
+                profilePictureRef = profilePicturesStorageRef.child((notification!["userId"]) as! String).child("Profile.jpg")
+                itemPictureRef = itemsStorageRef.child((notification!["itemId"] as! String)).child("1.jpeg")
             }
             
             if (notification?["new"] as! String == "true")
@@ -130,11 +158,36 @@ class NotificationsTableViewController: UITableViewController{
                 cell.notificationTime.textColor = UIColor.black
             }
             
-           cell.notificationImage.sd_setImage(with: storageRef)
+            else{
+                
+                cell.notificationLabel.textColor = UIColor.gray
+                cell.notificationTime.textColor = UIColor.gray
+                
+            }
+            
+           cell.notificationUser.sd_setShowActivityIndicatorView(true)
+           cell.notificationUser.sd_setIndicatorStyle(.gray)
+           cell.notificationUser.sd_addActivityIndicator()
+           cell.notificationUser.sd_setImage(with: profilePictureRef,  placeholderImage: nil, completion:
+                
+                {  (image, error, cache, ref) in
+                    
+                    cell.notificationUser.sd_removeActivityIndicator()
+            })
+        
+            cell.notificationImage.sd_setShowActivityIndicatorView(true)
+            cell.notificationImage.sd_setIndicatorStyle(.gray)
+            cell.notificationImage.sd_addActivityIndicator()
+            cell.notificationImage.sd_setImage(with: itemPictureRef,  placeholderImage: nil, completion:
+                
+                {  (image, error, cache, ref) in
+                    
+                    cell.notificationImage.sd_removeActivityIndicator()
+            })
+            
            cell.notificationImage.layer.masksToBounds = true
            cell.notificationImage.layer.cornerRadius = 5
-            
-            
+
             if (notifications.count - 1 == indexPath.item)
             {
                 self.indicator.stopAnimating()
@@ -147,7 +200,7 @@ class NotificationsTableViewController: UITableViewController{
             dateFormatter.dateStyle = .short
             cell.notificationTime.text = dateFormatter.string(from: date)
         }
-        
+    
         return cell
     }
 
@@ -158,10 +211,11 @@ class NotificationsTableViewController: UITableViewController{
         var notification = notifications[indexPath.item] // now the notification seems working
         if ((notification?["type"]) as! String == "favourite")
         {
-            var notificationUserEmail = notification?["email"] // AnyType
+            
+            var notificationUserId = notification?["userId"] // AnyType
             var notificationUserDisplayName = notification?["userName"] // Here
         
-            ProfileViewController.userId = notificationUserEmail as! String
+            ProfileViewController.userId = notificationUserId as! String
             ProfileViewController.userDisplayName = notificationUserDisplayName as! String
         
             let profileStoryboard = UIStoryboard(name: "Main", bundle: nil)

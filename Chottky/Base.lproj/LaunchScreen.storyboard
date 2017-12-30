@@ -20,7 +20,7 @@
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="main-icon" translatesAutoresizingMaskIntoConstraints="NO" id="E6r-yc-TzL">
+                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="parachute" translatesAutoresizingMaskIntoConstraints="NO" id="E6r-yc-TzL">
                                 <rect key="frame" x="112" y="243" width="150" height="180"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="180" id="Ufn-pF-5t5"/>
@@ -41,6 +41,6 @@
         </scene>
     </scenes>
     <resources>
-        <image name="main-icon" width="288" height="344"/>
+        <image name="parachute" width="288" height="344"/>
     </resources>
 </document>

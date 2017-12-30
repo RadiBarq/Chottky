@@ -13,9 +13,8 @@ import FirebaseStorageUI
 
 class MessagesTableViewController: UITableViewController {
     
-    
     var usersKeys = [String]()
-   // static var messageTo_Email = String()f
+    // static var messageTo_Email = String()f
     //static var messageTo_DisplayName = String()
     var usersNames = [String]()
     var holdingRow = String()
@@ -23,8 +22,8 @@ class MessagesTableViewController: UITableViewController {
     let userID = FIRAuth.auth()!.currentUser!.uid
     var storageRef: FIRStorageReference!
     @IBOutlet var holdView: UIView!
-    var indicator = UIActivityIndicatorView()
     
+    var indicator = UIActivityIndicatorView()
     
     override func viewWillAppear(_ animated: Bool) {
         
@@ -36,21 +35,23 @@ class MessagesTableViewController: UITableViewController {
         self.navigationController?.navigationBar.topItem?.title = ""
         
         tableView.register(UserCell.self, forCellReuseIdentifier: "cellId" ) // here remember to use self because the function needs an objedct, rememebr these very well
-        
-        usersKeys = [String]()
+        //usersKeys = [String]()
         navigationItem.backBarButtonItem?.tintColor = UIColor.white
         navigationItem.hidesBackButton = false
         
         let longPressGesture:UILongPressGestureRecognizer = UILongPressGestureRecognizer(target: self, action: #selector(handleLongPress(_:)))
         longPressGesture.minimumPressDuration = 1.0 // 1 second press
         self.tableView.addGestureRecognizer(longPressGesture)
-        fetchUsers()
-        initializeIndicatior()
-        indicator.startAnimating()
+        
         indicator.backgroundColor = UIColor.white
         title = "الرسائل"
         
     }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        
+    }
+    
     
     override func viewWillDisappear(_ animated: Bool) {
         
@@ -65,6 +66,8 @@ class MessagesTableViewController: UITableViewController {
         // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
         // self.navigationItem.rightBarButtonItem = self.editButtonItem()
         storageRef = FIRStorage.storage().reference(withPath: "Profile_Pictures")
+        initializeIndicatior()
+        fetchUsers()
     }
     
     @IBAction func closeView(_ sender: UIButton) {
@@ -76,7 +79,6 @@ class MessagesTableViewController: UITableViewController {
         
         var reference = FIRDatabase.database().reference().child("Users").child(userID).child("chat").child(holdingRow).removeValue()
         removeView()
-        
     }
     
     @IBAction func blockUser(_ sender: UIButton) {
@@ -84,6 +86,8 @@ class MessagesTableViewController: UITableViewController {
         var blockReference = FIRDatabase.database().reference().child("Users").child(userID).child("block").child(holdingRow).setValue("true")
         var deleteReference = FIRDatabase.database().reference().child("Users").child(userID).child("chat").child(holdingRow).removeValue()
         removeView()
+        
+        
     }
     
     override func didReceiveMemoryWarning() {
@@ -108,7 +112,6 @@ class MessagesTableViewController: UITableViewController {
             }
         }
     }
-    
     
     func addView()
     {
@@ -139,6 +142,8 @@ class MessagesTableViewController: UITableViewController {
         
         var reference = FIRDatabase.database().reference().child("Users").child(userID).child("chat").child(holdingRow).removeValue()
         removeView()
+        
+        // var seconRef = FIRDatabase.database().reference().child("Users").child(holdingRow).child("chat").child(userID).removeValue()
     }
     
     @IBAction func handleBlock(_ sender: UIButton) {
@@ -146,7 +151,7 @@ class MessagesTableViewController: UITableViewController {
         var blockReference = FIRDatabase.database().reference().child("Users").child(userID).child("block").child(holdingRow).setValue("true")
         
         var deleteReference = FIRDatabase.database().reference().child("Users").child(userID).child("chat").child(holdingRow).removeValue()
-
+        
         removeView()
     }
     
@@ -161,13 +166,13 @@ class MessagesTableViewController: UITableViewController {
         return usersKeys.count
     }
     
-    
     func fetchUsers()
     {
         let ref = FIRDatabase.database().reference()
-        usersKeys = [String]()
-        
-        let handle = ref.child("Users").child(userID).child("chat").observeSingleEvent(of: .value , with: { snapshot in
+        let handle = ref.child("Users").child(userID).child("chat").observe(.value, with: { snapshot in
+            self.indicator.startAnimating()
+            self.usersKeys = [String]()
+            
             
             for user in snapshot.children
             {
@@ -175,10 +180,17 @@ class MessagesTableViewController: UITableViewController {
                 self.usersKeys.append(parentKey)
             }
             
+            if (self.usersKeys.isEmpty == true)
+            {
+                self.indicator.stopAnimating()
+            }
+            
             self.tableView.reloadData()
+            
         })
+        
     }
-
+    
     func removeView()
     {
         UIView.animate(withDuration: 0.3, animations:
@@ -195,20 +207,21 @@ class MessagesTableViewController: UITableViewController {
         tableView.allowsSelection = true
         tableView.isScrollEnabled = true
         tableView.deselectRow(at: holdingTouchIndex, animated: true)
-        fetchUsers()
+        // fetchUsers()
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-
+        
         let cell = tableView.dequeueReusableCell(withIdentifier: "cellId", for: indexPath) as! UserCell
         var userName = String()
         let UserClickedEmail =  usersKeys[indexPath.row]
         
-            FIRDatabase.database().reference().child("Users").child(UserClickedEmail).child("UserName").observeSingleEvent(of: .value, with: { (snapshot) in
+        FIRDatabase.database().reference().child("Users").child(UserClickedEmail).child("UserName").observeSingleEvent(of: .value, with: { (snapshot) in
             FIRDatabase.database().reference().child("Users").child(self.userID).child("chat").child(UserClickedEmail).child("lastMessage").observeSingleEvent(of: .value, with: {(snapshot1) in
                 
                 for element in snapshot1.children
                 {
+                    
                     let childValue = String(describing: (element as! FIRDataSnapshot).value!) // Remeber this value maybe value.
                     let childKey = String(describing: (element as! FIRDataSnapshot).key)
                     
@@ -220,28 +233,53 @@ class MessagesTableViewController: UITableViewController {
                         
                     else if childKey == "time"
                     {
-                         //childValue = Double(childValue)!
-                         let date = Date(timeIntervalSince1970: TimeInterval(Double(childValue)!))
-                         let dateFormatter = DateFormatter()
-                         dateFormatter.locale = Locale(identifier: "ar_JO")
-                         dateFormatter.dateStyle = .short
-                         cell.lastMessageTimeLabel.text =  dateFormatter.string(from: date)
-                        
+                        //childValue = Double(childValue)!
+                        let date = Date(timeIntervalSince1970: TimeInterval(Double(childValue)!))
+                        let dateFormatter = DateFormatter()
+                        dateFormatter.locale = Locale(identifier: "ar_JO")
+                        dateFormatter.dateStyle = .short
+                        cell.lastMessageTimeLabel.text =  dateFormatter.string(from: date)
                         
                     }
+                        
+                    else
+                    {
+                        
+                        if childValue == "false"
+                        {
+                            
+                            cell.lastMessageLabel.textColor = UIColor.gray
+                            
+                        }
+                        
+                        else
+                        {
+                           cell.lastMessageLabel.textColor = Constants.SecondColor
+                        }
+                    }
                 }
-    
+                
                 let imageRef = self.storageRef.child(self.usersKeys[indexPath.row] + "/" + "Profile.jpg")
-                cell.profileImageView.sd_setImage(with: imageRef)
+                
+                cell.profileImageView.sd_setShowActivityIndicatorView(true)
+                cell.profileImageView.sd_setIndicatorStyle(.gray)
+                cell.profileImageView.sd_addActivityIndicator()
+                cell.profileImageView.sd_setImage(with: imageRef,  placeholderImage: nil, completion:
+                    
+                    {  (image, error, cache, ref) in
+                        
+                        cell.profileImageView.sd_removeActivityIndicator()
+                })
+                
                 userName = (snapshot.value) as! String
-                cell.textLabel?.textAlignment = .right
-                cell.textLabel?.text = userName
+                cell.messageContact.text = userName
                 self.indicator.stopAnimating()
                 self.indicator.hidesWhenStopped = true
                 
             })
+    
         })
-
+        
         return cell
     }
     
@@ -261,18 +299,22 @@ class MessagesTableViewController: UITableViewController {
         let UserClickedEmail =  usersKeys[indexPath.row]
         var userName = String()
         FIRDatabase.database().reference().child("Users").child(UserClickedEmail).child("UserName").observeSingleEvent(of: .value, with: { (snapshot) in
-
+            
             userName = (snapshot.value) as! String
             ChatCollectionViewController.messageFromDisplayName = userName
             ChatCollectionViewController.messageToId = self.usersKeys[indexPath.row]
             
             let flowLayout = UICollectionViewFlowLayout()
-        
+            
             let chatLogController = ChatCollectionViewController(collectionViewLayout:flowLayout)
             self.navigationController?.pushViewController(chatLogController, animated: true)
+            
             //    users = [String]()
         })
         
+        FIRDatabase.database().reference().child("Users").child(userID).child("chat").child(usersKeys[indexPath.row]).child("lastMessage").updateChildValues(["new": "false"])
+    
+    
         ///This is related to move the controller()
         // let storyboard = UIStoryboard(name: "Main", bundle: nil)
         //let firstViewController = storyboard.instantiateViewController(withIdentifier: "SendMessage"
@@ -283,48 +325,14 @@ class MessagesTableViewController: UITableViewController {
     func initializeIndicatior() {
         
         indicator = UIActivityIndicatorView(frame: CGRect(x: 0, y: 0, width: 40, height: 40))
-        indicator.activityIndicatorViewStyle = UIActivityIndicatorViewStyle.gray
+        // indicator.activityIndicatorViewStyle = UIActivityIndicatorViewStyle.gray
+        indicator.color = Constants.FirstColor
         indicator.center = self.view.center
+        indicator.stopAnimating()
         self.view.addSubview(indicator)
+        
     }
     
-    /*
-     // Override to support conditional editing of the table view.
-     override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
-     // Return false if you do not want the specified item to be editable.
-     return true
-     }
-     */
-    
-    /*
-     // Override to support editing the table view.
-     override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
-     if editingStyle == .delete {
-     // Delete the row from the data source
-     tableView.deleteRows(at: [indexPath], with: .fade)
-     } else if editingStyle == .insert {
-     // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
-     }
-     }
-     */
-    
-    /*
-     // Override to support rearranging the table view.
-     override func tableView(_ tableView: UITableView, moveRowAt fromIndexPath: IndexPath, to: IndexPath) {
-     
-     }
-     */
-    
-    /*
-     // Override to support conditional rearranging of the table view.
-     override func tableView(_ tableView: UITableView, canMoveRowAt indexPath: IndexPath) -> Bool {
-     // Return false if you do not want the item to be re-orderable.
-     return true
-     }
-     */
-    
-    // MARK: - Navigation
-
     // In a storyboard-based application, you will often want to do a little preparation before navigation
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         
@@ -337,13 +345,12 @@ class UserCell: UITableViewCell
     override func layoutSubviews() {
         
         super.layoutSubviews()
-        textLabel?.frame = CGRect(x: self.frame.width - 100, y: textLabel!.frame.origin.y - 10, width: textLabel!.frame.width, height: (textLabel?.frame.height)!)
+        textLabel?.frame = CGRect(x: self.frame.width - 200, y: textLabel!.frame.origin.y - 10, width: 200, height: (textLabel?.frame.height)!)
         textLabel?.textAlignment = .right
         
     }
     
     public var profileImageView: UIImageView = {
-        
         
         let imageView = UIImageView()
         //    imageView.image = UIImage(named: "profilepicture")
@@ -355,15 +362,27 @@ class UserCell: UITableViewCell
         
     }()
     
+    
+    public var messageContact: UILabel = {
+        
+        var lbl = UILabel()
+        lbl.textAlignment = .right
+        lbl.translatesAutoresizingMaskIntoConstraints = false
+        lbl.font = UIFont.systemFont(ofSize: 16)
+        lbl.textColor = UIColor.black
+        return lbl
+        
+    }()
+    
     public var lastMessageTimeLabel: UILabel = {
         
         let lbl = UILabel()
-        lbl.textAlignment = .right
+        lbl.textAlignment = .left
         lbl.translatesAutoresizingMaskIntoConstraints = false
         lbl.font = UIFont.systemFont(ofSize: 12)
         lbl.textColor = UIColor.lightGray
         return lbl
-        
+
     }()
     
     public var lastMessageLabel: UILabel = {
@@ -379,7 +398,6 @@ class UserCell: UITableViewCell
     
     override init(style: UITableViewCellStyle, reuseIdentifier: String?)
     {
-        
         super.init(style: .subtitle, reuseIdentifier: reuseIdentifier)
         addSubview(profileImageView)
         // ios9 constraints anchors
@@ -389,23 +407,30 @@ class UserCell: UITableViewCell
         profileImageView.widthAnchor.constraint(equalToConstant: 48).isActive = true
         profileImageView.heightAnchor.constraint(equalToConstant: 48).isActive = true
         // Related to the last message label
+        
         addSubview(lastMessageLabel)
-        
-        
-        lastMessageLabel.textColor = Constants.SecondColor
+       // lastMessageLabel.textColor = Constants.SecondColor
         lastMessageLabel.rightAnchor.constraint(equalTo: self.profileImageView.leftAnchor, constant: -10).isActive = true
         lastMessageLabel.centerYAnchor.constraint(equalTo: self.profileImageView.centerYAnchor, constant: 10).isActive = true
-        lastMessageLabel.widthAnchor.constraint(equalToConstant: self.frame.width - 50).isActive = true
+        lastMessageLabel.widthAnchor.constraint(equalToConstant: self.frame.width).isActive = true
         lastMessageLabel.heightAnchor.constraint(equalToConstant: 21).isActive = true
+        lastMessageLabel.leftAnchor.constraint(equalTo: self.leftAnchor, constant: 10).isActive = true
+        
         addSubview(lastMessageTimeLabel)
-        
-        
-        
-        lastMessageTimeLabel.leftAnchor.constraint(equalTo: self.leftAnchor, constant: 2).isActive = true
+        lastMessageTimeLabel.leftAnchor.constraint(equalTo: self.leftAnchor, constant: 10).isActive = true
         lastMessageTimeLabel.centerYAnchor.constraint(equalTo: self.profileImageView.centerYAnchor, constant: -10).isActive = true
         lastMessageTimeLabel.widthAnchor.constraint(equalToConstant: 100).isActive = true
         lastMessageTimeLabel.heightAnchor.constraint(equalToConstant: 21).isActive = true
         //lastMessageTimeLabel.text = "٥د"
+        
+        addSubview(messageContact)
+        messageContact.rightAnchor.constraint(equalTo: self.profileImageView.leftAnchor, constant: -5).isActive = true
+        messageContact.centerYAnchor.constraint(equalTo: self.profileImageView.centerYAnchor, constant: -10).isActive = true
+        messageContact.widthAnchor.constraint(equalToConstant: self.frame.width - 110).isActive = true
+        messageContact.heightAnchor.constraint(equalToConstant: 21).isActive = true
+        
+        
+        
     }
     
     required init?(coder aDecoder: NSCoder) {
