@@ -10,7 +10,6 @@ import UIKit
 
 class CollectionsCell: UICollectionViewCell {
 
-    
     var imageView: UIImageView =
         {
             var imageView = UIImageView()
@@ -26,6 +25,7 @@ class CollectionsCell: UICollectionViewCell {
         
     }()
     
+    
     override init (frame: CGRect)
     {
         super.init(frame: frame)
@@ -37,7 +37,6 @@ class CollectionsCell: UICollectionViewCell {
         
         fatalError("init(coder:) has not been implemented")
     }
-    
     
     func setupViews()
     {
@@ -57,18 +56,13 @@ class CollectionsCell: UICollectionViewCell {
         categoryLable.topAnchor.constraint(equalTo: imageView.bottomAnchor, constant: 20).isActive = true
     }
     
-    
     func setUpLabel(text: String)
     {
-        
         categoryLable.text = text
-        
     }
-    
     
     func setImage(image: UIImage) -> Void
     {
-        
         self.backgroundColor = UIColor.white
         imageView.image = image
         

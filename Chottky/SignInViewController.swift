@@ -66,6 +66,7 @@ class SignInViewController: UIViewController, UITextFieldDelegate {
     }
     
     override func didReceiveMemoryWarning() {
+        
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
@@ -77,6 +78,7 @@ class SignInViewController: UIViewController, UITextFieldDelegate {
         signIn()
         
     }
+    
     
     func signIn()
     {
@@ -97,15 +99,15 @@ class SignInViewController: UIViewController, UITextFieldDelegate {
         else
         {
             
-            
             authenticateWithFirebase(email: emailText, password: passwordText)
             
         }
     }
     
+    
     func authenticateWithFirebase(email:String, password:String)
     {
-        
+
         FIRAuth.auth()?.signIn(withEmail: email, password: password) { (user, error) in
             
         var alertEmailController:UIAlertController = UIAlertController()
@@ -141,38 +143,34 @@ class SignInViewController: UIViewController, UITextFieldDelegate {
             let defaultAction = UIAlertAction(title: "موافق", style: .default, handler: nil)
             alertEmailController.addAction(defaultAction)
             self.present(alertEmailController, animated: true, completion: nil)
-            
+
         }
             
-            
-            // Nothing Happened Here
+         // Nothing Happened Here
             else
             {
-                let userEmail:String = (user?.email)!
                 
-                let endEmailTextIndex = userEmail.index(userEmail.endIndex, offsetBy: -4)
-                var emailTruncatedDotCom = userEmail.substring(to: endEmailTextIndex)
-                let userId = user?.uid as! String
-                
-                WelcomeViewController.user.setUserEmail(email: emailTruncatedDotCom)
+                 let userEmail:String = (user?.email)!
+                 let endEmailTextIndex = userEmail.index(userEmail.endIndex, offsetBy: -4)
+                 var emailTruncatedDotCom = userEmail.substring(to: endEmailTextIndex)
+                 let userId = user?.uid as! String
+                 WelcomeViewController.user.setUserEmail(email: emailTruncatedDotCom)
                 
                 WelcomeViewController.user.setUpUserId(userId: userId)
                 
-                let ref = FIRDatabase.database().reference().child("Users").child(userId).child("UserName")
+                    let ref = FIRDatabase.database().reference().child("Users").child(userId).child("UserName")
                 
-                let userName = ref.observeSingleEvent(of: .value, with: { (FIRDataSnapshot) in
+                    let userName = ref.observeSingleEvent(of: .value, with: { (FIRDataSnapshot) in
                     
-                  WelcomeViewController.user.setUserDisplayName(name: (FIRDataSnapshot.value) as! String)
+                     WelcomeViewController.user.setUserDisplayName(name: (FIRDataSnapshot.value) as! String)
                     
                      let mainStoryboard = UIStoryboard(name: "Main", bundle: nil)
                      let tabViewController = mainStoryboard.instantiateViewController(withIdentifier: "tabBarViewController")
                      let addItemViewController = mainStoryboard.instantiateViewController(withIdentifier: "PostedItemViewController")
-                     self.present(addItemViewController, animated: true, completion: nil)
+                     self.present(tabViewController, animated: true, completion: nil)
                     
                 })
-               
             }
-            
         }
     }
     
@@ -199,10 +197,7 @@ extension UITextField {
         self.layer.addSublayer(border)
         self.layer.masksToBounds = true
         
-        
     }
-    
-    
     // Next step here
 }
 

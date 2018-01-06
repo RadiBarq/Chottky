@@ -26,14 +26,12 @@ class ProfileSettingsTableViewController: UITableViewController, UIImagePickerCo
     override func viewDidLoad() {
         
         super.viewDidLoad()
-        title = "اعدادات الحساب"
-        self.navigationController?.navigationBar.topItem?.title = ""
+     
         imageLibraryController.navigationBar.isTranslucent = false
         imageLibraryController.navigationBar.tintColor = UIColor.white
         self.imageLibraryController.delegate = self
         self.imageLibraryController.sourceType = UIImagePickerControllerSourceType.photoLibrary
         initializeIndicatior()
-
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -41,6 +39,8 @@ class ProfileSettingsTableViewController: UITableViewController, UIImagePickerCo
         emaiLabel.text = WelcomeViewController.user.email
         userNameLabel.text = WelcomeViewController.user.getUserDisplayName()
         profilePicture.sd_setImage(with:   ProfileSettingsTableViewController.profileSettingsImageStorageRef!)
+        title = "اعدادات الحساب"
+        //self.navigationController?.navigationBar.topItem?.title = ""
         
     }
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
@@ -84,6 +84,18 @@ class ProfileSettingsTableViewController: UITableViewController, UIImagePickerCo
             let changeProfileUserNameViewController = mainStoryboard.instantiateViewController(withIdentifier: "changeProfilePasswordViewController") as! ChangeProfilePasswordViewController
             self.navigationController?.pushViewController(changeProfileUserNameViewController, animated: true)
         }
+        
+        else if(indexPath.row == 4)
+        {
+            
+            var reportedUsersViewController = mainStoryboard.instantiateViewController(withIdentifier: "blockedUsersTableViewController") as!
+            BlockedUsersTableViewController
+            
+            self.navigationController?.pushViewController(reportedUsersViewController, animated: true)
+            
+        }
+        
+        
     }
     
     func initializeIndicatior() {

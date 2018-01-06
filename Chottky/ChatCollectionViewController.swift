@@ -43,8 +43,16 @@ class ChatCollectionViewController: UICollectionViewController, UICollectionView
         
         // Related to the titles on the navigation, my lord.
         self.navigationController?.navigationBar.topItem?.title = ""
-        self.title = ChatCollectionViewController.messageFromDisplayName
+        
+     //   self.title = ChatCollectionViewController.messageFromDisplayName
+        
+        let button =  UIButton(type: .custom)
+        button.frame = CGRect(x: 0, y: 0, width: 100, height: 40)
+        button.setTitle(ChatCollectionViewController.messageFromDisplayName, for: .normal)
+        button.addTarget(self, action: #selector(userNameClicked), for: .touchUpInside)
+        self.navigationItem.titleView = button
 
+        
         
         //  textFieldCp.addTarget(self, action: "addDoneButtonOnKeyboard", for: UIControlEvents.touchDown
         NotificationCenter.default.addObserver(self, selector: #selector(handleKeyBoardDidShow(notification:)), name: .UIKeyboardDidShow, object: nil)
@@ -70,6 +78,16 @@ class ChatCollectionViewController: UICollectionViewController, UICollectionView
         storageRef = storageRef.child(ChatCollectionViewController.messageFromDisplayName + "/" + "Profile.jpg")
     }
     
+    func userNameClicked()
+    {
+        
+        ProfileViewController.userDisplayName = ChatCollectionViewController.messageFromDisplayName
+        ProfileViewController.userId = ChatCollectionViewController.messageToId
+        let profileStoryboard = UIStoryboard(name: "Main", bundle: nil)
+        let profileViewController = profileStoryboard.instantiateViewController(withIdentifier: "ProfileViewController") as! ProfileViewController
+        self.navigationController?.pushViewController(profileViewController, animated: true)
+    }
+    
     
    override func viewWillAppear(_ animated: Bool) {
         
@@ -77,13 +95,15 @@ class ChatCollectionViewController: UICollectionViewController, UICollectionView
         self.tabBarController?.tabBar.isHidden = true
         UIApplication.shared.isStatusBarHidden = false
         self.navigationController?.isNavigationBarHidden = false
-        
     }
     
     
     override func viewWillDisappear(_ animated: Bool) {
+        
+        
         super.viewWillDisappear(true)
          self.tabBarController?.tabBar.isHidden = false
+        
     }
     
     func setUpKeyboardObserver()

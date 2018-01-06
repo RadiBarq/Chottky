@@ -39,11 +39,14 @@
 		CD6565CB1EAAAC2700C6353A /* PhotoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD6565CA1EAAAC2700C6353A /* PhotoViewController.swift */; };
 		CD6565CD1EAAAC3500C6353A /* VideoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD6565CC1EAAAC3500C6353A /* VideoViewController.swift */; };
 		CD6565CF1EAAAC4400C6353A /* SwiftyRecordButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD6565CE1EAAAC4400C6353A /* SwiftyRecordButton.swift */; };
+		CD6D29BB1FFE2AE8008B4AD2 /* BlockedUsersTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD6D29BA1FFE2AE8008B4AD2 /* BlockedUsersTableViewController.swift */; };
 		CD6E2C001E6FFD3000D11EC0 /* NearbyPeopleTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD6E2BFF1E6FFD3000D11EC0 /* NearbyPeopleTableViewController.swift */; };
 		CD6E2C031E7000EC00D11EC0 /* PeopleCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD6E2C021E7000EC00D11EC0 /* PeopleCell.swift */; };
 		CD6E2C0D1E70C1B400D11EC0 /* SignUpViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD6E2C0C1E70C1B400D11EC0 /* SignUpViewController.swift */; };
 		CD6E2C111E7148E900D11EC0 /* SignInViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD6E2C101E7148E900D11EC0 /* SignInViewController.swift */; };
 		CD772D2B1ECCD7980016ADF7 /* ProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD772D2A1ECCD7980016ADF7 /* ProfileViewController.swift */; };
+		CD98DB2A1FFA5B22007210FF /* Item.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD98DB291FFA5B22007210FF /* Item.swift */; };
+		CD98DB2C1FFAD950007210FF /* ReportUserViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD98DB2B1FFAD94F007210FF /* ReportUserViewController.swift */; };
 		CD9C62881F61EDC300A465A7 /* BrowseSettingsTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD9C62871F61EDC300A465A7 /* BrowseSettingsTableViewCell.swift */; };
 		CDDB3D061EC89A3D0083D722 /* CollectionsCollectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDDB3D051EC89A3D0083D722 /* CollectionsCollectionViewController.swift */; };
 		CDDB3D081EC89D9B0083D722 /* CollectionsCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDDB3D071EC89D9B0083D722 /* CollectionsCell.swift */; };
@@ -114,11 +117,14 @@
 		CD6565CA1EAAAC2700C6353A /* PhotoViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PhotoViewController.swift; sourceTree = "<group>"; };
 		CD6565CC1EAAAC3500C6353A /* VideoViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VideoViewController.swift; sourceTree = "<group>"; };
 		CD6565CE1EAAAC4400C6353A /* SwiftyRecordButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SwiftyRecordButton.swift; sourceTree = "<group>"; };
+		CD6D29BA1FFE2AE8008B4AD2 /* BlockedUsersTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlockedUsersTableViewController.swift; sourceTree = "<group>"; };
 		CD6E2BFF1E6FFD3000D11EC0 /* NearbyPeopleTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NearbyPeopleTableViewController.swift; sourceTree = "<group>"; };
 		CD6E2C021E7000EC00D11EC0 /* PeopleCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PeopleCell.swift; sourceTree = "<group>"; };
 		CD6E2C0C1E70C1B400D11EC0 /* SignUpViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SignUpViewController.swift; sourceTree = "<group>"; };
 		CD6E2C101E7148E900D11EC0 /* SignInViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SignInViewController.swift; sourceTree = "<group>"; };
 		CD772D2A1ECCD7980016ADF7 /* ProfileViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProfileViewController.swift; sourceTree = "<group>"; };
+		CD98DB291FFA5B22007210FF /* Item.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Item.swift; sourceTree = "<group>"; };
+		CD98DB2B1FFAD94F007210FF /* ReportUserViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReportUserViewController.swift; sourceTree = "<group>"; };
 		CD9C62871F61EDC300A465A7 /* BrowseSettingsTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BrowseSettingsTableViewCell.swift; sourceTree = "<group>"; };
 		CDDB3D051EC89A3D0083D722 /* CollectionsCollectionViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CollectionsCollectionViewController.swift; sourceTree = "<group>"; };
 		CDDB3D071EC89D9B0083D722 /* CollectionsCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CollectionsCell.swift; sourceTree = "<group>"; };
@@ -305,6 +311,7 @@
 				CDE135CA1E75E81C00ED6F72 /* User.swift */,
 				CD11DBEC1F580B2F00B46B84 /* TabViewProvider.swift */,
 				CD9C62871F61EDC300A465A7 /* BrowseSettingsTableViewCell.swift */,
+				CD98DB291FFA5B22007210FF /* Item.swift */,
 			);
 			name = Model;
 			sourceTree = "<group>";
@@ -321,6 +328,8 @@
 				CD4E5D571FF43ADE00D2B53B /* ChangeProfileEmailViewController.swift */,
 				CD4E5D591FF43B1900D2B53B /* ChangeProfileUserNameViewController.swift */,
 				CD4E5D5B1FF43B4400D2B53B /* ChangeProfilePasswordViewController.swift */,
+				CD98DB2B1FFAD94F007210FF /* ReportUserViewController.swift */,
+				CD6D29BA1FFE2AE8008B4AD2 /* BlockedUsersTableViewController.swift */,
 			);
 			name = Profile;
 			sourceTree = "<group>";
@@ -378,13 +387,13 @@
 		CDDB3D201ECA28C90083D722 /* Browse */ = {
 			isa = PBXGroup;
 			children = (
+				CD11DBF21F59FF2B00B46B84 /* BrowseSettingsTableViewController.swift */,
 				CDDB3D1A1ECA1E450083D722 /* ItemImageCell.swift */,
 				CD3BD70D1E7422C800693BAA /* MenuBarCell.swift */,
 				CDDB3D161EC9F6750083D722 /* ItemViewController.swift */,
 				CD3BD7071E74062500693BAA /* LeftMenuTableViewController.swift */,
 				CD3BD7051E736F6D00693BAA /* BrowseCollectionViewController.swift */,
 				CD381A6A1ECF376800B95AF1 /* ItemsCell.swift */,
-				CD11DBF21F59FF2B00B46B84 /* BrowseSettingsTableViewController.swift */,
 			);
 			name = Browse;
 			sourceTree = "<group>";
@@ -586,8 +595,10 @@
 				CDDB3D061EC89A3D0083D722 /* CollectionsCollectionViewController.swift in Sources */,
 				CDE135CD1E75F35900ED6F72 /* ChatMessageCell.swift in Sources */,
 				CD4E5D5C1FF43B4400D2B53B /* ChangeProfilePasswordViewController.swift in Sources */,
+				CD98DB2A1FFA5B22007210FF /* Item.swift in Sources */,
 				CD3BD7081E74062500693BAA /* LeftMenuTableViewController.swift in Sources */,
 				CD3BD7101E74708200693BAA /* CameraViewController.swift in Sources */,
+				CD6D29BB1FFE2AE8008B4AD2 /* BlockedUsersTableViewController.swift in Sources */,
 				CDDB3D101EC9031A0083D722 /* NotificationsCell.swift in Sources */,
 				CD3C30871ED1DDB900A1C349 /* SoldViewController.swift in Sources */,
 				CD3C308B1ED1DDDB00A1C349 /* WatchingViewController.swift in Sources */,
@@ -596,6 +607,7 @@
 				CD6565CB1EAAAC2700C6353A /* PhotoViewController.swift in Sources */,
 				CDE135CB1E75E81C00ED6F72 /* User.swift in Sources */,
 				CD4E5D5A1FF43B1900D2B53B /* ChangeProfileUserNameViewController.swift in Sources */,
+				CD98DB2C1FFAD950007210FF /* ReportUserViewController.swift in Sources */,
 				CD3C30911ED70E4300A1C349 /* ProfileItemsCell.swift in Sources */,
 				CD3C30891ED1DDCB00A1C349 /* SellingViewController.swift in Sources */,
 				CDF5AB321E6C7D9C00E0FE14 /* Extensions.swift in Sources */,

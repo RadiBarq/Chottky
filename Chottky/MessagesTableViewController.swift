@@ -22,8 +22,8 @@ class MessagesTableViewController: UITableViewController {
     let userID = FIRAuth.auth()!.currentUser!.uid
     var storageRef: FIRStorageReference!
     @IBOutlet var holdView: UIView!
-    
     var indicator = UIActivityIndicatorView()
+    var holdingName = String()
     
     override func viewWillAppear(_ animated: Bool) {
         
@@ -45,13 +45,16 @@ class MessagesTableViewController: UITableViewController {
         
         indicator.backgroundColor = UIColor.white
         title = "الرسائل"
-        
+    
     }
+    
     
     override func viewDidAppear(_ animated: Bool) {
         
+        
+        
+        
     }
-    
     
     override func viewWillDisappear(_ animated: Bool) {
         
@@ -83,7 +86,7 @@ class MessagesTableViewController: UITableViewController {
     
     @IBAction func blockUser(_ sender: UIButton) {
         
-        var blockReference = FIRDatabase.database().reference().child("Users").child(userID).child("block").child(holdingRow).setValue("true")
+        var blockReference = FIRDatabase.database().reference().child("Users").child(userID).child("block").child(holdingRow).setValue(holdingName)
         var deleteReference = FIRDatabase.database().reference().child("Users").child(userID).child("chat").child(holdingRow).removeValue()
         removeView()
         
@@ -107,30 +110,74 @@ class MessagesTableViewController: UITableViewController {
             if let indexPath =  tableView.indexPathForRow(at: touchPoint){
                 
                 holdingRow = usersKeys[indexPath.row]
+                holdingName = usersNames[indexPath.row]
+                
                 holdingTouchIndex = indexPath
-                popOutTheHoldView(name: holdingRow) // That's it
+               popOutTheHoldView(name: holdingRow) // That's it
+
             }
         }
     }
     
     func addView()
     {
-        view.superview?.addSubview(holdView)
-        self.tableView.isScrollEnabled = false
-        self.tableView.allowsSelection = false
+        //view.superview?.addSubview(holdView)
+        //self.tableView.isScrollEnabled = false
+        //self.tableView.allowsSelection = false
         
-        holdView.layer.cornerRadius = 5
+    //    holdView.layer.cornerRadius = 5
         //   holdView.translatesAutoresizingMaskIntoConstraints = false
-        holdView.center = view.center
-        holdView.transform = CGAffineTransform.init(scaleX: 1.3, y: 1.3)
-        holdView.alpha = 0
+      //  holdView.center = view.center
+       // holdView.transform = CGAffineTransform.init(scaleX: 1.3, y: 1.3)
+        //holdView.alpha = 0
         
-        UIView.animate(withDuration: 0.4)
-        {
+      //  UIView.animate(withDuration: 0.4)
+       // {
             // self.visualEffect.effect = self.effect
-            self.holdView.alpha = 1
-            self.holdView.transform = CGAffineTransform.identity
-        }
+         //   self.holdView.alpha = 1
+          //  self.holdView.transform = CGAffineTransform.identity
+       // }
+        
+        
+        let alert = UIAlertController(title: "العملية على هاذا المستخدم", message: "", preferredStyle: .actionSheet)
+        
+        alert.addAction(UIAlertAction(title: "حذر المستخدم", style: .default, handler: { (action) in
+            // PostedItemViewController.imageClickedNumber = indexPath.item
+            // let cameraStoryboard = UIStoryboard(name: "Main", bundle: nil)
+            //  let cameraViewController = cameraStoryboard.instantiateViewController(withIdentifier: "cameraView") as! CameraViewController
+            //  self.navigationController?.pushViewController(cameraViewController, animated: true)
+            var blockReference = FIRDatabase.database().reference().child("Users").child(self.userID).child("block").child(self.holdingRow).setValue(self.holdingName)
+            
+            var deleteReference = FIRDatabase.database().reference().child("Users").child(self.userID).child("chat").child(self.holdingRow).removeValue()
+
+        }))
+        
+        alert.addAction(UIAlertAction(title: "التبليغ عن المستخدم", style: .default, handler: { (action) in
+            
+            let mainStoryboard = UIStoryboard(name: "Main", bundle: nil)
+            let reportViewController = mainStoryboard.instantiateViewController(withIdentifier: "reportUserViewController") as! ReportUserViewController
+            self.navigationController?.pushViewController(reportViewController, animated: true)
+            ProfileViewController.userId = self.holdingRow
+
+        }))
+        
+        alert.addAction(UIAlertAction(title: "حذف من الرسائل", style: .default, handler: { (action) in
+            
+             var reference = FIRDatabase.database().reference().child("Users").child(self.userID).child("chat").child(self.holdingRow).removeValue()
+        }))
+        
+        
+        alert.addAction(UIAlertAction(title: "اغلاق", style: .cancel, handler: { (action) in
+            //execute some code when this option is selected
+            // self.skinType = "Dark Skin"
+            alert.dismiss(animated: true, completion: nil)
+            print("close")
+            
+        }))
+        
+        
+        self.present(alert, animated: true, completion: nil)
+        
     }
     
     func popOutTheHoldView(name: String)
@@ -146,6 +193,8 @@ class MessagesTableViewController: UITableViewController {
         // var seconRef = FIRDatabase.database().reference().child("Users").child(holdingRow).child("chat").child(userID).removeValue()
     }
     
+    
+  
     @IBAction func handleBlock(_ sender: UIButton) {
         
         var blockReference = FIRDatabase.database().reference().child("Users").child(userID).child("block").child(holdingRow).setValue("true")
@@ -239,7 +288,6 @@ class MessagesTableViewController: UITableViewController {
                         dateFormatter.locale = Locale(identifier: "ar_JO")
                         dateFormatter.dateStyle = .short
                         cell.lastMessageTimeLabel.text =  dateFormatter.string(from: date)
-                        
                     }
                         
                     else
@@ -272,6 +320,7 @@ class MessagesTableViewController: UITableViewController {
                 })
                 
                 userName = (snapshot.value) as! String
+                self.usersNames.append(userName)
                 cell.messageContact.text = userName
                 self.indicator.stopAnimating()
                 self.indicator.hidesWhenStopped = true
@@ -362,7 +411,6 @@ class UserCell: UITableViewCell
         
     }()
     
-    
     public var messageContact: UILabel = {
         
         var lbl = UILabel()
@@ -428,9 +476,7 @@ class UserCell: UITableViewCell
         messageContact.centerYAnchor.constraint(equalTo: self.profileImageView.centerYAnchor, constant: -10).isActive = true
         messageContact.widthAnchor.constraint(equalToConstant: self.frame.width - 110).isActive = true
         messageContact.heightAnchor.constraint(equalToConstant: 21).isActive = true
-        
-        
-        
+  
     }
     
     required init?(coder aDecoder: NSCoder) {

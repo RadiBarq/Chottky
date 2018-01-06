@@ -18,14 +18,18 @@ class BrowseSettingsTableViewController: UITableViewController {
     let postedWithinArray = ["اخر ٢٤ سيعة", "اخر ٧ ايام", "في اخر ٣٠ يوم", "كل المنتجات"]
     let distanceArray = ["قريب جدا (١ كم)", "في الاحياء القريبة (٥كم)", "في مدينيتي (١٠كم)", "في مدينيتي (١٠كم)", "لم يحدد"]
     let sortedByArray = ["الاقرب اولا", "السعر من الاعلى الى الاقل", "السعر من الاقل  الى الاعلى", "الاجدد اولا"]
+    static var  selectedCategoriesIndexes: Array? = [0, 0 , 0, 0, 0, 0, 0, 0, 0, 0]
+    static var selectedPostedWithInIndex: Int? = 3
+    static var selectedDistanceIndex: Int? = 3
+    static var selectedsortedByIndex: Int? = nil
     
-    var selectedCategoriesIndexes: Array? = []
-    var selectedPostedWithInIndex: Int?
-    var selectedDistanceIndex: Int?
-    var selectedsortedByIndex: Int?
+    
+    var copyOfSelectedCategory = [Int]()
+    
+    var copyOfSelectedDistance = Int()
 
-    
     override func viewDidLoad() {
+        
         super.viewDidLoad()
         // Uncomment the following line to preserve selection between presentations
         // self.clearsSelectionOnViewWillAppear = false
@@ -33,28 +37,135 @@ class BrowseSettingsTableViewController: UITableViewController {
         // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
         // self.navigationItem.rightBarButtonItem = self.editButtonItem()
         
-       self.navigationController?.navigationBar.topItem?.title = ""
+        self.navigationController?.navigationBar.topItem?.title = ""
+        self.title = "اعدادات التصفح"
+        
+       //selectedPostedWithInIndex = 3
+       // selectedDistanceIndex = 3
     }
-    
+
     override func viewWillAppear(_ animated: Bool) {
         
         super.viewWillAppear(animated)
        // self.navigationController?.navigationBar.topItem?.title = "اعدادات التصفح"
         self.navigationController?.navigationBar.isTranslucent = false
-        
-       // self.tableView.reloadData()
+        self.navigationItem.rightBarButtonItem = UIBarButtonItem(title: "اعادة", style: .done, target: self, action: #selector(resetButtonClicked))
+        intializeCategoryArray()
+        copyOfSelectedCategory = BrowseSettingsTableViewController.selectedCategoriesIndexes!
+        copyOfSelectedDistance = BrowseSettingsTableViewController.selectedDistanceIndex!
         
     }
+
+    
     override func viewWillDisappear(_ animated: Bool) {
         
         super.viewWillDisappear(animated)
         self.navigationController?.navigationBar.topItem?.title = ""
+        if (copyOfSelectedCategory.containsSameElements(as:  BrowseSettingsTableViewController.selectedCategoriesIndexes!) == false || copyOfSelectedDistance != BrowseSettingsTableViewController.selectedDistanceIndex)
+        {
+            BrowseCollectionViewController.queryChanged = true
+        }
+    }
+    
+    func intializeCategoryArray()
+    {
+       // unselectRowsInSection(rowsCount: (BrowseSettingsTableViewController.selectedCategoriesIndexes?.count)!, section: 0)
+        
+        var thirdSectionIndexPath = IndexPath(row:BrowseSettingsTableViewController.selectedDistanceIndex! , section: 0)
+        self.tableView.scrollToRow(at: thirdSectionIndexPath, at: .bottom, animated: false)
+        var thirdCell =  tableView.cellForRow(at: thirdSectionIndexPath) as! BrowseSettingsTableViewCell
+        thirdCell.addImageView()
+        
+        var secondSectionIndexPath = IndexPath(row: BrowseSettingsTableViewController.selectedPostedWithInIndex!, section: 1 )
+          self.tableView.scrollToRow(at: secondSectionIndexPath, at: .bottom, animated: false)
+        var secondCell =  tableView.cellForRow(at: secondSectionIndexPath) as! BrowseSettingsTableViewCell
+        secondCell.addImageView()
+        
+        
+        var fivthSectionIndexPath = IndexPath(row:BrowseSettingsTableViewController.selectedDistanceIndex! , section: 2)
+        self.tableView.scrollToRow(at: fivthSectionIndexPath, at: .bottom, animated: false)
+        var fivthCell =  self.tableView.cellForRow(at: fivthSectionIndexPath) as! BrowseSettingsTableViewCell
+        fivthCell.addImageView()
+        
+        
+        if (BrowseSettingsTableViewController.selectedsortedByIndex != nil)
+        {
+            var fourthSectionIndexPath = IndexPath(row: BrowseSettingsTableViewController.selectedsortedByIndex!, section: 3)
+            self.tableView.scrollToRow(at: fourthSectionIndexPath, at: .bottom, animated: false)
+            let fourthCell =  tableView.cellForRow(at: fourthSectionIndexPath) as! BrowseSettingsTableViewCell
+            fourthCell.addImageView()
+        }
+        
+        
+        self.tableView.scrollToRow(at: IndexPath(row: 0,section:0), at: .top, animated: false)
+        var counter = 0
+        for i in BrowseSettingsTableViewController.selectedCategoriesIndexes!
+        {
+            
+            var indexPath = IndexPath(row: counter, section: 0)
+            var cell =  tableView.cellForRow(at: indexPath) as! BrowseSettingsTableViewCell
+
+            if (i == 1)
+            {
+                cell.addImageView()
+                cell.setSelected(true, animated: false)
+            }
+        
+            else
+            {
+                cell.removeImageView()
+                cell.setSelected(false, animated: false)
+            }
+
+            counter = counter + 1
+        }
     }
 
-    override func didReceiveMemoryWarning() {
+    func resetButtonClicked()
+    {
+        var thirdSectionIndexPath = IndexPath(row:BrowseSettingsTableViewController.selectedDistanceIndex! , section: 0)
+        self.tableView.scrollToRow(at: thirdSectionIndexPath, at: .bottom, animated: false)
+        var thirdCell =  tableView.cellForRow(at: thirdSectionIndexPath) as! BrowseSettingsTableViewCell
+        thirdCell.removeImageView()
+        thirdCell.setSelected(false, animated: false)
         
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
+        var secondSectionIndexPath = IndexPath(row: BrowseSettingsTableViewController.selectedPostedWithInIndex!, section: 1 )
+        var secondCell =  tableView.cellForRow(at: secondSectionIndexPath) as! BrowseSettingsTableViewCell
+        secondCell.removeImageView()
+        secondCell.setSelected(false, animated: false   )
+        
+        
+        var fivthSectionIndexPath = IndexPath(row:BrowseSettingsTableViewController.selectedDistanceIndex! , section: 2)
+        self.tableView.scrollToRow(at: fivthSectionIndexPath, at: .bottom, animated: false)
+        var fivthCell =  self.tableView.cellForRow(at: fivthSectionIndexPath) as! BrowseSettingsTableViewCell
+        fivthCell.removeImageView()
+        fivthCell.setSelected(false, animated: false)
+        
+        
+        if (BrowseSettingsTableViewController.selectedsortedByIndex != nil)
+        {
+            var fourthSectionIndexPath = IndexPath(row: BrowseSettingsTableViewController.selectedsortedByIndex!, section: 3)
+            self.tableView.scrollToRow(at: fourthSectionIndexPath, at: .bottom, animated: false)
+            let fourthCell =  tableView.cellForRow(at: fourthSectionIndexPath) as! BrowseSettingsTableViewCell
+            fourthCell.removeImageView()
+            fourthCell.setSelected(false, animated: false)
+        }
+        BrowseSettingsTableViewController.selectedPostedWithInIndex = 3
+        BrowseSettingsTableViewController.selectedDistanceIndex = 3
+        BrowseSettingsTableViewController.selectedsortedByIndex = nil
+        BrowseSettingsTableViewController.selectedCategoriesIndexes = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+        viewWillAppear(false)
+        
+    }
+    
+    override func numberOfSections(in tableView: UITableView) -> Int {
+        
+        return 4
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        
+        
     }
     
     override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
@@ -84,7 +195,29 @@ class BrowseSettingsTableViewController: UITableViewController {
         }
     }
     
-    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+    override func tableView(_ tableView: UITableView, willDeselectRowAt indexPath: IndexPath) -> IndexPath? {
+     
+
+        let row = indexPath.row  // this is the row number.
+        let selectedCell =  tableView.cellForRow(at: indexPath) as! BrowseSettingsTableViewCell
+        let section = indexPath.section // this is the section number.
+        
+        if (section == 0)
+        {
+            if (selectedCell.isSelected == true)
+            {
+                selectedCell.removeImageView()
+                BrowseSettingsTableViewController.selectedCategoriesIndexes![row] = 0
+                selectedCell.setSelected(false, animated: true)
+            }
+        }
+        
+        return indexPath
+    }
+    
+    
+    override func tableView(_ tableView: UITableView, willSelectRowAt indexPath: IndexPath) ->
+        IndexPath? {
         
         let section = indexPath.section // this is the section number.
         let row = indexPath.row  // this is the row number.
@@ -92,50 +225,58 @@ class BrowseSettingsTableViewController: UITableViewController {
         
         if (section == 0)
         {
-            
-            let sectionNumber = 0
-            let numberOfRowsInSection = tableView.numberOfRows(inSection: sectionNumber)
-            selectRowsInSection(rowsCount:  numberOfRowsInSection, section: sectionNumber)
-            
+            if (selectedCell.isSelected == false)
+            {
+                selectedCell.addImageView()
+                BrowseSettingsTableViewController.selectedCategoriesIndexes![row] = 1
+                selectedCell.setSelected(true, animated: true)
+            }
         }
         
-
-        else if (section == 1)
+        return indexPath
+        
+    }
+    
+    
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        
+        let section = indexPath.section // this is the section number.
+        let row = indexPath.row  // this is the row number.
+        let selectedCell =  tableView.cellForRow(at: indexPath) as! BrowseSettingsTableViewCell
+    
+         if (section == 1)
         {
             
             let sectionNumber = 1
             let numberOfRowsInSection = tableView.numberOfRows(inSection: sectionNumber)
             unselectRowsInSection(rowsCount: numberOfRowsInSection, section: sectionNumber)
             selectedCell.addImageView()
-            selectedPostedWithInIndex = row
-    
+            BrowseSettingsTableViewController.selectedPostedWithInIndex = row
+            
         }
         
         else if (section == 2)
         {
-            
             let sectionNumber = 2
             let numberOfRowsInSection = tableView.numberOfRows(inSection: sectionNumber)
             unselectRowsInSection(rowsCount: numberOfRowsInSection, section: sectionNumber)
             selectedCell.addImageView()
-            selectedDistanceIndex = row
+            BrowseSettingsTableViewController.selectedDistanceIndex = row
         }
         
-        else
+        else if (section == 3)
         {
 
             let sectionNumber = 3
             let numberOfRowsInSection = tableView.numberOfRows(inSection: sectionNumber)
             unselectRowsInSection(rowsCount: numberOfRowsInSection, section: sectionNumber)
             selectedCell.addImageView()
-            selectedsortedByIndex = row
-            
+            BrowseSettingsTableViewController.selectedsortedByIndex = row
         }
     }
     
     func unselectRowsInSection(rowsCount: Int, section: Int)
     {
-        
         for row in 0 ..< rowsCount
         {
             var indexPath  = NSIndexPath(row: row, section: section)
@@ -147,13 +288,12 @@ class BrowseSettingsTableViewController: UITableViewController {
                 cell?.setSelected(false, animated: true)
                 cell?.removeImageView()
             }
-           
+            
         }
     }
     
     func selectRowsInSection(rowsCount: Int, section: Int)
     {
-        
         for row in 0 ..< rowsCount
         {
             

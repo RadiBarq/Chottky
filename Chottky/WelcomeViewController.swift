@@ -17,6 +17,8 @@ class WelcomeViewController: UIViewController {
     public static var user = User()
     
     
+    
+    
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         

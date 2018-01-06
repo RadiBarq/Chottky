@@ -28,24 +28,106 @@ class ProfileViewController: UIViewController {
     var indicator = UIActivityIndicatorView()
     @IBOutlet weak var backgroundView: UIImageView!
     @IBOutlet weak var settingsButton: UIBarButtonItem!
+    var isThisUserBlocked: Bool?
     
 
     @IBAction func backButtonClicked(_ sender: UIBarButtonItem) {
 
         navigationController?.popViewController(animated: true)
         navigationController?.isNavigationBarHidden = false
-        
     }
-    
-    
     
     @IBAction func onClickSettings(_ sender: Any) {
         
-        let mainStoryboard = UIStoryboard(name: "Main", bundle: nil)
-        let profileSetttingsController = mainStoryboard.instantiateViewController(withIdentifier: "profileSettingsTableViewController") as! ProfileSettingsTableViewController
-        self.navigationController?.pushViewController(profileSetttingsController, animated: true)
+        
+        if (ProfileViewController.userId == userID)
+        {
+            
+            let mainStoryboard = UIStoryboard(name: "Main", bundle: nil)
+            let profileSetttingsController = mainStoryboard.instantiateViewController(withIdentifier: "profileSettingsTableViewController") as! ProfileSettingsTableViewController
+            self.navigationController?.pushViewController(profileSetttingsController, animated: true)
+            
+        }
+            
+        else
+        {
+            let alert = UIAlertController(title: "العملية على هاذا المستخدم", message: "", preferredStyle: .actionSheet)
+            if (self.isThisUserBlocked == false)
+            {
+            
+            alert.addAction(UIAlertAction(title: "حذر المستخدم", style: .default, handler: { (action) in
+               // PostedItemViewController.imageClickedNumber = indexPath.item
+               // let cameraStoryboard = UIStoryboard(name: "Main", bundle: nil)
+              //  let cameraViewController = cameraStoryboard.instantiateViewController(withIdentifier: "cameraView") as! CameraViewController
+              //  self.navigationController?.pushViewController(cameraViewController, animated: true)
+         
+                var blockReference = FIRDatabase.database().reference().child("Users").child(self.userID).child("block").child(ProfileViewController.userId).setValue(ProfileViewController.userDisplayName)
+        
+                var deleteReference = FIRDatabase.database().reference().child("Users").child(self.userID).child("chat").child(ProfileViewController.userId).removeValue()
+                
+                   self.isThisUserBlocked = true
+                
+               }))
+            }
+            
+            else{
+    
+                alert.addAction(UIAlertAction(title: "الغاء حذر المستخدم", style: .default, handler: { (action) in
+                    // PostedItemViewController.imageClickedNumber = indexPath.item
+                    // let cameraStoryboard = UIStoryboard(name: "Main", bundle: nil)
+                    //  let cameraViewController = cameraStoryboard.instantiateViewController(withIdentifier: "cameraView") as! CameraViewController
+                    //  self.navigationController?.pushViewController(cameraViewController, animated: true)
+                    
+                    var blockReference = FIRDatabase.database().reference().child("Users").child(self.userID).child("block").child(ProfileViewController.userId).removeValue()
+                    
+                    self.isThisUserBlocked = false
+ 
+                }))
+            }
+        
+            alert.addAction(UIAlertAction(title: "التبليغ عن المستخدم", style: .default, handler: { (action) in
+                
+                let mainStoryboard = UIStoryboard(name: "Main", bundle: nil)
+                let reportViewController = mainStoryboard.instantiateViewController(withIdentifier: "reportUserViewController") as! ReportUserViewController
+                self.navigationController?.pushViewController(reportViewController, animated: true)
+                
+            }))
+            
+            alert.addAction(UIAlertAction(title: "اغلاق", style: .cancel, handler: { (action) in
+                //execute some code when this option is selected
+                // self.skinType = "Dark Skin"
+                alert.dismiss(animated: true, completion: nil)
+                print("close")
+                
+            }))
+            
+            self.present(alert, animated: true, completion: nil)
+        }
     }
     
+    
+    func checkIfUserBlcoked()
+    {
+        
+       var checkerRef =   FIRDatabase.database().reference().child("Users").child(self.userID).child("block")
+        
+        checkerRef.observeSingleEvent(of: .value, with: {(snapshot) in
+            
+            if(snapshot.hasChild(ProfileViewController.userId))
+            {
+                
+               self.isThisUserBlocked = true
+
+            }
+            
+            else
+            {
+                self.isThisUserBlocked = false
+                
+            }
+            
+        })
+    }
     
     override func viewWillDisappear(_ animated: Bool) {
         
@@ -53,16 +135,17 @@ class ProfileViewController: UIViewController {
         controllerArray = []
         self.navigationController?.isNavigationBarHidden = false
         self.tabBarController?.tabBar.isHidden = false
+    
     }
     
     override func viewWillAppear(_ animated: Bool) {
         
         super.viewWillAppear(animated)
-       
         self.navigationController?.navigationBar.topItem?.title = ""
+        self.navigationController?.navigationBar.backItem?.title = ""
         self.navigationController?.isNavigationBarHidden = true
+        title = ""
         self.tabBarController?.tabBar.isHidden = true
-        
         
         var moveTo: Int = 0
         // title = "الصفحة الشخصية"
@@ -81,6 +164,7 @@ class ProfileViewController: UIViewController {
         controllerArray.append(soldViewController)
         controllerArray.append(sellingViewController)
         
+        checkIfUserBlcoked()
         
         // pageMenu?.view.translatesAutoresizingMaskIntoConstraints = false
         
@@ -96,7 +180,6 @@ class ProfileViewController: UIViewController {
         
         if (ProfileViewController.userId == userID)
         {
-            
             let watchingViewController = collectionsStoryboard.instantiateViewController(withIdentifier: "WatchingViewController")
             watchingViewController.title = "المفضلة"
             
@@ -108,11 +191,9 @@ class ProfileViewController: UIViewController {
             moveTo = 2
         }
             
-            
         else
         {
-            
-            settingsButton.isEnabled = false
+            settingsButton.image = UIImage(named: "ic_more_vert_white_36pt")
             customeNavigationItem.title = ProfileViewController.userDisplayName
             //    profileImageStorageRef = FIRStorage.storage().reference(withPath: "Items_Photos").child(ItemViewController.itemKey)
             profileImageStorageRef = FIRStorage.storage().reference(withPath: "Profile_Pictures").child(ProfileViewController.userId).child("Profile.jpg")
@@ -142,6 +223,7 @@ class ProfileViewController: UIViewController {
             .enableHorizontalBounce(true),
             .unselectedMenuItemLabelColor(UIColor(red:  127/255, green: 127/255, blue: 127/255 , alpha: 1))
         ]
+        
         // thsis pageMenu is a view controller not a view
         pageMenu = CAPSPageMenu(viewControllers: controllerArray, frame: CGRect(x:0.0, y:250.0, width:self.view.frame.width, height:self.view.frame.height - 250), pageMenuOptions: parameters)
         self.view.addSubview(pageMenu!.view)
@@ -154,12 +236,11 @@ class ProfileViewController: UIViewController {
         
         super.viewDidLoad()
         ProfileViewController.profileNavigationController = self.navigationController
-    
     }
     
     override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
         
+        super.viewDidAppear(animated)
         
     }
     

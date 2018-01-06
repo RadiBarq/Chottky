@@ -11,17 +11,20 @@ import Firebase
 import SDWebImage
 import FirebaseStorageUI
 import Lottie
+import GeoFire
 
 class ItemViewController: UIViewController, UICollectionViewDelegateFlowLayout, UICollectionViewDataSource, UIScrollViewDelegate{
     
     public static var itemKey: String!
     var storageRef: FIRStorageReference!
     var databaseRef: FIRDatabaseReference!
+    var locationRef: FIRDatabaseReference!
     @IBOutlet weak var imagesCollectionView: UICollectionView!
     var clickedImageView: UIImageView?
-      var scrollView = UIScrollView()
+    var scrollView = UIScrollView()
     var clickedImage: UIImage?
     var itemValues: NSDictionary?
+    var itemDistance: NSDictionary?
     var favouriteAnimationView = LOTAnimationView(name: "favorite_black")
     @IBOutlet weak var favouriteAnimationSuperView: UIView!
     var loadedImages: [UIImage?] = [nil, nil, nil, nil]
@@ -42,10 +45,10 @@ class ItemViewController: UIViewController, UICollectionViewDelegateFlowLayout, 
     @IBOutlet weak var contactButton: UIButton!
     @IBOutlet weak var priceLabel: UILabel!
     @IBOutlet weak var bottomButton: UIButton!
-    
     var indicator = UIActivityIndicatorView()
-    
     let userID = FIRAuth.auth()!.currentUser!.uid
+    var calculatedDistance = Double()
+    var itemLocation = CLLocation()
     
     override func viewDidLoad() {
         
@@ -53,22 +56,24 @@ class ItemViewController: UIViewController, UICollectionViewDelegateFlowLayout, 
          imagesCollectionView.delegate = self
          imagesCollectionView.dataSource = self
          imagesCollectionView.register(ItemImageCell.self, forCellWithReuseIdentifier: "imageCell")
-     
+        
          self.scrollView.delegate = self
        //  self.navigationController?.navigationBar.isTranslucent = false
          //self.navigationController?.isNavigationBarHidden = true
          // Do any additional setup after loading the view.
         
          databaseRef = FIRDatabase.database().reference().child("items").child(ItemViewController.itemKey)
+         locationRef = FIRDatabase.database().reference().child("items-location")
          favouriteAnimationSuperView.backgroundColor = .clear
          storageRef = FIRStorage.storage().reference(withPath: "Items_Photos").child(ItemViewController.itemKey)
          favouriteRef = FIRDatabase.database().reference().child("Users").child(userID).child("favourites")
          soldItemsRef = FIRDatabase.database().reference().child("Users").child(userID).child("sold_items")
         
-         addFavouriteAnimationView()
+        
          // playFavouriteAnimation()
          getItemInformation()
-         checkIfThisIsFavouriteItem()
+        // getItemDistance()
+       
           // Add the gesture to the photo
          let profilePictureTapGesture = UITapGestureRecognizer(target: self, action: #selector(profilePictureClicked))
          profilePicture.addGestureRecognizer(profilePictureTapGesture)
@@ -78,10 +83,9 @@ class ItemViewController: UIViewController, UICollectionViewDelegateFlowLayout, 
          //UIApplication.shared.isStatusBarHidden = false
         // self.navigationController?.navigationBar.isHidden = false
          //self.navigationController?.isNavigationBarHidden = false
-        
-        initializeIndicatior()
-        indicator.startAnimating()
-        
+         initializeIndicatior()
+         indicator.startAnimating()
+    
     }
     
     func getItemInformation()
@@ -91,11 +95,35 @@ class ItemViewController: UIViewController, UICollectionViewDelegateFlowLayout, 
             (snapsot) in
             
             self.itemValues = snapsot.value as? NSDictionary
-            self.updateItemInformation()
+            self.getItemDistance()
         })
     }
     
-    
+    func getItemDistance()
+    {
+        var geoFire = GeoFire(firebaseRef: locationRef)
+        geoFire?.getLocationForKey(ItemViewController.itemKey, withCallback: {(location, error) in
+        
+            if (location != nil)
+            {
+                self.itemLocation = CLLocation(latitude: (location?.coordinate.latitude)!, longitude: (location?.coordinate.longitude)!)
+                self.updateItemInformation()
+            }
+                
+                
+            else if (error != nil)
+            {
+                print(error?.localizedDescription)
+            }
+            else
+            {
+                print("GeoFire does not conatains the needed locaiton in this scenario")
+            }
+        })
+        
+        
+    }
+
     func initializeIndicatior() {
         
         indicator = UIActivityIndicatorView(frame: CGRect(x: 0, y: 0, width: 40, height: 40))
@@ -105,6 +133,7 @@ class ItemViewController: UIViewController, UICollectionViewDelegateFlowLayout, 
        // indicator.stopAnimating()
         self.view.addSubview(indicator)
     }
+    
     func profilePictureClicked()
     {
         if (ItemViewController.isItOpenedFromProfileView == false)
@@ -116,6 +145,7 @@ class ItemViewController: UIViewController, UICollectionViewDelegateFlowLayout, 
             let profileStoryboard = UIStoryboard(name: "Main", bundle: nil)
             let profileViewController = profileStoryboard.instantiateViewController(withIdentifier: "ProfileViewController") as! ProfileViewController
             self.navigationController?.pushViewController(profileViewController, animated: true)
+            
         }
             
         else
@@ -149,38 +179,103 @@ class ItemViewController: UIViewController, UICollectionViewDelegateFlowLayout, 
     
     func addFavouriteNotification() // Here is a very important point to discuss.
     {
+        
         favouriteNotificationRef = FIRDatabase.database().reference().child("Users").child(itemUserId).child("notifications").child(ItemViewController.itemKey)
         var itemKey = ItemViewController.itemKey
         let timestamp = Int(NSDate().timeIntervalSince1970)
         favouriteNotificationRef.updateChildValues(["userId": userID, "itemId": ItemViewController.itemKey, "new": "true", "timestamp": timestamp, "type" : "favourite", "userName": WelcomeViewController.user.getUserDisplayName()])
+        
     }
     
     @IBAction func contactButtonClicked(_ sender: UIButton) {
         
         if !(self.itemUserId == userID)
         {
-            ChatCollectionViewController.messageFromDisplayName = itemUserDisplayName
-            ChatCollectionViewController.messageToId = itemUserId
-            let flowLayout = UICollectionViewFlowLayout()
-            let chatLogController = ChatCollectionViewController(collectionViewLayout:flowLayout)
-            self.navigationController?.pushViewController(chatLogController, animated: true)
-            //self.navigationController?.pushViewController(chatLogController, animated: true
+   
+            var checkerRef =  FIRDatabase.database().reference().child("Users").child(self.userID).child("block")
+            
+           checkerRef.observeSingleEvent(of: .value, with: {(snapshot) in
+                
+                if(snapshot.hasChild(self.itemUserId))
+                {
+                    let alertEmailController = UIAlertController(title: "لايمكن التواصل مع هاذا المستخدم لانه على قائمة المحذورين", message: "الرجاء الغاء هاذا المستخدم من المحذورين ومن ثم اعد المحاوله", preferredStyle: .alert)
+                    let defaultAction = UIAlertAction(title: "موافق", style: .default, handler: nil)
+                    alertEmailController.addAction(defaultAction)
+                    self.present(alertEmailController, animated: true, completion: nil)
+                }
+
+                else
+                {
+                    
+                    var ref =  FIRDatabase.database().reference().child("Users").child(self.itemUserId).child("block")
+                    ref.observeSingleEvent(of: .value, with: {(snapshot) in
+                        
+                        if (snapshot.hasChild(self.userID))
+                        {
+                        
+                            let alertEmailController = UIAlertController(title: "لا يمكن الوصول لهاذا المستخدم في الوقت الراهن", message: "الرجاء المحاوله لاحقا", preferredStyle: .alert)
+                            let defaultAction = UIAlertAction(title: "موافق", style: .default, handler: nil)
+                            alertEmailController.addAction(defaultAction)
+                            self.present(alertEmailController, animated: true, completion: nil)
+            
+                        }
+                        
+                        else
+                        {
+                            ChatCollectionViewController.messageFromDisplayName = self.itemUserDisplayName
+                            ChatCollectionViewController.messageToId = self.self.itemUserId
+                            let flowLayout = UICollectionViewFlowLayout()
+                            let chatLogController = ChatCollectionViewController(collectionViewLayout:flowLayout)
+                            self.navigationController?.pushViewController(chatLogController, animated: true)
+                        }
+                        
+                    })
+                    
+                  }
+            })
         }
             
         else
         {
-
+            
             FIRDatabase.database().reference().child("items").child(ItemViewController.itemKey).removeValue()
-                FIRDatabase.database().reference().child("Users").child(userID).child("items").child(ItemViewController.itemKey).removeValue()
-                var itemKey = ItemViewController.itemKey!
-                self.soldItemsRef.updateChildValues([itemKey: ""])
-                self.navigationController?.popViewController(animated: true)
+            FIRDatabase.database().reference().child("Users").child(userID).child("items").child(ItemViewController.itemKey).removeValue()
+            var itemKey = ItemViewController.itemKey!
+            self.soldItemsRef.updateChildValues([itemKey: ""])
+            self.navigationController?.popViewController(animated: true)
+            
         }
     }
     
     func updateItemInformation()
     {
         
+          addFavouriteAnimationView()
+        
+          checkIfThisIsFavouriteItem()
+        
+
+          let lat1 = itemLocation.coordinate.latitude
+          let lon1 = itemLocation.coordinate.longitude
+          let lat2 = Double(BrowseCollectionViewController.arrayLocation[0])
+          let lon2 = Double(BrowseCollectionViewController.arrayLocation[1])
+          self.calculatedDistance = self.calculateDistance(lat1: lat1, lon1: lon1, lat2: lat2!, lon2: lon2!, unit: "k")
+        
+ 
+    
+            if (calculatedDistance >= 1)
+            {
+                self.calculatedDistance = Double(round(1000 * self.calculatedDistance)/1000)
+                self.distanceLabel.text = String(self.calculatedDistance) + " كم"
+            }
+        
+            else{
+                
+                self.calculatedDistance = Double(round(10000 * self.calculatedDistance)/10000)
+                var inntDistance = Int(self.calculatedDistance * 1000)
+                self.distanceLabel.text = String(inntDistance) + " متر"
+                
+            }
         
           var title = itemValues?["title"] as! String
           var description = itemValues?["description"] as! String
@@ -191,7 +286,7 @@ class ItemViewController: UIViewController, UICollectionViewDelegateFlowLayout, 
           var imageCount = itemValues?["imagesCount"] as! Int
           var profilePictureRef = FIRStorage.storage().reference(withPath: "Profile_Pictures").child(itemUserId).child("Profile.jpg")
           itemUserDisplayName = itemValues?["displayName"] as! String
-         self.navigationController?.navigationBar.topItem?.title = itemUserDisplayName
+          self.navigationController?.navigationBar.topItem?.title = itemUserDisplayName
           numberOfPhotos = imageCount
         
           profilePicture.sd_setShowActivityIndicatorView(true)
@@ -222,8 +317,8 @@ class ItemViewController: UIViewController, UICollectionViewDelegateFlowLayout, 
             bottomButton.setTitle("تواصل", for: .normal)
         }
         
-          indicator.stopAnimating()
-          imagesCollectionView.reloadData()
+        indicator.stopAnimating()
+        imagesCollectionView.reloadData()
     }
 
     @available(iOS 6.0, *)
@@ -276,6 +371,7 @@ class ItemViewController: UIViewController, UICollectionViewDelegateFlowLayout, 
             self.favouriteRef.updateChildValues([itemKey : ""])
             self.isThisFavouriteItem = true
             self.addFavouriteNotification()
+                
             }
         }
             
@@ -371,7 +467,40 @@ class ItemViewController: UIViewController, UICollectionViewDelegateFlowLayout, 
         self.navigationController?.popViewController(animated: true)
     }
     
-    
+    func calculateDistance(lat1: Double, lon1: Double, lat2: Double, lon2: Double, unit: String) -> Double
+    {
+        
+        var radlat1 = Double.pi * lat1 / 180
+        
+        var radlat2 = Double.pi * lat2 / 180
+        
+        var radlon1 = Double.pi * lon1 / 180
+        var radlon2 = Double.pi * lon2 / 180
+        
+        var theta = lon1 - lon2
+        
+        var radtheta = Double.pi * theta/180
+        
+        var dist = sin(radlat1) * sin(radlat2) + cos(radlat1) * cos(radlat2) * cos(radtheta)
+        
+        dist = acos(dist)
+        
+        dist = dist * 180 / Double.pi
+        
+        dist = dist * 60 * 1.1515
+        
+        if unit == "k"
+        {
+            dist = dist * 1.609344
+        }
+        
+        if unit == "m"
+        {
+            dist = dist * 0.8684
+        }
+        
+        return dist
+    }
     
     func imageTapped(c: ItemImageCell, index: Int) {
         
@@ -419,7 +548,6 @@ class ItemViewController: UIViewController, UICollectionViewDelegateFlowLayout, 
     func viewForZooming(in scrollView: UIScrollView) -> UIView? {
         
             return self.clickedImageView
-        
     }
     
     func dismissFullscreenImage(_ sender: UITapGestureRecognizer) {
@@ -451,11 +579,14 @@ class ItemViewController: UIViewController, UICollectionViewDelegateFlowLayout, 
         setupTheCloseButton()
     }
     
+    
     override func viewDidAppear(_ animated: Bool)
     {
         super.viewDidAppear(false)
        // self.navigationController?.isNavigationBarHidden = false
       //  self.navigationController?.navigationBar.isTranslucent = false
+        
+        
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -470,5 +601,7 @@ class ItemViewController: UIViewController, UICollectionViewDelegateFlowLayout, 
         self.navigationController?.navigationBar.isTranslucent = false
        // self.navigationController?.isNavigationBarHidden = fals
         //self.navigationController?.popViewController(animated: false
+        
     }
+    
 }

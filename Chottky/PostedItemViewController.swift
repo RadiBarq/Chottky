@@ -21,6 +21,12 @@ class PostedItemViewController: UIViewController, UICollectionViewDataSource, UI
     
     var test_images_names: [String] = ["1.jpeg", "2.jpeg", "3.jpeg", "4.jpeg"]
     
+    var categoryItems = ["سيارات", "الكترونيات", "شقق و اراضي", ]
+    
+    @IBOutlet weak var postButton: UIButton!
+    
+    
+    
     static var imageClickedNumber: Int = 0
     static var imageClicked: UIImage?
     var imageLibraryController = UIImagePickerController()
@@ -36,12 +42,10 @@ class PostedItemViewController: UIViewController, UICollectionViewDataSource, UI
     @IBOutlet weak var priceField: UITextField!
     
     let userID = FIRAuth.auth()!.currentUser!.uid
-    
     var locationManager: CLLocationManager = CLLocationManager()
-
     var indicatior = UIActivityIndicatorView()
-    
-    var stringLocation = String()
+    var stringLocation:String = ""
+    static var itemId = String()
     
     
     override func viewDidLoad() {
@@ -82,8 +86,7 @@ class PostedItemViewController: UIViewController, UICollectionViewDataSource, UI
         self.titleField.tag = 0
         imageLibraryController.navigationBar.isTranslucent = false
         imageLibraryController.navigationBar.tintColor = UIColor.white
-        
-        
+    
         self.locationManager.desiredAccuracy = kCLLocationAccuracyBest
         self.locationManager.delegate = self
         self.locationManager.requestWhenInUseAuthorization()
@@ -103,14 +106,27 @@ class PostedItemViewController: UIViewController, UICollectionViewDataSource, UI
         print(stringLocation)
         // print (AddPokemonViewController.stringLocation)
     }
-    
 
     public func locationManager(_ manager: CLLocationManager, didFailWithError error: Error)
     {
-        //Todo if the location is not available
-        //TODO Also with the location concerns
-        print("Error getting the location")
-        
+        if CLLocationManager.locationServicesEnabled() {
+            
+            switch CLLocationManager.authorizationStatus() {
+            case .notDetermined, .restricted, .denied:
+                
+                var alertEmailController = UIAlertController(title: "لم يتمكن جايلك من الحصول على موقعك", message: "لتمكين خدمة الموقع الرجاء الذهاب الى الاعدادات و من ثم Gayelak و من ثم الموقع و من ثم تمكين خدمة الموقع اثناء استخدام التطبيق", preferredStyle: .alert)
+                let defaultAction = UIAlertAction(title: "موافق", style: .default, handler: nil)
+                alertEmailController.addAction(defaultAction)
+                self.present(alertEmailController, animated: true, completion: nil)
+                
+            case .authorizedAlways, .authorizedWhenInUse:
+                print("Access")
+            }
+        }
+            
+        else {
+            
+        }
     }
     
     func textFieldShouldReturn(_ textField: UITextField) -> Bool
@@ -144,12 +160,66 @@ class PostedItemViewController: UIViewController, UICollectionViewDataSource, UI
     }
     
     
+    func sizeOfString (string: String, constrainedToWidth width: Double, font: UIFont) -> CGSize {
+        return (string as NSString).boundingRect(with: CGSize(width: width, height: DBL_MAX),
+                                                 options: NSStringDrawingOptions.usesLineFragmentOrigin,
+                                                         attributes: [NSFontAttributeName: font],
+                                                         context: nil).size
+        
+        
+    }
+    
+    
     func textViewDidBeginEditing(_ textView: UITextView) {
         
-        if textView.textColor == UIColor(red: 203/255, green: 202/255, blue: 203/255, alpha: 1)
+        if (textView.text == "الوصف")
         {
             textView.text = nil
             textView.textColor = UIColor.black
+        }
+    }
+
+    
+    func textViewDidChange(_ textView: UITextView) {
+        
+        if(textView.text.isEmpty)
+        {
+            textView.text = "الوصف"
+            textView.textColor = UIColor(red: 203/255, green: 202/255, blue: 203/255, alpha: 1)
+        }
+        
+            
+        else if (textView.textColor == UIColor(red: 203/255, green: 202/255, blue: 203/255, alpha: 1))
+        {
+            var txt = textView.text
+          //  textView.text = nil
+            
+            if (txt == "الوص")
+            {
+                
+                textView.text = nil
+                textView.textColor = UIColor.black
+                
+            }
+
+            else
+            {
+            
+            if let range = txt?.range(of: "الوصف") {
+                txt?.removeSubrange(range)
+            }
+                
+                
+            textView.text = txt
+            textView.textColor = UIColor.black
+        }
+    }
+        
+        else
+        {
+           
+            textView.textColor = UIColor.black
+            
         }
     }
     
@@ -163,10 +233,14 @@ class PostedItemViewController: UIViewController, UICollectionViewDataSource, UI
     }
     
     func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
-        
-        let newText = (descriptionTextView.text as NSString).replacingCharacters(in: range, with: text)
-        let numberOfChars = newText.characters.count // for Swift use count(newText)
-        return numberOfChars < 600;
+
+            let newText = (textView.text as NSString).replacingCharacters(in: range, with: text)
+            var textWidth = textView.frame.width
+            textWidth -= 2.0 * textView.textContainer.lineFragmentPadding;
+            let boundingRect = sizeOfString(string: newText, constrainedToWidth: Double(textWidth), font: textView.font!)
+            let numberOfLines = boundingRect.height / textView.font!.lineHeight;
+            return numberOfLines <= 6;
+
     }
     
     func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
@@ -260,6 +334,7 @@ class PostedItemViewController: UIViewController, UICollectionViewDataSource, UI
         imageLibraryController.dismiss(animated: true, completion: nil)
     }
     
+    
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         
         var cell = imagesCollectionView.dequeueReusableCell(withReuseIdentifier: cellId, for: indexPath) as! PostedImageCell
@@ -301,8 +376,19 @@ class PostedItemViewController: UIViewController, UICollectionViewDataSource, UI
     
     @IBAction func handlePost(_ sender: UIButton) {
         
-
         var isThereIsPhotos = checkIfThereIsAvailablePhotos()
+        
+        if (stringLocation == "")
+        {
+            var alertEmailController = UIAlertController(title: "لم يتمكن جايلك من الحصول على موقعك", message: "لتمكين خدمة الموقع الرجاء الذهاب الى الاعدادات و من ثم Gayelak و من ثم الموقع و من ثم تمكين خدمة الموقع اثناء استخدام التطبيق", preferredStyle: .alert)
+            let defaultAction = UIAlertAction(title: "موافق", style: .default, handler: nil)
+            alertEmailController.addAction(defaultAction)
+            self.present(alertEmailController, animated: true, completion: nil)
+            
+        }
+            
+        else
+        {
         
         if descriptionTextView.text == "" || titleField.text == "" || priceField.text == "" || isThereIsPhotos == false
         {
@@ -317,7 +403,6 @@ class PostedItemViewController: UIViewController, UICollectionViewDataSource, UI
             indicatior.startAnimating()
             var storageCounter = 1
             var dataBaseCounter = 1
-            
             
             for image in PostedItemViewController.images
             {
@@ -358,6 +443,7 @@ class PostedItemViewController: UIViewController, UICollectionViewDataSource, UI
                             self.present(alertEmailController, animated: true, completion: nil)
                             self.indicatior.stopAnimating()
                             return
+                            
                         }
                         
                         else
@@ -371,16 +457,21 @@ class PostedItemViewController: UIViewController, UICollectionViewDataSource, UI
                                 FIRDatabase.database().reference().child("Users").child(self.userID).child("items").updateChildValues([databaseRef.key :""])
                                 print (metadata)
                                 
-                                
                                 // here the work of the geofire
-                                let geofireRef = FIRDatabase.database().reference().child("Pokemons Location")
-                                let geoFire = GeoFire(firebaseRef: geofireRef)
+                                self.postGeofireInformation(itemId: databaseRef.key)
                                 
+                                //self.backTapped()
                                 
+                                let collectionsStoryboard = UIStoryboard(name: "Main", bundle: nil)
+                                let collectionsViewController = collectionsStoryboard.instantiateViewController(withIdentifier: "CollectionsCollectionViewController") as! CollectionsCollectionViewController
+                                  CollectionsCollectionViewController.presentedFor = "sell"
+                                PostedItemViewController.itemId = databaseRef.key
+                                self.navigationController?.pushViewController(collectionsViewController, animated: true)
+                               self.postButton.isEnabled = false
                                 
                                 self.indicatior.stopAnimating()
-                                self.backTapped()
-                                
+                        
+    
                             }
                         }
                         
@@ -391,7 +482,31 @@ class PostedItemViewController: UIViewController, UICollectionViewDataSource, UI
             }
         }
     }
+    }
     
+    func postGeofireInformation(itemId: String)
+    {
+        
+        let geofireRef = FIRDatabase.database().reference().child("items-location")
+        let geoFire = GeoFire(firebaseRef: geofireRef)
+        var userCoordinates = stringLocation.components(separatedBy: " ")
+        let lat = CLLocationDegrees(userCoordinates[0])!
+        let lon = CLLocationDegrees(userCoordinates[1])!
+        
+        geoFire?.setLocation(CLLocation(latitude: lat, longitude: lon), forKey: itemId)
+        { (error) in
+            
+            if error != nil {
+                
+                print("An error occured: \(error)")
+                
+            } else {
+                
+                print("Saved location successfully!")
+                
+            }
+        }
+    }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
         
@@ -421,10 +536,7 @@ class PostedItemViewController: UIViewController, UICollectionViewDataSource, UI
         // let mainStoryboard = UIStoryboard(name: "Main", bundle: nil)
         //let browseNavigationViewController = mainStoryboard.instantiateViewController(withIdentifier: "BrowseCollectionViewController")
         //self.navigationController?.pushViewController(browseNavigationViewController, animated: true)
-        
-        
-        
-        
+  
     }
     
 }

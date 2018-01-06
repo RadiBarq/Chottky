@@ -14,14 +14,12 @@ import FirebaseStorageUI
 
 class NotificationsTableViewController: UITableViewController{
     
-    
     var itemsStorageRef: FIRStorageReference!
     var profilePicturesStorageRef: FIRStorageReference!
     var notificationsRef: FIRDatabaseReference!
     var indicator = UIActivityIndicatorView()
     var notifications = [NSDictionary?]()
     let userID = FIRAuth.auth()!.currentUser!.uid
-
     
     override func viewDidLoad() {
         
@@ -53,7 +51,6 @@ class NotificationsTableViewController: UITableViewController{
         title = "الاشعارات"
     }
     
-    
     override func viewWillDisappear(_ animated: Bool) {
         
         super.viewWillDisappear(animated)
@@ -61,7 +58,6 @@ class NotificationsTableViewController: UITableViewController{
         title = ""
     }
 
-    
     func makeNotificationsOld()
     {
         for notification in notifications
@@ -75,7 +71,6 @@ class NotificationsTableViewController: UITableViewController{
             }
         }
     }
-    
     
     func fetchNotifications()
     {
@@ -211,7 +206,6 @@ class NotificationsTableViewController: UITableViewController{
         var notification = notifications[indexPath.item] // now the notification seems working
         if ((notification?["type"]) as! String == "favourite")
         {
-            
             var notificationUserId = notification?["userId"] // AnyType
             var notificationUserDisplayName = notification?["userName"] // Here
         
@@ -221,6 +215,7 @@ class NotificationsTableViewController: UITableViewController{
             let profileStoryboard = UIStoryboard(name: "Main", bundle: nil)
             let profileViewController = profileStoryboard.instantiateViewController(withIdentifier: "ProfileViewController") as! ProfileViewController
             self.navigationController?.pushViewController(profileViewController, animated: true)
+            
         }
         
     }

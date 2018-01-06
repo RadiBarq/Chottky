@@ -83,7 +83,7 @@ class LeftMenuTableViewController: UITableViewController{
         
         var backgroundFrame = CGRect(x: 0, y: 0, width: self.view.frame.size.width,height: 150)
         var backgroundImageView: UIImageView = UIImageView(frame: backgroundFrame)
-        let backgroundImage: UIImage = UIImage(named: "main_background")!
+        let backgroundImage: UIImage = #imageLiteral(resourceName: "Triangle Pattern")
         backgroundImageView.image = backgroundImage
         
         let rect = CGRect(x: 0, y: 0, width: tableView.frame.size.width, height: 150)
@@ -196,9 +196,14 @@ class LeftMenuTableViewController: UITableViewController{
             self.navigationController?.popViewController(animated: true)
             dismiss(animated: true, completion: nil)
             // At the end of this, remember to add this.
-            let cameraStoryboard = UIStoryboard(name: "Main", bundle: nil)
-            let cameraViewController = cameraStoryboard.instantiateViewController(withIdentifier: "cameraView") as! CameraViewController
-            BrowseCollectionViewController.browseNavigaionController?.pushViewController(cameraViewController, animated: true)
+        //    let cameraStoryboard = UIStoryboard(name: "Main", bundle: nil)
+         //   let cameraViewController = cameraStoryboard.instantiateViewController(withIdentifier: "cameraView") as! CameraViewController
+            //BrowseCollectionViewController.browseNavigaionController?.pushViewController(cameraViewController, animated: true)
+            
+             let mainStiryboard = UIStoryboard(name: "Main", bundle: nil)
+            let addItemViewController = mainStiryboard.instantiateViewController(withIdentifier: "PostedItemViewController")
+           BrowseCollectionViewController.browseNavigaionController?.pushViewController(addItemViewController, animated: true)
+            
         }
             
         else if (indexPath.item == 1)
@@ -217,7 +222,6 @@ class LeftMenuTableViewController: UITableViewController{
             let profileViewController = profileStoryboard.instantiateViewController(withIdentifier: "ProfileViewController") as! ProfileViewController
             self.navigationController?.pushViewController(profileViewController, animated: true)
             
-
         }
             
 

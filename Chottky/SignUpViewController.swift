@@ -18,22 +18,21 @@ class SignUpViewController: UIViewController, UITextFieldDelegate
     let emailMaxLength = 1000
     let userNameLength = 20
     var differenceChecker: Bool?
-
     @IBOutlet weak var topImageConstraint: NSLayoutConstraint!
     @IBOutlet weak var signInButton: UIButton!
+    
+    
     
     override func viewWillAppear(_ animated: Bool) {
         
         super.viewWillAppear(animated)
         UIApplication.shared.isStatusBarHidden = true
-        
     }
     
     override func viewWillDisappear(_ animated: Bool) {
         
         super.viewWillDisappear(animated)
         UIApplication.shared.isStatusBarHidden = false
-        
     }
     
     override func viewDidLoad() {
@@ -51,7 +50,6 @@ class SignUpViewController: UIViewController, UITextFieldDelegate
      //   UIApplication.shared.statusBarStyle = .lightContent
         NotificationCenter.default.addObserver(self, selector: #selector(self.keyboardWillShow), name: NSNotification.Name.UIKeyboardWillShow, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(self.keyboardWillHide), name: NSNotification.Name.UIKeyboardWillHide, object: nil)
-        
     }
 
     override func didReceiveMemoryWarning() {
@@ -127,7 +125,7 @@ class SignUpViewController: UIViewController, UITextFieldDelegate
                                     self.topImageConstraint.constant = 40
                                     self.view.layoutIfNeeded()
                                     
-                            
+                
        
             },
                 
