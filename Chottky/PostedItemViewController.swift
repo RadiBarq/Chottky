@@ -9,23 +9,20 @@ import UIKit
 import Firebase
 import GeoFire
 import CoreLocation
+import Lottie
+
 
 class PostedItemViewController: UIViewController, UICollectionViewDataSource, UITextViewDelegate, UITextFieldDelegate, UICollectionViewDelegateFlowLayout, UINavigationControllerDelegate, UIImagePickerControllerDelegate, CLLocationManagerDelegate{
-    
     
     var cellId = "cellId"
     static var imagesValid = [false, false, false, false]
     static var images:[UIImage?] = [nil, nil, nil, nil]
     // This is for testing should be removed later on
     var test_images: [UIImage?] = [UIImage(named: "nike_shoes-1"), UIImage(named: "nike_shoes"), UIImage(named: "nike_shoes-2")]
-    
     var test_images_names: [String] = ["1.jpeg", "2.jpeg", "3.jpeg", "4.jpeg"]
-    
     var categoryItems = ["سيارات", "الكترونيات", "شقق و اراضي", ]
-    
+
     @IBOutlet weak var postButton: UIButton!
-    
-    
     
     static var imageClickedNumber: Int = 0
     static var imageClicked: UIImage?
@@ -34,6 +31,10 @@ class PostedItemViewController: UIViewController, UICollectionViewDataSource, UI
     static var isItFirstTimeOnThisView: Bool = true
     //static var backButtonPressed: Bool = false
     // static var firstImage: UIImage?
+    
+    var animationSuperView = UIView()
+    var indicatioAnimation = LOTAnimationView(name: "animation-w500-h500")
+    
     
     @IBOutlet weak var imagesCollectionView: UICollectionView!
     @IBOutlet weak var currencySegemnted: UISegmentedControl!
@@ -48,12 +49,18 @@ class PostedItemViewController: UIViewController, UICollectionViewDataSource, UI
     static var itemId = String()
     
     
+    
     override func viewDidLoad() {
         
         super.viewDidLoad()
         // imagesCollectionView.register(PostedImageCell.self, forCellWithReuseIdentifier: cellId)
         // Here the place where to put the right currency
-        currencySegemnted.setTitle("ILS", forSegmentAt: 0)
+        
+        
+        let locale = Locale.current
+        let currencySymbol = locale.currencySymbol!
+        let currencyCode = locale.currencyCode!
+        currencySegemnted.setTitle(currencyCode, forSegmentAt: 0)
         currencySegemnted.setTitle("$", forSegmentAt: 1)
         titleField.delegate = self
         priceField.delegate = self
@@ -93,6 +100,39 @@ class PostedItemViewController: UIViewController, UICollectionViewDataSource, UI
         self.locationManager.startUpdatingLocation()
     }
     
+    
+    func addAnimationSuperView()
+    {
+        
+        self.view.addSubview(animationSuperView)
+        animationSuperView.layer.masksToBounds = true
+        animationSuperView.translatesAutoresizingMaskIntoConstraints = false
+        animationSuperView.widthAnchor.constraint(equalToConstant: 75).isActive = true
+        animationSuperView.heightAnchor.constraint(equalToConstant: 75).isActive = true
+        animationSuperView.centerXAnchor.constraint(equalTo: self.view.centerXAnchor).isActive = true
+        animationSuperView.centerYAnchor.constraint(equalTo: self.view.centerYAnchor).isActive = true
+        animationSuperView.layer.cornerRadius = 5
+        animationSuperView.backgroundColor = Constants.FirstColor.withAlphaComponent(0.85)
+        
+        
+        animationSuperView.addSubview(indicatioAnimation!)
+        indicatioAnimation?.translatesAutoresizingMaskIntoConstraints = false
+        indicatioAnimation?.widthAnchor.constraint(equalToConstant: 100).isActive = true
+        indicatioAnimation?.heightAnchor.constraint(equalToConstant: 100).isActive = true
+        indicatioAnimation?.centerYAnchor.constraint(equalTo: animationSuperView.centerYAnchor).isActive = true
+        indicatioAnimation?.centerXAnchor.constraint(equalTo: animationSuperView.centerXAnchor).isActive = true
+        indicatioAnimation?.animationProgress = 0.0
+        indicatioAnimation?.loopAnimation = true
+        indicatioAnimation?.play()
+        
+      
+        
+    }
+    
+
+    
+    
+  
     func doneClicked()
     {
         view.endEditing(true)
@@ -335,6 +375,8 @@ class PostedItemViewController: UIViewController, UICollectionViewDataSource, UI
     }
     
     
+    
+    
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         
         var cell = imagesCollectionView.dequeueReusableCell(withReuseIdentifier: cellId, for: indexPath) as! PostedImageCell
@@ -390,7 +432,7 @@ class PostedItemViewController: UIViewController, UICollectionViewDataSource, UI
         else
         {
         
-        if descriptionTextView.text == "" || titleField.text == "" || priceField.text == "" || isThereIsPhotos == false
+        if descriptionTextView.text == "" || titleField.text == "" || isThereIsPhotos == false
         {
             let alertEmailController = UIAlertController(title: "المعلومات المدخلة غير مكتملة", message: "الرجاء اعد المحاولة", preferredStyle: .alert)
             let defaultAction = UIAlertAction(title: "موافق", style: .default, handler: nil)
@@ -400,7 +442,7 @@ class PostedItemViewController: UIViewController, UICollectionViewDataSource, UI
         
         else
         {
-            indicatior.startAnimating()
+            self.addAnimationSuperView()
             var storageCounter = 1
             var dataBaseCounter = 1
             
@@ -408,7 +450,6 @@ class PostedItemViewController: UIViewController, UICollectionViewDataSource, UI
             {
                 if (image != nil)
                 {
-                    
                     dataBaseCounter = dataBaseCounter + 1
                     
                 }
@@ -434,6 +475,7 @@ class PostedItemViewController: UIViewController, UICollectionViewDataSource, UI
                         
                         if error != nil
                         {
+                            
                             // Here ther is an error
                             print (error?.localizedDescription)
                             let alertEmailController = UIAlertController(title: "حدث خطأ ما", message: "الرجاء اعد المحاولة لاحقا", preferredStyle: .alert)
@@ -453,7 +495,8 @@ class PostedItemViewController: UIViewController, UICollectionViewDataSource, UI
                             {
                                 let timestamp = Int(NSDate().timeIntervalSince1970)
                                 databaseRef.updateChildValues(["title": self.titleField.text, "description":self.descriptionTextView.text, "price": self.priceField.text, "currency": self.currencySegemnted.titleForSegment(at: self.currencySegemnted.selectedSegmentIndex) , "userId":
-                                    self.userID,"imagesCount": dataBaseCounter - 1,  "timestamp": timestamp, "displayName": WelcomeViewController.user.getUserDisplayName()])
+                                    self.userID,"imagesCount": dataBaseCounter - 1,  "timestamp": timestamp, "displayName": WelcomeViewController.user.getUserDisplayName(),
+                                                "favourites": 0])
                                 FIRDatabase.database().reference().child("Users").child(self.userID).child("items").updateChildValues([databaseRef.key :""])
                                 print (metadata)
                                 
@@ -467,11 +510,9 @@ class PostedItemViewController: UIViewController, UICollectionViewDataSource, UI
                                   CollectionsCollectionViewController.presentedFor = "sell"
                                 PostedItemViewController.itemId = databaseRef.key
                                 self.navigationController?.pushViewController(collectionsViewController, animated: true)
-                               self.postButton.isEnabled = false
-                                
+                                self.postButton.isEnabled = false
                                 self.indicatior.stopAnimating()
-                        
-    
+                                self.animationSuperView.removeFromSuperview()
                             }
                         }
                         
@@ -499,6 +540,7 @@ class PostedItemViewController: UIViewController, UICollectionViewDataSource, UI
             if error != nil {
                 
                 print("An error occured: \(error)")
+                
                 
             } else {
                 

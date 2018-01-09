@@ -13,7 +13,7 @@ import SDWebImage
 import FirebaseStorageUI
 import GeoFire
 import Foundation
-
+import Lottie
 
 private let reuseIdentifier = "itemCell"
 
@@ -52,9 +52,17 @@ class BrowseCollectionViewController: UICollectionViewController, UICollectionVi
     var finalArray =  [String]()
     var maximumRadius = Int()
     static var arrayLocation = [String]()
+    var currentItemsCount = 0
+    var favouritesDictionary: [String: Int] = [:]
+    var uncommonArray = [String]()
+    
+    var animationSuperView = UIView()
+    var indicatioAnimation = LOTAnimationView(name: "animation-w500-h500")
+    
     override func viewWillAppear(_ animated: Bool) {
         
         super.viewWillAppear(animated)
+        
         //   UIApplication.shared.setStatusBarHidden(false, with: .none)
         self.navigationController?.isNavigationBarHidden = false
         UIApplication.shared.isStatusBarHidden = false
@@ -70,9 +78,13 @@ class BrowseCollectionViewController: UICollectionViewController, UICollectionVi
         
         if (BrowseCollectionViewController.queryChanged == true)
         {
-            itemKeys = []
+            self.noItemAvailableLabel.removeFromSuperview()
             self.locationDisabledLabel.removeFromSuperview()
             self.locationDisabledButton.removeFromSuperview()
+                initializeItems()
+            
+            addAnimationSuperView()
+         
             
             if (BrowseSettingsTableViewController.selectedDistanceIndex == 0)
             {
@@ -93,19 +105,17 @@ class BrowseCollectionViewController: UICollectionViewController, UICollectionVi
             
             else if (BrowseSettingsTableViewController.selectedDistanceIndex == 3)
             {
-                maximumRadius = 100
-                
+                maximumRadius = 50
             }
             
             getItems()
-            BrowseCollectionViewController.queryChanged = false
             
         }
     }
     
     override func viewDidLoad() {
-        super.viewDidLoad()
         
+        super.viewDidLoad()
         
         // Uncomment the following line to preserve selection between presentations
         // self.clearsSelectionOnViewWillAppear = false
@@ -118,7 +128,8 @@ class BrowseCollectionViewController: UICollectionViewController, UICollectionVi
         statusBar.backgroundColor = UIColor.rgb(red: 41, green: 121, blue: 255)
         //statusBar.tintColor = UIColor.white
         
-         radius = 10
+        radius = 5
+        maximumRadius = 50
         
         let menuLeftNavigationController = UISideMenuNavigationController(rootViewController: LeftMenuTableViewController())
         menuLeftNavigationController.leftSide = true
@@ -146,16 +157,48 @@ class BrowseCollectionViewController: UICollectionViewController, UICollectionVi
         
         setupNavigationBarItems()
         
-        _ = Timer.scheduledTimer(withTimeInterval: 30, repeats: true) { (
+        _ = Timer.scheduledTimer(withTimeInterval: 30000000000, repeats: true) { (
             time) in
             self.locationManager.desiredAccuracy = kCLLocationAccuracyBest
             self.weGotFirstLocation = false
             self.locationManager.delegate = self
+            
             self.locationManager.requestWhenInUseAuthorization()
             self.locationManager.startUpdatingLocation()
         }
+    
+        addAnimationSuperView()
+    }
+    
+    func addAnimationSuperView()
+    {
+        
+        self.view.addSubview(animationSuperView)
+        animationSuperView.layer.masksToBounds = true
+        animationSuperView.translatesAutoresizingMaskIntoConstraints = false
+        animationSuperView.widthAnchor.constraint(equalToConstant: 75).isActive = true
+        animationSuperView.heightAnchor.constraint(equalToConstant: 75).isActive = true
+        animationSuperView.centerXAnchor.constraint(equalTo: self.view.centerXAnchor).isActive = true
+        animationSuperView.centerYAnchor.constraint(equalTo: self.view.centerYAnchor).isActive = true
+        animationSuperView.layer.cornerRadius = 5
+        animationSuperView.backgroundColor = Constants.FirstColor.withAlphaComponent(0.85)
+        
+        
+        animationSuperView.addSubview(indicatioAnimation!)
+        indicatioAnimation?.translatesAutoresizingMaskIntoConstraints = false
+        indicatioAnimation?.widthAnchor.constraint(equalToConstant: 100).isActive = true
+        indicatioAnimation?.heightAnchor.constraint(equalToConstant: 100).isActive = true
+        indicatioAnimation?.centerYAnchor.constraint(equalTo: animationSuperView.centerYAnchor).isActive = true
+        indicatioAnimation?.centerXAnchor.constraint(equalTo: animationSuperView.centerXAnchor).isActive = true
+        indicatioAnimation?.animationProgress = 0.0
+        indicatioAnimation?.loopAnimation = true
+        indicatioAnimation?.play()
+        
+        self.collectionView?.isUserInteractionEnabled = false
         
     }
+    
+
     
     func setupNavigationBarItems()
     {
@@ -184,8 +227,8 @@ class BrowseCollectionViewController: UICollectionViewController, UICollectionVi
         let cameraStoryboard = UIStoryboard(name: "Main", bundle: nil)
         let cameraViewController = cameraStoryboard.instantiateViewController(withIdentifier: "cameraView") as! CameraViewController
         self.navigationController?.pushViewController(cameraViewController, animated: true)
-        
     }
+    
     
     func initializeNoItemAvailable()
     {
@@ -201,14 +244,30 @@ class BrowseCollectionViewController: UICollectionViewController, UICollectionVi
         noItemAvailableLabel.text = "لم نتمكن من ايجاد اي نتائج بالقرب منك، حاول البحث عن شئ اخر او حاول في وقت لاحق!"
         noItemAvailableLabel.textAlignment = .center
     }
+
+    
+    override func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
+        
+            if indexPath.row + 1 == finalArray.count {
+                
+                if (radius <= maximumRadius)
+                {
+                    self.radius = self.radius + 10
+                    addAnimationSuperView()
+                    itemKeys = []
+                    self.getItems()
+                }
+            }
+        }
     
     func fetchGeofireDataToDictionary()
     {
         itemsDictionary = [:] // this is how to make the dictionary empty in this case
-        for i in 0..<itemKeys.count
+        favouritesDictionary = [:]
+        for i in 0..<uncommonArray.count
         {
             var oneItem = Item()
-            var valueRef = FIRDatabase.database().reference().child("items").child(itemKeys[i]).observeSingleEvent(of: .value, with: {(snapshot)
+            var valueRef = FIRDatabase.database().reference().child("items").child(uncommonArray[i]).observeSingleEvent(of: .value, with: {(snapshot)
                 in
                 for item in snapshot.children
                 {
@@ -221,61 +280,58 @@ class BrowseCollectionViewController: UICollectionViewController, UICollectionVi
                         
                         if (childValue == "category-car")
                         {
-                            self.carCategoryArray.append(self.itemKeys[i])
+                            self.carCategoryArray.append(self.uncommonArray[i])
                         }
                             
                         else if (childValue == "phone-category")
                         {
-                            self.phoneCategoryArray.append(self.itemKeys[i])
+                            self.phoneCategoryArray.append(self.uncommonArray[i])
                         }
                             
                             
                         else if (childValue == "category-aparment")
                         {
-                            self.apartmentCategoryArray.append(self.itemKeys[i])
+                            self.apartmentCategoryArray.append(self.uncommonArray[i])
                             
                         }
                             
                         else if (childValue == "category-home")
                         {
-                            self.homeCategoryArray.append(self.itemKeys[i])
+                            self.homeCategoryArray.append(self.uncommonArray[i])
                         }
                             
                         else if (childValue == "category-dog")
                         {
-                            
-                            self.dogCategoryArray.append(self.itemKeys[i])
-                            
+                            self.dogCategoryArray.append(self.uncommonArray[i])
                         }
                             
                         else if (childValue == "category-sport")
                         {
-                            self.sportCategoryArray.append(self.itemKeys[i])
+                            self.sportCategoryArray.append(self.uncommonArray[i])
                         }
                             
                         else if (childValue == "category-clothes")
                         {
-                            
-                            self.clothesCategoryArray.append(self.itemKeys[i])
-                            
+                            self.clothesCategoryArray.append(self.uncommonArray[i])
                         }
                             
                         else if (childValue == "category-kids")
                         {
-                            self.kidsCategoryArray.append(self.itemKeys[i])
                             
+                            self.kidsCategoryArray.append(self.uncommonArray[i])
+    
                         }
                             
                         else if (childValue == "category-books")
                         {
                             
-                            self.booksCategoryArray.append(self.itemKeys[i])
-                            
+                            self.booksCategoryArray.append(self.uncommonArray[i])
+
                         }
                             
                         else if (childValue == "category-others")
                         {
-                            self.otherCategoryArray.append(self.itemKeys[i])
+                            self.otherCategoryArray.append(self.uncommonArray[i])
                             
                         }
                             
@@ -334,18 +390,30 @@ class BrowseCollectionViewController: UICollectionViewController, UICollectionVi
                         oneItem.userId = childValue as! String
                     }
                         
+                    else if (childKey == "favourites")
+                    {
+                        
+                        var numberOfFavourites = Int(childValue)
+                        self.favouritesDictionary[self.uncommonArray[i]] = numberOfFavourites
+                        oneItem.itemPrice = childValue as! String
+                        
+                    }
+                        
                     else
                     {
                         print("On of the keys is wrong in this case my lord.")
                     }
-            
-                    self.itemsDictionary[self.itemKeys[i]] = oneItem
+                    
+                    self.itemsDictionary[self.uncommonArray[i]] = oneItem
                 }
                 
-                if (i == self.itemKeys.count - 1)
+                if (i == self.uncommonArray.count - 1)
                 {
+
+                    // so here sorting the uncommonArray according to favourites here
+                   // var keys = Array(self.favouritesDictionary.keys)
+            
                     self.categoryQuery()
-                    self.collectionView?.reloadData()
                 }
             })
         }
@@ -379,12 +447,30 @@ class BrowseCollectionViewController: UICollectionViewController, UICollectionVi
 
     func setupLefMenuProfileImage()
     {
+        
         var imageStorageRef: FIRStorageReference = FIRStorage.storage().reference(withPath: "Profile_Pictures")
         imageStorageRef = imageStorageRef.child(userID + "/" + "Profile.jpg")
         LeftMenuTableViewController.profileImageView.sd_setImage(with: imageStorageRef)
         
     }
     
+    func initializeItems()
+    {
+         itemKeys = []
+         finalArray = []
+         radius = 5
+         currentItemsCount = 0
+         carCategoryArray = []
+         phoneCategoryArray = []
+         apartmentCategoryArray = []
+         homeCategoryArray = []
+         dogCategoryArray = []
+         sportCategoryArray = []
+         clothesCategoryArray = []
+         kidsCategoryArray = []
+         booksCategoryArray = []
+         otherCategoryArray = []
+    }
     
     override func numberOfSections(in collectionView: UICollectionView) -> Int {
         // #warning Incomplete implementation, return the number of sections
@@ -418,12 +504,7 @@ class BrowseCollectionViewController: UICollectionViewController, UICollectionVi
         
         //cell.itemImageView.sd_showActivityIndicatorView()
         //cell.itemImageView.sd_setIndicatorStyle(.gray)
-        
-        if (indexPath.row == finalArray.count - 1)
-        {
-            self.indicator.stopAnimating()
-            self.indicator.hidesWhenStopped = true
-        }
+       
         
         return cell
     }
@@ -467,6 +548,7 @@ class BrowseCollectionViewController: UICollectionViewController, UICollectionVi
             getItems()
         }
     }
+
     
     public func locationManager(_ manager: CLLocationManager, didFailWithError error: Error)
     {
@@ -484,8 +566,7 @@ class BrowseCollectionViewController: UICollectionViewController, UICollectionVi
                 print("Access")
             }
         }
-            
-            
+        
         else {
             
         }
@@ -530,7 +611,7 @@ class BrowseCollectionViewController: UICollectionViewController, UICollectionVi
     func getItems()
     {
         // we should make sure that the location is available here.
-        indicator.startAnimating()
+
         BrowseCollectionViewController.arrayLocation = stringLocation.components(separatedBy: " ")
         let geoFire = GeoFire(firebaseRef: geofireRef)
         let lat = Double(BrowseCollectionViewController.arrayLocation[0])
@@ -538,34 +619,51 @@ class BrowseCollectionViewController: UICollectionViewController, UICollectionVi
         var queryHandle = geoFire?.query(at: CLLocation(latitude: lat!, longitude: lon!), withRadius: Double(radius))
         
         queryHandle?.observe(.keyEntered) { (key, location) in
+            
             self.itemKeys.append(key!)
+            
         }
     
         queryHandle?.observeReady({
             
-            if (self.itemKeys.count == 0)
+           if (self.itemKeys.count == 0 && self.radius > self.maximumRadius)
             {
-                self.indicator.stopAnimating()
-                self.initializeNoItemAvailable()
+               self.animationSuperView.removeFromSuperview()
+               self.collectionView?.isUserInteractionEnabled = true
+               self.initializeNoItemAvailable()
+                
             }
                 
-            else if (self.itemKeys.count < 6 && self.radius <= self.maximumRadius )
-            {
-                
-                self.radius = self.radius + 5
+           else if (self.itemKeys.count - self.currentItemsCount < 12 && self.radius <= self.maximumRadius) //&& self.radius <= self.maximumRadius
+           {
+               self.radius = self.radius + 10
+               self.itemKeys = []
+               self.getItems()
             }
                 
             else
             {
-                // this is when the items are ready in this scenario
-                self.finalArray = self.itemKeys
+                self.carCategoryArray = []
+                self.phoneCategoryArray = []
+                self.apartmentCategoryArray = []
+                self.homeCategoryArray = []
+                self.dogCategoryArray = []
+                self.sportCategoryArray = []
+                self.clothesCategoryArray = []
+                self.kidsCategoryArray = []
+                self.booksCategoryArray = []
+                self.otherCategoryArray = []
+                
+                 self.uncommonArray = self.itemKeys.filter{ item in !self.finalArray.contains(item)}
+             //   self.itemKeys = self.currentKeys
+             //   self.finalArray = self.itemKeys
+          
                 self.fetchGeofireDataToDictionary()
                 queryHandle?.removeAllObservers()
-                
-            }
+        
+          }
         })
     }
-
     
     func categoryQuery()
     {
@@ -583,89 +681,178 @@ class BrowseCollectionViewController: UICollectionViewController, UICollectionVi
         var booksSet: Set<String> = Set(booksCategoryArray)
         var othersSet: Set<String> = Set(otherCategoryArray)
         var finalSet: Set<String> = Set()
+        var tempArray = [String]()
+        var checkIfAtLeastOneChecked = false
+        var categoryFavouritesDic: [String: Int] = [:]
         
         if (BrowseSettingsTableViewController.selectedCategoriesIndexes![0] == 1)
         {
             //cars
            // carsSet = carsSet.intersection(givenSet)
-            finalSet = finalSet.union(carsSet)
+            tempArray.mergeElements(newElements:  carCategoryArray)
+            checkIfAtLeastOneChecked = true
+            
         }
         
         if (BrowseSettingsTableViewController.selectedCategoriesIndexes![1] == 1)
         {
             //electronics
             //phonesSet =  phonesSet.intersection(givenSet)
-            finalSet =  finalSet.union(phonesSet)
+           tempArray.mergeElements(newElements: phoneCategoryArray)
+            checkIfAtLeastOneChecked = true
         }
         
         if (BrowseSettingsTableViewController.selectedCategoriesIndexes![2] == 1)
         {
             // lands and aparatments
           //  apartmentSet =  apartmentSet.intersection(givenSet)
-            finalSet = finalSet.union(apartmentSet)
+              tempArray.mergeElements(newElements: apartmentCategoryArray)
+            checkIfAtLeastOneChecked = true
         }
         
         if (BrowseSettingsTableViewController.selectedCategoriesIndexes![3] == 1)
         {
             // home and garden
            // homeSet = homeSet.intersection(givenSet)
-            finalSet = finalSet.union(homeSet)
+              tempArray.mergeElements(newElements: homeCategoryArray)
+            checkIfAtLeastOneChecked = true
         }
         
         if (BrowseSettingsTableViewController.selectedCategoriesIndexes![4] == 1)
         {
             // animals
             //dogSet = dogSet.intersection(givenSet)
-            finalSet = finalSet.union(dogSet)
+             tempArray.mergeElements(newElements: dogCategoryArray)
+             checkIfAtLeastOneChecked = true
         }
         
         if (BrowseSettingsTableViewController.selectedCategoriesIndexes![5] == 1)
         {
             //sports and games
            // sportSet = sportSet.intersection(givenSet)
-            finalSet = finalSet.union(sportSet)
+              tempArray.mergeElements(newElements: sportCategoryArray)
+             checkIfAtLeastOneChecked = true
         }
         
         if (BrowseSettingsTableViewController.selectedCategoriesIndexes![6] == 1)
         {
             // clothes and accessories
            // clothesSet = clothesSet.intersection(givenSet)
-            finalSet = finalSet.union(clothesSet)
+              tempArray.mergeElements(newElements: clothesCategoryArray)
+             checkIfAtLeastOneChecked = true
         }
+        
         
         if (BrowseSettingsTableViewController.selectedCategoriesIndexes![7] == 1)
         {
             //kids
             //kidsSet = kidsSet.intersection(givenSet)
-            finalSet = finalSet.union(kidsSet)
-            
+              tempArray.mergeElements(newElements: kidsCategoryArray)
+             checkIfAtLeastOneChecked = true
         }
         
         if (BrowseSettingsTableViewController.selectedCategoriesIndexes![8] == 1)
         {
             // books and movies
             //booksSet = booksSet.intersection(givenSet)
-            finalSet = finalSet.union(booksSet)
+              tempArray.mergeElements(newElements: booksCategoryArray)
+             checkIfAtLeastOneChecked = true
         }
         
         if (BrowseSettingsTableViewController.selectedCategoriesIndexes![9] == 1)
         {
             // others
            // othersSet = othersSet.intersection(givenSet)
-            finalSet = finalSet.union(othersSet)
+              tempArray.mergeElements(newElements: otherCategoryArray)
+             checkIfAtLeastOneChecked = true
         }
         
-        if (finalSet.isEmpty == true)
+        if (tempArray.count != 0)
         {
-            finalArray = Array(givenSet)
+            for item in tempArray
+            {
+                categoryFavouritesDic[item] = self.favouritesDictionary[item]
+                
+            }
+            
+            self.uncommonArray = tempArray
+            self.uncommonArray.sort{ (o1, o2) -> Bool in
+                return categoryFavouritesDic[o1]! as! Int > categoryFavouritesDic[o2]! as! Int
+            }
+            
+          
+            self.finalArray = self.finalArray + self.uncommonArray
+            self.currentItemsCount = self.finalArray.count
         }
             
         else
         {
-            finalArray = Array(finalSet)
+    
+            if (checkIfAtLeastOneChecked == true)
+            {
+                
+                if (radius>maximumRadius && finalArray.count == 0)
+                {
+                    self.finalArray = tempArray
+                    initializeNoItemAvailable()
+                     self.animationSuperView.removeFromSuperview()
+                    self.collectionView?.reloadData()
+                    self.collectionView?.isUserInteractionEnabled = true
+                    BrowseCollectionViewController.queryChanged = false
+                    self.currentItemsCount = 0
+                    return
+                }
+                    
+                else
+                {
+                    self.currentItemsCount = finalArray.count
+                    
+                }
+            }
+            
+            else
+            {
+                self.uncommonArray.sort{ (o1, o2) -> Bool in
+                        return self.favouritesDictionary[o1]! as! Int > self.favouritesDictionary[o2]! as! Int
+                    }
+            
+                self.finalArray = self.finalArray + self.uncommonArray
+                self.currentItemsCount = self.finalArray.count
+                
+            }
+            
+        }
+            
+    
+       if (finalArray.count < 12 && radius<=maximumRadius)
+        {
+                self.radius = self.radius + 10
+                itemKeys = []
+                self.getItems()
+        }
+    
+        else
+        {
+            
+            self.collectionView?.reloadData()
+           
+            if (BrowseCollectionViewController.queryChanged == true)
+            {
+                
+                self.collectionView?.scrollToItem(at: IndexPath(row: 0, section: 0),
+                                                  at: .top,
+                                                  animated: true)
+                BrowseCollectionViewController.queryChanged = false
+                
+                
+            }
+            
+             self.animationSuperView.removeFromSuperview()
+            self.collectionView?.isUserInteractionEnabled = true
+            
         }
     }
-    
+
     override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         
         //self.navigationController?.navigationBar.isTranslucent = false
@@ -739,3 +926,5 @@ class BrowseCollectionViewController: UICollectionViewController, UICollectionVi
         return 8
     }
 }
+
+

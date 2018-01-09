@@ -13,6 +13,7 @@ import FirebaseStorageUI
 import Lottie
 import GeoFire
 
+
 class ItemViewController: UIViewController, UICollectionViewDelegateFlowLayout, UICollectionViewDataSource, UIScrollViewDelegate{
     
     public static var itemKey: String!
@@ -69,7 +70,6 @@ class ItemViewController: UIViewController, UICollectionViewDelegateFlowLayout, 
          favouriteRef = FIRDatabase.database().reference().child("Users").child(userID).child("favourites")
          soldItemsRef = FIRDatabase.database().reference().child("Users").child(userID).child("sold_items")
         
-        
          // playFavouriteAnimation()
          getItemInformation()
         // getItemDistance()
@@ -85,7 +85,7 @@ class ItemViewController: UIViewController, UICollectionViewDelegateFlowLayout, 
          //self.navigationController?.isNavigationBarHidden = false
          initializeIndicatior()
          indicator.startAnimating()
-    
+        
     }
     
     func getItemInformation()
@@ -179,19 +179,16 @@ class ItemViewController: UIViewController, UICollectionViewDelegateFlowLayout, 
     
     func addFavouriteNotification() // Here is a very important point to discuss.
     {
-        
         favouriteNotificationRef = FIRDatabase.database().reference().child("Users").child(itemUserId).child("notifications").child(ItemViewController.itemKey)
         var itemKey = ItemViewController.itemKey
         let timestamp = Int(NSDate().timeIntervalSince1970)
         favouriteNotificationRef.updateChildValues(["userId": userID, "itemId": ItemViewController.itemKey, "new": "true", "timestamp": timestamp, "type" : "favourite", "userName": WelcomeViewController.user.getUserDisplayName()])
-        
     }
     
     @IBAction func contactButtonClicked(_ sender: UIButton) {
         
         if !(self.itemUserId == userID)
         {
-   
             var checkerRef =  FIRDatabase.database().reference().child("Users").child(self.userID).child("block")
             
            checkerRef.observeSingleEvent(of: .value, with: {(snapshot) in
@@ -237,31 +234,24 @@ class ItemViewController: UIViewController, UICollectionViewDelegateFlowLayout, 
             
         else
         {
-            
-            FIRDatabase.database().reference().child("items").child(ItemViewController.itemKey).removeValue()
-            FIRDatabase.database().reference().child("Users").child(userID).child("items").child(ItemViewController.itemKey).removeValue()
+        FIRDatabase.database().reference().child("items").child(ItemViewController.itemKey).removeValue()
+        FIRDatabase.database().reference().child("Users").child(userID).child("items").child(ItemViewController.itemKey).removeValue()
             var itemKey = ItemViewController.itemKey!
             self.soldItemsRef.updateChildValues([itemKey: ""])
             self.navigationController?.popViewController(animated: true)
-            
         }
     }
     
     func updateItemInformation()
     {
-        
           addFavouriteAnimationView()
-        
           checkIfThisIsFavouriteItem()
-        
 
           let lat1 = itemLocation.coordinate.latitude
           let lon1 = itemLocation.coordinate.longitude
           let lat2 = Double(BrowseCollectionViewController.arrayLocation[0])
           let lon2 = Double(BrowseCollectionViewController.arrayLocation[1])
           self.calculatedDistance = self.calculateDistance(lat1: lat1, lon1: lon1, lat2: lat2!, lon2: lon2!, unit: "k")
-        
- 
     
             if (calculatedDistance >= 1)
             {
@@ -285,6 +275,8 @@ class ItemViewController: UIViewController, UICollectionViewDelegateFlowLayout, 
           var timetamp = itemValues?["timestamp"] as! Float
           var imageCount = itemValues?["imagesCount"] as! Int
           var profilePictureRef = FIRStorage.storage().reference(withPath: "Profile_Pictures").child(itemUserId).child("Profile.jpg")
+          var favouritesNumber = itemValues?["favourites"] as! Int
+          print(favouritesNumber)
           itemUserDisplayName = itemValues?["displayName"] as! String
           self.navigationController?.navigationBar.topItem?.title = itemUserDisplayName
           numberOfPhotos = imageCount
@@ -293,7 +285,7 @@ class ItemViewController: UIViewController, UICollectionViewDelegateFlowLayout, 
           profilePicture.sd_setIndicatorStyle(.gray)
           profilePicture.sd_addActivityIndicator()
           profilePicture.sd_setImage(with: profilePictureRef,  placeholderImage: nil, completion:
-       
+            
             {  (image, error, cache, ref) in
                 
                 self.profilePicture.sd_removeActivityIndicator()
@@ -303,7 +295,16 @@ class ItemViewController: UIViewController, UICollectionViewDelegateFlowLayout, 
           //profilePicture.sd_setIndicatorStyle(.gray)
           titleLabel.text = title
           descriptionLabel.text = description
-          priceLabel.text = currency + " " + price
+        
+            if (price == "السعر (غير محدد)")
+            {
+                    priceLabel.text = "السعر قابل للتفاوض"
+            }
+        
+           else
+            {
+                priceLabel.text = currency + " " + price
+            }
         
         //Here check if this item for the same user
         if (itemUserId == userID)
@@ -320,7 +321,8 @@ class ItemViewController: UIViewController, UICollectionViewDelegateFlowLayout, 
         indicator.stopAnimating()
         imagesCollectionView.reloadData()
     }
-
+    
+    
     @available(iOS 6.0, *)
     public func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         
@@ -356,10 +358,13 @@ class ItemViewController: UIViewController, UICollectionViewDelegateFlowLayout, 
         favouriteAnimationView?.translatesAutoresizingMaskIntoConstraints = false
     }
     
+    
     func playFavouriteAnimation(_sender: UITapGestureRecognizer){
+        
         
         if (isThisFavouriteItem == false)
         {
+            
             favouriteAnimationView?.animationProgress  = 0.4
             //favouriteAnimationView?.animationSpeed = 2
             favouriteAnimationView?.loopAnimation = false
@@ -369,6 +374,18 @@ class ItemViewController: UIViewController, UICollectionViewDelegateFlowLayout, 
             self.favouriteAnimationView?.animationProgress  = 0.9
             var itemKey = ItemViewController.itemKey!
             self.favouriteRef.updateChildValues([itemKey : ""])
+                
+            // here to increase the favourites number
+        FIRDatabase.database().reference().child("items").child(ItemViewController.itemKey).child("favourites").observeSingleEvent(of: .value, with: { (snapshot) in
+            
+            var favouritesNumber = ((snapshot as! FIRDataSnapshot).value) as! Int
+            
+                favouritesNumber = favouritesNumber + 1
+            FIRDatabase.database().reference().child("items").child(ItemViewController.itemKey).child("favourites").setValue(favouritesNumber)
+            
+            
+            })
+                
             self.isThisFavouriteItem = true
             self.addFavouriteNotification()
                 
@@ -378,6 +395,7 @@ class ItemViewController: UIViewController, UICollectionViewDelegateFlowLayout, 
         else
         {
             self.removeFavouriteAnimation()
+        
         }
     }
 
@@ -402,9 +420,19 @@ class ItemViewController: UIViewController, UICollectionViewDelegateFlowLayout, 
     
     func removeFavouriteFromFirebase()
     {
+        
             let ref = FIRDatabase.database().reference().child("notification")
         FIRDatabase.database().reference().child("Users").child(itemUserId).child("notifications").child(ItemViewController.itemKey).removeValue()
         FIRDatabase.database().reference().child("Users").child(userID).child("favourites").child(ItemViewController.itemKey).removeValue()
+        FIRDatabase.database().reference().child("items").child(ItemViewController.itemKey).child("favourites").observeSingleEvent(of: .value, with: { (snapshot) in
+            
+            var favouritesNumber = ((snapshot as! FIRDataSnapshot).value) as! Int
+            
+                favouritesNumber = favouritesNumber - 1
+            FIRDatabase.database().reference().child("items").child(ItemViewController.itemKey).child("favourites").setValue(favouritesNumber)
+            
+        })
+        
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
@@ -564,6 +592,7 @@ class ItemViewController: UIViewController, UICollectionViewDelegateFlowLayout, 
             
             self.clickedImageView?.alpha = 0
             self.scrollView.removeFromSuperview()
+        
         })
     }
     
@@ -577,6 +606,7 @@ class ItemViewController: UIViewController, UICollectionViewDelegateFlowLayout, 
          UIApplication.shared.statusBarStyle = .lightContent
         statusBar.tintColor = UIColor.white
         setupTheCloseButton()
+
     }
     
     
@@ -585,7 +615,6 @@ class ItemViewController: UIViewController, UICollectionViewDelegateFlowLayout, 
         super.viewDidAppear(false)
        // self.navigationController?.isNavigationBarHidden = false
       //  self.navigationController?.navigationBar.isTranslucent = false
-        
         
     }
     

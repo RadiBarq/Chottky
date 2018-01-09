@@ -62,5 +62,22 @@ extension Array where Element: Comparable {
     }
 }
 
+extension Array where Element : Equatable{
+    
+    public mutating func mergeElements<C : Collection>(newElements: C) where C.Generator.Element == Element{
+        let filteredList = newElements.filter({!self.contains($0)})
+        self.append(contentsOf: filteredList)
+    }
+    
+}
+
+
+
+
+
+
+
+
+
 
 

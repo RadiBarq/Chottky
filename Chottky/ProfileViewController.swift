@@ -225,8 +225,13 @@ class ProfileViewController: UIViewController {
         ]
         
         // thsis pageMenu is a view controller not a view
-        pageMenu = CAPSPageMenu(viewControllers: controllerArray, frame: CGRect(x:0.0, y:250.0, width:self.view.frame.width, height:self.view.frame.height - 250), pageMenuOptions: parameters)
+        pageMenu = CAPSPageMenu(viewControllers: controllerArray, frame: CGRect(x:0.0, y:self.backgroundView.frame.height + 65, width:self.view.frame.width, height:self.view.frame.height - self.backgroundView.frame
+        .height - 65), pageMenuOptions: parameters)
         self.view.addSubview(pageMenu!.view)
+        
+    
+  
+     
         
         pageMenu?.moveToPage(moveTo)
         pageMenu?.view.backgroundColor = UIColor(red: 244/255, green: 244/255, blue: 244/255, alpha: 1)

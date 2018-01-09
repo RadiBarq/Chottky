@@ -48,6 +48,7 @@
 		CD98DB2A1FFA5B22007210FF /* Item.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD98DB291FFA5B22007210FF /* Item.swift */; };
 		CD98DB2C1FFAD950007210FF /* ReportUserViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD98DB2B1FFAD94F007210FF /* ReportUserViewController.swift */; };
 		CD9C62881F61EDC300A465A7 /* BrowseSettingsTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD9C62871F61EDC300A465A7 /* BrowseSettingsTableViewCell.swift */; };
+		CDD9B5C820042B1800756943 /* animation-w500-h500.json in Resources */ = {isa = PBXBuildFile; fileRef = CDD9B5C720042B1700756943 /* animation-w500-h500.json */; };
 		CDDB3D061EC89A3D0083D722 /* CollectionsCollectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDDB3D051EC89A3D0083D722 /* CollectionsCollectionViewController.swift */; };
 		CDDB3D081EC89D9B0083D722 /* CollectionsCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDDB3D071EC89D9B0083D722 /* CollectionsCell.swift */; };
 		CDDB3D0C1EC900730083D722 /* NotificationsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDDB3D0B1EC900730083D722 /* NotificationsTableViewController.swift */; };
@@ -126,6 +127,7 @@
 		CD98DB291FFA5B22007210FF /* Item.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Item.swift; sourceTree = "<group>"; };
 		CD98DB2B1FFAD94F007210FF /* ReportUserViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReportUserViewController.swift; sourceTree = "<group>"; };
 		CD9C62871F61EDC300A465A7 /* BrowseSettingsTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BrowseSettingsTableViewCell.swift; sourceTree = "<group>"; };
+		CDD9B5C720042B1700756943 /* animation-w500-h500.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; name = "animation-w500-h500.json"; path = "../../../Downloads/animation-w500-h500.json"; sourceTree = "<group>"; };
 		CDDB3D051EC89A3D0083D722 /* CollectionsCollectionViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CollectionsCollectionViewController.swift; sourceTree = "<group>"; };
 		CDDB3D071EC89D9B0083D722 /* CollectionsCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CollectionsCell.swift; sourceTree = "<group>"; };
 		CDDB3D0B1EC900730083D722 /* NotificationsTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NotificationsTableViewController.swift; sourceTree = "<group>"; };
@@ -261,6 +263,7 @@
 		CD4AE9C31EDF3DA2003F8B79 /* JSON */ = {
 			isa = PBXGroup;
 			children = (
+				CDD9B5C720042B1700756943 /* animation-w500-h500.json */,
 				CD4AE9C41EE06048003F8B79 /* favorite_black.json */,
 			);
 			name = JSON;
@@ -523,6 +526,7 @@
 				CDDB3D151EC90DFF0083D722 /* Siddiqua.ttf in Resources */,
 				CDDB3D131EC90C8B0083D722 /* Ceria Lebaran.otf in Resources */,
 				CD26B78F1E69F9800016AF8C /* LaunchScreen.storyboard in Resources */,
+				CDD9B5C820042B1800756943 /* animation-w500-h500.json in Resources */,
 				CD6565C91EAAA8B300C6353A /* GoogleService-Info.plist in Resources */,
 				CD26B78C1E69F9800016AF8C /* Assets.xcassets in Resources */,
 				CD26B78A1E69F9800016AF8C /* Main.storyboard in Resources */,

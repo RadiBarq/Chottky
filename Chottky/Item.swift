@@ -19,6 +19,7 @@ class Item
     public var timestamp = String()
     public var title = String()
     public var userId = String()
+    public var itemPrice = String()
     
     init(category: String, currency: String, description: String, displayName: String, imagesCount: String, price: String, timestamp:String, title: String, userId: String)
     {

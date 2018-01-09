@@ -23,11 +23,10 @@ class BrowseSettingsTableViewController: UITableViewController {
     static var selectedDistanceIndex: Int? = 3
     static var selectedsortedByIndex: Int? = nil
     
-    
     var copyOfSelectedCategory = [Int]()
-    
     var copyOfSelectedDistance = Int()
-
+    
+    
     override func viewDidLoad() {
         
         super.viewDidLoad()
@@ -53,6 +52,7 @@ class BrowseSettingsTableViewController: UITableViewController {
         intializeCategoryArray()
         copyOfSelectedCategory = BrowseSettingsTableViewController.selectedCategoriesIndexes!
         copyOfSelectedDistance = BrowseSettingsTableViewController.selectedDistanceIndex!
+        
         
     }
 
@@ -154,7 +154,9 @@ class BrowseSettingsTableViewController: UITableViewController {
         BrowseSettingsTableViewController.selectedDistanceIndex = 3
         BrowseSettingsTableViewController.selectedsortedByIndex = nil
         BrowseSettingsTableViewController.selectedCategoriesIndexes = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+        BrowseCollectionViewController.queryChanged = true
         viewWillAppear(false)
+        
         
     }
     

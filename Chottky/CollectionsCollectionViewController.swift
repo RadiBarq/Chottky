@@ -17,6 +17,7 @@ class CollectionsCollectionViewController: UICollectionViewController,  UICollec
     let categorisTextArray = ["سيارات","الكترونيات","شقق و اراضي","البيت و الحديقة","حيوانات","الرياضة و الالعاب","ملابس و اكسسوارات","الاطفال","افلام، كتب و اغاني","اغراض اخرى"]
     var selectedInex = 0
     
+    
     // this should be enum in the future here my lord.
     static var presentedFor = "discover"
     
@@ -27,6 +28,8 @@ class CollectionsCollectionViewController: UICollectionViewController,  UICollec
         
         // Register cell classes
         self.collectionView!.register(CollectionsCell.self, forCellWithReuseIdentifier: reuseIdentifier)
+        
+
         
         // self.collectionView?.delegate = self
         
