@@ -120,8 +120,7 @@ class ItemViewController: UIViewController, UICollectionViewDelegateFlowLayout, 
                 print("GeoFire does not conatains the needed locaiton in this scenario")
             }
         })
-        
-        
+    
     }
 
     func initializeIndicatior() {
@@ -172,7 +171,6 @@ class ItemViewController: UIViewController, UICollectionViewDelegateFlowLayout, 
                 
                 self.isThisFavouriteItem = false
                 print("false room doesn't exist")
-                
             }
         })
     }
@@ -183,6 +181,15 @@ class ItemViewController: UIViewController, UICollectionViewDelegateFlowLayout, 
         var itemKey = ItemViewController.itemKey
         let timestamp = Int(NSDate().timeIntervalSince1970)
         favouriteNotificationRef.updateChildValues(["userId": userID, "itemId": ItemViewController.itemKey, "new": "true", "timestamp": timestamp, "type" : "favourite", "userName": WelcomeViewController.user.getUserDisplayName()])
+    
+        FIRDatabase.database().reference().child("notifications").child(ItemViewController.itemKey + userID).updateChildValues([
+            
+            "from": self.userID,
+            "to": self.itemUserId,
+            "itemId": ItemViewController.itemKey,
+            "messageType": "favourite"
+            
+            ])
     }
     
     @IBAction func contactButtonClicked(_ sender: UIButton) {
@@ -296,9 +303,11 @@ class ItemViewController: UIViewController, UICollectionViewDelegateFlowLayout, 
           titleLabel.text = title
           descriptionLabel.text = description
         
-            if (price == "السعر (غير محدد)")
+            if (price == "غير محدد")
             {
+                
                     priceLabel.text = "السعر قابل للتفاوض"
+            
             }
         
            else

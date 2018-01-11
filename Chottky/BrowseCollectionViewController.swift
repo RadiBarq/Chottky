@@ -14,6 +14,7 @@ import FirebaseStorageUI
 import GeoFire
 import Foundation
 import Lottie
+import UserNotifications
 
 private let reuseIdentifier = "itemCell"
 
@@ -55,9 +56,15 @@ class BrowseCollectionViewController: UICollectionViewController, UICollectionVi
     var currentItemsCount = 0
     var favouritesDictionary: [String: Int] = [:]
     var uncommonArray = [String]()
-    
+    var pricesHighToLowDictionary: [String: Double]  = [:]
+    var pricesLowToHighDictionary: [String: Double] = [:]
+    var timestampDictionary: [String: Double] = [:]
     var animationSuperView = UIView()
     var indicatioAnimation = LOTAnimationView(name: "animation-w500-h500")
+    var dollarCurrenciesPrices: [String:Double] = ["SAR": 3.75,"ILS":3.44, "KWD": 0.3016, "AED": 3.672, "QAR": 3.640, "LYD": 1.359, "OMR": 0.3845,
+                                                   "EGP":17.6541, "DZD": 114.343, "IQD": 1179, "MAD": 9.27913, "SDD":699.230, "SDG":6.99230,
+                                                   "TND":2.46597, "LBP":1504.17, "SYP":214.550, "YER":249.856, "JOD": 0.70777, "BHD": 0.37456, "MRO": 349.800, "SOS": 548.639, "DJF": 177.296, "KMF": 409.221]
+    
     
     override func viewWillAppear(_ animated: Bool) {
         
@@ -128,6 +135,13 @@ class BrowseCollectionViewController: UICollectionViewController, UICollectionVi
         statusBar.backgroundColor = UIColor.rgb(red: 41, green: 121, blue: 255)
         //statusBar.tintColor = UIColor.white
         
+        // notifications stuff
+        let center = UNUserNotificationCenter.current()
+        center.requestAuthorization(options:[.badge, .alert, .sound]) { (granted, error) in
+            // Enable or disable features based on authorization.
+        }
+        UIApplication.shared.registerForRemoteNotifications()
+        
         radius = 5
         maximumRadius = 50
         
@@ -172,7 +186,6 @@ class BrowseCollectionViewController: UICollectionViewController, UICollectionVi
     
     func addAnimationSuperView()
     {
-        
         self.view.addSubview(animationSuperView)
         animationSuperView.layer.masksToBounds = true
         animationSuperView.translatesAutoresizingMaskIntoConstraints = false
@@ -193,13 +206,9 @@ class BrowseCollectionViewController: UICollectionViewController, UICollectionVi
         indicatioAnimation?.animationProgress = 0.0
         indicatioAnimation?.loopAnimation = true
         indicatioAnimation?.play()
-        
         self.collectionView?.isUserInteractionEnabled = false
-        
     }
-    
-
-    
+        
     func setupNavigationBarItems()
     {
         var image = UIImage(named: "ic_filter_list_white.png")
@@ -228,7 +237,6 @@ class BrowseCollectionViewController: UICollectionViewController, UICollectionVi
         let cameraViewController = cameraStoryboard.instantiateViewController(withIdentifier: "cameraView") as! CameraViewController
         self.navigationController?.pushViewController(cameraViewController, animated: true)
     }
-    
     
     func initializeNoItemAvailable()
     {
@@ -264,6 +272,9 @@ class BrowseCollectionViewController: UICollectionViewController, UICollectionVi
     {
         itemsDictionary = [:] // this is how to make the dictionary empty in this case
         favouritesDictionary = [:]
+        pricesHighToLowDictionary = [:]
+        pricesLowToHighDictionary = [:]
+        self.timestampDictionary = [:]
         for i in 0..<uncommonArray.count
         {
             var oneItem = Item()
@@ -271,7 +282,7 @@ class BrowseCollectionViewController: UICollectionViewController, UICollectionVi
                 in
                 for item in snapshot.children
                 {
-                    let childValue = String(describing: (item as! FIRDataSnapshot).value!) // Remeber this value maybe value.
+                    var childValue = String(describing: (item as! FIRDataSnapshot).value!) // Remeber this value maybe value.
                     let childKey = String(describing: (item as! FIRDataSnapshot).key)
                     
                     if (childKey == "category")
@@ -366,17 +377,43 @@ class BrowseCollectionViewController: UICollectionViewController, UICollectionVi
                         
                         oneItem.imagesCount = childValue as! String
                     }
-                        
+
                     else if (childKey == "price")
                     {
-                        
                         oneItem.price = childValue as! String
+                        
+                        if (childValue as! String == "غير محدد")
+                        {
+                            childValue = "0"
+                        }
+                        
+                         var price = Double(childValue)
+                         let local = Locale.current
+                        
+                        if (oneItem.currency == "$" && self.dollarCurrenciesPrices[local.currencyCode!] != nil)
+                        {
+            
+                            price = price! * self.dollarCurrenciesPrices[local.currencyCode!]!
+
+                        }
+                        
+                        
+                        self.pricesHighToLowDictionary[self.uncommonArray[i]] = price
+                        self.pricesLowToHighDictionary[self.uncommonArray[i]] = price
                     }
                         
                     else if (childKey == "timestamp")
                     {
-                        
                         oneItem.timestamp = childValue as! String
+                        let locale = Locale.current
+                        let currencyCode = locale.currencyCode!
+                        
+                        
+                      
+                        
+                        var timestamp = Double(childValue)
+                        self.timestampDictionary[self.uncommonArray[i]] = timestamp
+                        
                     }
                         
                     else if (childKey == "title")
@@ -409,15 +446,763 @@ class BrowseCollectionViewController: UICollectionViewController, UICollectionVi
                 
                 if (i == self.uncommonArray.count - 1)
                 {
-
+                    
                     // so here sorting the uncommonArray according to favourites here
                    // var keys = Array(self.favouritesDictionary.keys)
             
-                    self.categoryQuery()
+                    if (BrowseSettingsTableViewController.selectedsortedByIndex == 0)
+                    {
+                            self.favouritesQuery()
+                    }
+                    
+                    else if (BrowseSettingsTableViewController.selectedsortedByIndex == 1)
+                    {
+                        
+                        self.pricesHighToLawQuery()
+            
+                    }
+                    
+                    else if (BrowseSettingsTableViewController.selectedsortedByIndex == 2)
+                    {
+                        self.pricesLowToHighQuery()
+                        
+                    }
+                    
+                    else
+                    {
+                        self.newestQuery()
+                        
+                    }
+                    
                 }
             })
         }
     }
+    
+    
+    func favouritesQuery()
+    {
+        var itemsRef = FIRDatabase.database().reference().child("items")
+        let givenSet:Set<String> = Set(finalArray)
+        var carsSet:Set<String> = Set(carCategoryArray)
+        var phonesSet:Set<String> = Set(phoneCategoryArray)
+        var apartmentSet:Set<String> = Set(apartmentCategoryArray)
+        var homeSet: Set<String> = Set(homeCategoryArray)
+        var dogSet: Set<String> = Set(dogCategoryArray)
+        var sportSet: Set<String> = Set(sportCategoryArray)
+        var clothesSet: Set<String> = Set(clothesCategoryArray)
+        var kidsSet: Set<String> = Set(kidsCategoryArray)
+        var booksSet: Set<String> = Set(booksCategoryArray)
+        var othersSet: Set<String> = Set(otherCategoryArray)
+        var finalSet: Set<String> = Set()
+        var tempArray = [String]()
+        var checkIfAtLeastOneChecked = false
+        var categoryFavouritesDic: [String: Int] = [:]
+        
+        if (BrowseSettingsTableViewController.selectedCategoriesIndexes![0] == 1)
+        {
+            //cars
+            // carsSet = carsSet.intersection(givenSet)
+            tempArray.mergeElements(newElements:  carCategoryArray)
+            checkIfAtLeastOneChecked = true
+            
+        }
+        
+        if (BrowseSettingsTableViewController.selectedCategoriesIndexes![1] == 1)
+        {
+            //electronics
+            //phonesSet =  phonesSet.intersection(givenSet)
+            tempArray.mergeElements(newElements: phoneCategoryArray)
+            checkIfAtLeastOneChecked = true
+        }
+        
+        if (BrowseSettingsTableViewController.selectedCategoriesIndexes![2] == 1)
+        {
+            // lands and aparatments
+            //  apartmentSet =  apartmentSet.intersection(givenSet)
+            tempArray.mergeElements(newElements: apartmentCategoryArray)
+            checkIfAtLeastOneChecked = true
+        }
+        
+        if (BrowseSettingsTableViewController.selectedCategoriesIndexes![3] == 1)
+        {
+            // home and garden
+            // homeSet = homeSet.intersection(givenSet)
+            tempArray.mergeElements(newElements: homeCategoryArray)
+            checkIfAtLeastOneChecked = true
+        }
+        
+        if (BrowseSettingsTableViewController.selectedCategoriesIndexes![4] == 1)
+        {
+            // animals
+            //dogSet = dogSet.intersection(givenSet)
+            tempArray.mergeElements(newElements: dogCategoryArray)
+            checkIfAtLeastOneChecked = true
+        }
+        
+        if (BrowseSettingsTableViewController.selectedCategoriesIndexes![5] == 1)
+        {
+            //sports and games
+            // sportSet = sportSet.intersection(givenSet)
+            tempArray.mergeElements(newElements: sportCategoryArray)
+            checkIfAtLeastOneChecked = true
+        }
+        
+        if (BrowseSettingsTableViewController.selectedCategoriesIndexes![6] == 1)
+        {
+            // clothes and accessories
+            // clothesSet = clothesSet.intersection(givenSet)
+            tempArray.mergeElements(newElements: clothesCategoryArray)
+            checkIfAtLeastOneChecked = true
+        }
+        
+        
+        if (BrowseSettingsTableViewController.selectedCategoriesIndexes![7] == 1)
+        {
+            //kids
+            //kidsSet = kidsSet.intersection(givenSet)
+            tempArray.mergeElements(newElements: kidsCategoryArray)
+            checkIfAtLeastOneChecked = true
+        }
+        
+        if (BrowseSettingsTableViewController.selectedCategoriesIndexes![8] == 1)
+        {
+            // books and movies
+            //booksSet = booksSet.intersection(givenSet)
+            tempArray.mergeElements(newElements: booksCategoryArray)
+            checkIfAtLeastOneChecked = true
+        }
+        
+        if (BrowseSettingsTableViewController.selectedCategoriesIndexes![9] == 1)
+        {
+            // others
+            // othersSet = othersSet.intersection(givenSet)
+            tempArray.mergeElements(newElements: otherCategoryArray)
+            checkIfAtLeastOneChecked = true
+        }
+        
+        if (tempArray.count != 0)
+        {
+            for item in tempArray
+            {
+                categoryFavouritesDic[item] = self.favouritesDictionary[item]
+                
+            }
+            
+            self.uncommonArray = tempArray
+            self.uncommonArray.sort{ (o1, o2) -> Bool in
+                return categoryFavouritesDic[o1]! as! Int > categoryFavouritesDic[o2]! as! Int
+            }
+            
+            
+            self.finalArray = self.finalArray + self.uncommonArray
+            self.currentItemsCount = self.finalArray.count
+        }
+            
+        else
+        {
+            
+            if (checkIfAtLeastOneChecked == true)
+            {
+                
+                if (radius>maximumRadius && finalArray.count == 0)
+                {
+                    self.finalArray = tempArray
+                    initializeNoItemAvailable()
+                    self.animationSuperView.removeFromSuperview()
+                    self.collectionView?.reloadData()
+                    self.collectionView?.isUserInteractionEnabled = true
+                    BrowseCollectionViewController.queryChanged = false
+                    self.currentItemsCount = 0
+                    return
+                }
+                    
+                else
+                {
+                    self.currentItemsCount = finalArray.count
+                    
+                }
+            }
+                
+            else
+            {
+                self.uncommonArray.sort{ (o1, o2) -> Bool in
+                    return self.favouritesDictionary[o1]! as! Int > self.favouritesDictionary[o2]! as! Int
+                }
+                
+                self.finalArray = self.finalArray + self.uncommonArray
+                self.currentItemsCount = self.finalArray.count
+                
+            }
+            
+        }
+        
+        
+        if (finalArray.count < 12 && radius<=maximumRadius)
+        {
+            self.radius = self.radius + 10
+            itemKeys = []
+            self.getItems()
+        }
+            
+        else
+        {
+            
+            self.collectionView?.reloadData()
+            
+            if (BrowseCollectionViewController.queryChanged == true)
+            {
+                
+                self.collectionView?.scrollToItem(at: IndexPath(row: 0, section: 0),
+                                                  at: .top,
+                                                  animated: true)
+                BrowseCollectionViewController.queryChanged = false
+            }
+            
+            self.animationSuperView.removeFromSuperview()
+            self.collectionView?.isUserInteractionEnabled = true
+        }
+    }
+    
+    func pricesHighToLawQuery()
+    {
+        var itemsRef = FIRDatabase.database().reference().child("items")
+        let givenSet:Set<String> = Set(finalArray)
+        var carsSet:Set<String> = Set(carCategoryArray)
+        var phonesSet:Set<String> = Set(phoneCategoryArray)
+        var apartmentSet:Set<String> = Set(apartmentCategoryArray)
+        var homeSet: Set<String> = Set(homeCategoryArray)
+        var dogSet: Set<String> = Set(dogCategoryArray)
+        var sportSet: Set<String> = Set(sportCategoryArray)
+        var clothesSet: Set<String> = Set(clothesCategoryArray)
+        var kidsSet: Set<String> = Set(kidsCategoryArray)
+        var booksSet: Set<String> = Set(booksCategoryArray)
+        var othersSet: Set<String> = Set(otherCategoryArray)
+        var finalSet: Set<String> = Set()
+        var tempArray = [String]()
+        var checkIfAtLeastOneChecked = false
+        var categoryPricesDic: [String: Double] = [:]
+        
+        if (BrowseSettingsTableViewController.selectedCategoriesIndexes![0] == 1)
+        {
+            //cars
+            // carsSet = carsSet.intersection(givenSet)
+            tempArray.mergeElements(newElements:  carCategoryArray)
+            checkIfAtLeastOneChecked = true
+            
+        }
+        
+        if (BrowseSettingsTableViewController.selectedCategoriesIndexes![1] == 1)
+        {
+            //electronics
+            //phonesSet =  phonesSet.intersection(givenSet)
+            tempArray.mergeElements(newElements: phoneCategoryArray)
+            checkIfAtLeastOneChecked = true
+        }
+        
+        if (BrowseSettingsTableViewController.selectedCategoriesIndexes![2] == 1)
+        {
+            // lands and aparatments
+            //  apartmentSet =  apartmentSet.intersection(givenSet)
+            tempArray.mergeElements(newElements: apartmentCategoryArray)
+            checkIfAtLeastOneChecked = true
+        }
+        
+        if (BrowseSettingsTableViewController.selectedCategoriesIndexes![3] == 1)
+        {
+            // home and garden
+            // homeSet = homeSet.intersection(givenSet)
+            tempArray.mergeElements(newElements: homeCategoryArray)
+            checkIfAtLeastOneChecked = true
+        }
+        
+        if (BrowseSettingsTableViewController.selectedCategoriesIndexes![4] == 1)
+        {
+            // animals
+            //dogSet = dogSet.intersection(givenSet)
+            tempArray.mergeElements(newElements: dogCategoryArray)
+            checkIfAtLeastOneChecked = true
+        }
+        
+        if (BrowseSettingsTableViewController.selectedCategoriesIndexes![5] == 1)
+        {
+            //sports and games
+            // sportSet = sportSet.intersection(givenSet)
+            tempArray.mergeElements(newElements: sportCategoryArray)
+            checkIfAtLeastOneChecked = true
+        }
+        
+        if (BrowseSettingsTableViewController.selectedCategoriesIndexes![6] == 1)
+        {
+            // clothes and accessories
+            // clothesSet = clothesSet.intersection(givenSet)
+            tempArray.mergeElements(newElements: clothesCategoryArray)
+            checkIfAtLeastOneChecked = true
+        }
+        
+        
+        if (BrowseSettingsTableViewController.selectedCategoriesIndexes![7] == 1)
+        {
+            //kids
+            //kidsSet = kidsSet.intersection(givenSet)
+            tempArray.mergeElements(newElements: kidsCategoryArray)
+            checkIfAtLeastOneChecked = true
+        }
+        
+        if (BrowseSettingsTableViewController.selectedCategoriesIndexes![8] == 1)
+        {
+            // books and movies
+            //booksSet = booksSet.intersection(givenSet)
+            tempArray.mergeElements(newElements: booksCategoryArray)
+            checkIfAtLeastOneChecked = true
+        }
+        
+        if (BrowseSettingsTableViewController.selectedCategoriesIndexes![9] == 1)
+        {
+            // others
+            // othersSet = othersSet.intersection(givenSet)
+            tempArray.mergeElements(newElements: otherCategoryArray)
+            checkIfAtLeastOneChecked = true
+        }
+        
+        if (tempArray.count != 0)
+        {
+            for item in tempArray
+            {
+                categoryPricesDic[item] = self.pricesHighToLowDictionary[item]
+            }
+            
+            self.uncommonArray = tempArray
+            self.uncommonArray.sort{ (o1, o2) -> Bool in
+                return categoryPricesDic[o1]! as! Double > categoryPricesDic[o2]! as! Double
+            }
+            
+            
+            self.finalArray = self.finalArray + self.uncommonArray
+            self.currentItemsCount = self.finalArray.count
+        }
+            
+        else
+        {
+            if (checkIfAtLeastOneChecked == true)
+            {
+                
+                if (radius>maximumRadius && finalArray.count == 0)
+                {
+                    self.finalArray = tempArray
+                    initializeNoItemAvailable()
+                    self.animationSuperView.removeFromSuperview()
+                    self.collectionView?.reloadData()
+                    self.collectionView?.isUserInteractionEnabled = true
+                    BrowseCollectionViewController.queryChanged = false
+                    self.currentItemsCount = 0
+                    return
+                }
+                    
+                else
+                {
+                    self.currentItemsCount = finalArray.count
+                }
+            }
+                
+            else
+            {
+                self.uncommonArray.sort{ (o1, o2) -> Bool in
+                    return self.pricesHighToLowDictionary[o1]! > self.pricesHighToLowDictionary[o2]!
+                }
+                
+                self.finalArray = self.finalArray + self.uncommonArray
+                self.currentItemsCount = self.finalArray.count
+            }
+        }
+        
+        if (finalArray.count < 12 && radius<=maximumRadius)
+        {
+            self.radius = self.radius + 10
+            itemKeys = []
+            self.getItems()
+        }
+            
+        else
+        {
+            self.collectionView?.reloadData()
+            
+            if (BrowseCollectionViewController.queryChanged == true)
+            {
+                
+                self.collectionView?.scrollToItem(at: IndexPath(row: 0, section: 0),
+                                                  at: .top,
+                                                  animated: true)
+                BrowseCollectionViewController.queryChanged = false
+            }
+            
+            self.animationSuperView.removeFromSuperview()
+            self.collectionView?.isUserInteractionEnabled = true
+        }
+    }
+    
+    func newestQuery()
+    {
+        var itemsRef = FIRDatabase.database().reference().child("items")
+        let givenSet:Set<String> = Set(finalArray)
+        var carsSet:Set<String> = Set(carCategoryArray)
+        var phonesSet:Set<String> = Set(phoneCategoryArray)
+        var apartmentSet:Set<String> = Set(apartmentCategoryArray)
+        var homeSet: Set<String> = Set(homeCategoryArray)
+        var dogSet: Set<String> = Set(dogCategoryArray)
+        var sportSet: Set<String> = Set(sportCategoryArray)
+        var clothesSet: Set<String> = Set(clothesCategoryArray)
+        var kidsSet: Set<String> = Set(kidsCategoryArray)
+        var booksSet: Set<String> = Set(booksCategoryArray)
+        var othersSet: Set<String> = Set(otherCategoryArray)
+        var finalSet: Set<String> = Set()
+        var tempArray = [String]()
+        var checkIfAtLeastOneChecked = false
+        var categoryTimeStampDic: [String: Double] = [:]
+        
+        
+        if (BrowseSettingsTableViewController.selectedCategoriesIndexes![0] == 1)
+        {
+            //cars
+            // carsSet = carsSet.intersection(givenSet)
+            tempArray.mergeElements(newElements:  carCategoryArray)
+            checkIfAtLeastOneChecked = true
+            
+        }
+        
+        if (BrowseSettingsTableViewController.selectedCategoriesIndexes![1] == 1)
+        {
+            //electronics
+            //phonesSet =  phonesSet.intersection(givenSet)
+            tempArray.mergeElements(newElements: phoneCategoryArray)
+            checkIfAtLeastOneChecked = true
+        }
+        
+        if (BrowseSettingsTableViewController.selectedCategoriesIndexes![2] == 1)
+        {
+            // lands and aparatments
+            //  apartmentSet =  apartmentSet.intersection(givenSet)
+            tempArray.mergeElements(newElements: apartmentCategoryArray)
+            checkIfAtLeastOneChecked = true
+        }
+        
+        if (BrowseSettingsTableViewController.selectedCategoriesIndexes![3] == 1)
+        {
+            // home and garden
+            // homeSet = homeSet.intersection(givenSet)
+            tempArray.mergeElements(newElements: homeCategoryArray)
+            checkIfAtLeastOneChecked = true
+        }
+        
+        if (BrowseSettingsTableViewController.selectedCategoriesIndexes![4] == 1)
+        {
+            // animals
+            //dogSet = dogSet.intersection(givenSet)
+            tempArray.mergeElements(newElements: dogCategoryArray)
+            checkIfAtLeastOneChecked = true
+        }
+        
+        if (BrowseSettingsTableViewController.selectedCategoriesIndexes![5] == 1)
+        {
+            //sports and games
+            // sportSet = sportSet.intersection(givenSet)
+            tempArray.mergeElements(newElements: sportCategoryArray)
+            checkIfAtLeastOneChecked = true
+        }
+        
+        if (BrowseSettingsTableViewController.selectedCategoriesIndexes![6] == 1)
+        {
+            // clothes and accessories
+            // clothesSet = clothesSet.intersection(givenSet)
+            tempArray.mergeElements(newElements: clothesCategoryArray)
+            checkIfAtLeastOneChecked = true
+        }
+        
+        if (BrowseSettingsTableViewController.selectedCategoriesIndexes![7] == 1)
+        {
+            //kids
+            //kidsSet = kidsSet.intersection(givenSet)
+            tempArray.mergeElements(newElements: kidsCategoryArray)
+            checkIfAtLeastOneChecked = true
+        }
+        
+        if (BrowseSettingsTableViewController.selectedCategoriesIndexes![8] == 1)
+        {
+            // books and movies
+            //booksSet = booksSet.intersection(givenSet)
+            tempArray.mergeElements(newElements: booksCategoryArray)
+            checkIfAtLeastOneChecked = true
+        }
+        
+        if (BrowseSettingsTableViewController.selectedCategoriesIndexes![9] == 1)
+        {
+            // others
+            // othersSet = othersSet.intersection(givenSet)
+            tempArray.mergeElements(newElements: otherCategoryArray)
+            checkIfAtLeastOneChecked = true
+        }
+        
+        if (tempArray.count != 0)
+        {
+            for item in tempArray
+            {
+                categoryTimeStampDic[item] = self.timestampDictionary[item]
+            }
+            
+            self.uncommonArray = tempArray
+            self.uncommonArray.sort{ (o1, o2) -> Bool in
+                return categoryTimeStampDic[o1]! > categoryTimeStampDic[o2]!
+            }
+            
+            
+            self.finalArray = self.finalArray + self.uncommonArray
+            self.currentItemsCount = self.finalArray.count
+        }
+            
+        else
+        {
+            
+            if (checkIfAtLeastOneChecked == true)
+            {
+                
+                if (radius>maximumRadius && finalArray.count == 0)
+                {
+                    self.finalArray = tempArray
+                    initializeNoItemAvailable()
+                    self.animationSuperView.removeFromSuperview()
+                    self.collectionView?.reloadData()
+                    self.collectionView?.isUserInteractionEnabled = true
+                    BrowseCollectionViewController.queryChanged = false
+                    self.currentItemsCount = 0
+                    return
+                }
+                    
+                else
+                {
+                    self.currentItemsCount = finalArray.count
+                }
+            }
+                
+            else
+            {
+                self.uncommonArray.sort{ (o1, o2) -> Bool in
+                    return self.timestampDictionary[o1]! > self.timestampDictionary[o2]!
+                }
+                
+                self.finalArray = self.finalArray + self.uncommonArray
+                self.currentItemsCount = self.finalArray.count
+                
+            }
+            
+        }
+        
+        
+        if (finalArray.count < 12 && radius<=maximumRadius)
+        {
+            self.radius = self.radius + 10
+            itemKeys = []
+            self.getItems()
+        }
+            
+        else
+        {
+            
+            self.collectionView?.reloadData()
+            
+            if (BrowseCollectionViewController.queryChanged == true)
+            {
+                
+                self.collectionView?.scrollToItem(at: IndexPath(row: 0, section: 0),
+                                                  at: .top,
+                                                  animated: true)
+                BrowseCollectionViewController.queryChanged = false
+            }
+            
+            self.animationSuperView.removeFromSuperview()
+            self.collectionView?.isUserInteractionEnabled = true
+        }
+    }
+    
+    
+    func pricesLowToHighQuery()
+    {
+        var itemsRef = FIRDatabase.database().reference().child("items")
+        let givenSet:Set<String> = Set(finalArray)
+        var carsSet:Set<String> = Set(carCategoryArray)
+        var phonesSet:Set<String> = Set(phoneCategoryArray)
+        var apartmentSet:Set<String> = Set(apartmentCategoryArray)
+        var homeSet: Set<String> = Set(homeCategoryArray)
+        var dogSet: Set<String> = Set(dogCategoryArray)
+        var sportSet: Set<String> = Set(sportCategoryArray)
+        var clothesSet: Set<String> = Set(clothesCategoryArray)
+        var kidsSet: Set<String> = Set(kidsCategoryArray)
+        var booksSet: Set<String> = Set(booksCategoryArray)
+        var othersSet: Set<String> = Set(otherCategoryArray)
+        var finalSet: Set<String> = Set()
+        var tempArray = [String]()
+        var checkIfAtLeastOneChecked = false
+        var categoryPricesDic: [String: Double] = [:]
+        
+        if (BrowseSettingsTableViewController.selectedCategoriesIndexes![0] == 1)
+        {
+            //cars
+            // carsSet = carsSet.intersection(givenSet)
+            tempArray.mergeElements(newElements:  carCategoryArray)
+            checkIfAtLeastOneChecked = true
+            
+
+        }
+        
+        if (BrowseSettingsTableViewController.selectedCategoriesIndexes![1] == 1)
+        {
+            //electronics
+            //phonesSet =  phonesSet.intersection(givenSet)
+            tempArray.mergeElements(newElements: phoneCategoryArray)
+            checkIfAtLeastOneChecked = true
+        }
+        
+        if (BrowseSettingsTableViewController.selectedCategoriesIndexes![2] == 1)
+        {
+            // lands and aparatments
+            //  apartmentSet =  apartmentSet.intersection(givenSet)
+            tempArray.mergeElements(newElements: apartmentCategoryArray)
+            checkIfAtLeastOneChecked = true
+        }
+        
+        if (BrowseSettingsTableViewController.selectedCategoriesIndexes![3] == 1)
+        {
+            // home and garden
+            // homeSet = homeSet.intersection(givenSet)
+            tempArray.mergeElements(newElements: homeCategoryArray)
+            checkIfAtLeastOneChecked = true
+        }
+        
+        if (BrowseSettingsTableViewController.selectedCategoriesIndexes![4] == 1)
+        {
+            // animals
+            //dogSet = dogSet.intersection(givenSet)
+            tempArray.mergeElements(newElements: dogCategoryArray)
+            checkIfAtLeastOneChecked = true
+        }
+        
+        if (BrowseSettingsTableViewController.selectedCategoriesIndexes![5] == 1)
+        {
+            //sports and games
+            // sportSet = sportSet.intersection(givenSet)
+            tempArray.mergeElements(newElements: sportCategoryArray)
+            checkIfAtLeastOneChecked = true
+        }
+        
+        if (BrowseSettingsTableViewController.selectedCategoriesIndexes![6] == 1)
+        {
+            // clothes and accessories
+            // clothesSet = clothesSet.intersection(givenSet)
+            tempArray.mergeElements(newElements: clothesCategoryArray)
+            checkIfAtLeastOneChecked = true
+        }
+        
+        
+        if (BrowseSettingsTableViewController.selectedCategoriesIndexes![7] == 1)
+        {
+            //kids
+            //kidsSet = kidsSet.intersection(givenSet)
+            tempArray.mergeElements(newElements: kidsCategoryArray)
+            checkIfAtLeastOneChecked = true
+        }
+        
+        if (BrowseSettingsTableViewController.selectedCategoriesIndexes![8] == 1)
+        {
+            // books and movies
+            //booksSet = booksSet.intersection(givenSet)
+            tempArray.mergeElements(newElements: booksCategoryArray)
+            checkIfAtLeastOneChecked = true
+        }
+        
+        if (BrowseSettingsTableViewController.selectedCategoriesIndexes![9] == 1)
+        {
+            // others
+            // othersSet = othersSet.intersection(givenSet)
+            tempArray.mergeElements(newElements: otherCategoryArray)
+            checkIfAtLeastOneChecked = true
+        }
+        
+        if (tempArray.count != 0)
+        {
+            for item in tempArray
+            {
+                categoryPricesDic[item] = self.pricesLowToHighDictionary[item]
+            }
+            
+            self.uncommonArray = tempArray
+            self.uncommonArray.sort{ (o1, o2) -> Bool in
+                return categoryPricesDic[o2]! > categoryPricesDic[o1]!
+            }
+            
+            self.finalArray = self.finalArray + self.uncommonArray
+            self.currentItemsCount = self.finalArray.count
+        }
+            
+        else
+        {
+            if (checkIfAtLeastOneChecked == true)
+            {
+                
+                if (radius>maximumRadius && finalArray.count == 0)
+                {
+                    self.finalArray = tempArray
+                    initializeNoItemAvailable()
+                    self.animationSuperView.removeFromSuperview()
+                    self.collectionView?.reloadData()
+                    self.collectionView?.isUserInteractionEnabled = true
+                    BrowseCollectionViewController.queryChanged = false
+                    self.currentItemsCount = 0
+                    return
+                }
+                    
+                else
+                {
+                    self.currentItemsCount = finalArray.count
+                }
+            }
+                
+            else
+            {
+                self.uncommonArray.sort{ (o1, o2) -> Bool in
+                    return self.pricesLowToHighDictionary[o2]! > self.pricesLowToHighDictionary[o1]!
+                }
+                
+                self.finalArray = self.finalArray + self.uncommonArray
+                self.currentItemsCount = self.finalArray.count
+            }
+        }
+        
+        if (finalArray.count < 12 && radius<=maximumRadius)
+        {
+            self.radius = self.radius + 10
+            itemKeys = []
+            self.getItems()
+        }
+            
+        else
+        {
+            self.collectionView?.reloadData()
+            
+            if (BrowseCollectionViewController.queryChanged == true)
+            {
+                
+                self.collectionView?.scrollToItem(at: IndexPath(row: 0, section: 0),
+                                                  at: .top,
+                                                  animated: true)
+                BrowseCollectionViewController.queryChanged = false
+            }
+            
+            self.animationSuperView.removeFromSuperview()
+            self.collectionView?.isUserInteractionEnabled = true
+        }
+    }
+    
+    
+    
     
     func addSellItemButton()
     {
@@ -481,6 +1266,7 @@ class BrowseCollectionViewController: UICollectionViewController, UICollectionVi
         
         // #warning Incomplete implementation, return the number of items
         return finalArray.count
+        
     }
     
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
@@ -505,7 +1291,6 @@ class BrowseCollectionViewController: UICollectionViewController, UICollectionVi
         //cell.itemImageView.sd_showActivityIndicatorView()
         //cell.itemImageView.sd_setIndicatorStyle(.gray)
        
-        
         return cell
     }
     
@@ -549,7 +1334,6 @@ class BrowseCollectionViewController: UICollectionViewController, UICollectionVi
         }
     }
 
-    
     public func locationManager(_ manager: CLLocationManager, didFailWithError error: Error)
     {
         if CLLocationManager.locationServicesEnabled() {
@@ -657,201 +1441,14 @@ class BrowseCollectionViewController: UICollectionViewController, UICollectionVi
                  self.uncommonArray = self.itemKeys.filter{ item in !self.finalArray.contains(item)}
              //   self.itemKeys = self.currentKeys
              //   self.finalArray = self.itemKeys
-          
+                
                 self.fetchGeofireDataToDictionary()
                 queryHandle?.removeAllObservers()
-        
           }
         })
     }
     
-    func categoryQuery()
-    {
-        
-        var itemsRef = FIRDatabase.database().reference().child("items")
-        let givenSet:Set<String> = Set(finalArray)
-        var carsSet:Set<String> = Set(carCategoryArray)
-        var phonesSet:Set<String> = Set(phoneCategoryArray)
-        var apartmentSet:Set<String> = Set(apartmentCategoryArray)
-        var homeSet: Set<String> = Set(homeCategoryArray)
-        var dogSet: Set<String> = Set(dogCategoryArray)
-        var sportSet: Set<String> = Set(sportCategoryArray)
-        var clothesSet: Set<String> = Set(clothesCategoryArray)
-        var kidsSet: Set<String> = Set(kidsCategoryArray)
-        var booksSet: Set<String> = Set(booksCategoryArray)
-        var othersSet: Set<String> = Set(otherCategoryArray)
-        var finalSet: Set<String> = Set()
-        var tempArray = [String]()
-        var checkIfAtLeastOneChecked = false
-        var categoryFavouritesDic: [String: Int] = [:]
-        
-        if (BrowseSettingsTableViewController.selectedCategoriesIndexes![0] == 1)
-        {
-            //cars
-           // carsSet = carsSet.intersection(givenSet)
-            tempArray.mergeElements(newElements:  carCategoryArray)
-            checkIfAtLeastOneChecked = true
-            
-        }
-        
-        if (BrowseSettingsTableViewController.selectedCategoriesIndexes![1] == 1)
-        {
-            //electronics
-            //phonesSet =  phonesSet.intersection(givenSet)
-           tempArray.mergeElements(newElements: phoneCategoryArray)
-            checkIfAtLeastOneChecked = true
-        }
-        
-        if (BrowseSettingsTableViewController.selectedCategoriesIndexes![2] == 1)
-        {
-            // lands and aparatments
-          //  apartmentSet =  apartmentSet.intersection(givenSet)
-              tempArray.mergeElements(newElements: apartmentCategoryArray)
-            checkIfAtLeastOneChecked = true
-        }
-        
-        if (BrowseSettingsTableViewController.selectedCategoriesIndexes![3] == 1)
-        {
-            // home and garden
-           // homeSet = homeSet.intersection(givenSet)
-              tempArray.mergeElements(newElements: homeCategoryArray)
-            checkIfAtLeastOneChecked = true
-        }
-        
-        if (BrowseSettingsTableViewController.selectedCategoriesIndexes![4] == 1)
-        {
-            // animals
-            //dogSet = dogSet.intersection(givenSet)
-             tempArray.mergeElements(newElements: dogCategoryArray)
-             checkIfAtLeastOneChecked = true
-        }
-        
-        if (BrowseSettingsTableViewController.selectedCategoriesIndexes![5] == 1)
-        {
-            //sports and games
-           // sportSet = sportSet.intersection(givenSet)
-              tempArray.mergeElements(newElements: sportCategoryArray)
-             checkIfAtLeastOneChecked = true
-        }
-        
-        if (BrowseSettingsTableViewController.selectedCategoriesIndexes![6] == 1)
-        {
-            // clothes and accessories
-           // clothesSet = clothesSet.intersection(givenSet)
-              tempArray.mergeElements(newElements: clothesCategoryArray)
-             checkIfAtLeastOneChecked = true
-        }
-        
-        
-        if (BrowseSettingsTableViewController.selectedCategoriesIndexes![7] == 1)
-        {
-            //kids
-            //kidsSet = kidsSet.intersection(givenSet)
-              tempArray.mergeElements(newElements: kidsCategoryArray)
-             checkIfAtLeastOneChecked = true
-        }
-        
-        if (BrowseSettingsTableViewController.selectedCategoriesIndexes![8] == 1)
-        {
-            // books and movies
-            //booksSet = booksSet.intersection(givenSet)
-              tempArray.mergeElements(newElements: booksCategoryArray)
-             checkIfAtLeastOneChecked = true
-        }
-        
-        if (BrowseSettingsTableViewController.selectedCategoriesIndexes![9] == 1)
-        {
-            // others
-           // othersSet = othersSet.intersection(givenSet)
-              tempArray.mergeElements(newElements: otherCategoryArray)
-             checkIfAtLeastOneChecked = true
-        }
-        
-        if (tempArray.count != 0)
-        {
-            for item in tempArray
-            {
-                categoryFavouritesDic[item] = self.favouritesDictionary[item]
-                
-            }
-            
-            self.uncommonArray = tempArray
-            self.uncommonArray.sort{ (o1, o2) -> Bool in
-                return categoryFavouritesDic[o1]! as! Int > categoryFavouritesDic[o2]! as! Int
-            }
-            
-          
-            self.finalArray = self.finalArray + self.uncommonArray
-            self.currentItemsCount = self.finalArray.count
-        }
-            
-        else
-        {
     
-            if (checkIfAtLeastOneChecked == true)
-            {
-                
-                if (radius>maximumRadius && finalArray.count == 0)
-                {
-                    self.finalArray = tempArray
-                    initializeNoItemAvailable()
-                     self.animationSuperView.removeFromSuperview()
-                    self.collectionView?.reloadData()
-                    self.collectionView?.isUserInteractionEnabled = true
-                    BrowseCollectionViewController.queryChanged = false
-                    self.currentItemsCount = 0
-                    return
-                }
-                    
-                else
-                {
-                    self.currentItemsCount = finalArray.count
-                    
-                }
-            }
-            
-            else
-            {
-                self.uncommonArray.sort{ (o1, o2) -> Bool in
-                        return self.favouritesDictionary[o1]! as! Int > self.favouritesDictionary[o2]! as! Int
-                    }
-            
-                self.finalArray = self.finalArray + self.uncommonArray
-                self.currentItemsCount = self.finalArray.count
-                
-            }
-            
-        }
-            
-    
-       if (finalArray.count < 12 && radius<=maximumRadius)
-        {
-                self.radius = self.radius + 10
-                itemKeys = []
-                self.getItems()
-        }
-    
-        else
-        {
-            
-            self.collectionView?.reloadData()
-           
-            if (BrowseCollectionViewController.queryChanged == true)
-            {
-                
-                self.collectionView?.scrollToItem(at: IndexPath(row: 0, section: 0),
-                                                  at: .top,
-                                                  animated: true)
-                BrowseCollectionViewController.queryChanged = false
-                
-                
-            }
-            
-             self.animationSuperView.removeFromSuperview()
-            self.collectionView?.isUserInteractionEnabled = true
-            
-        }
-    }
 
     override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         

@@ -18,6 +18,7 @@
 		CD26B78F1E69F9800016AF8C /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CD26B78D1E69F9800016AF8C /* LaunchScreen.storyboard */; };
 		CD26B79F1E6A43610016AF8C /* MenuBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD26B79E1E6A43610016AF8C /* MenuBar.swift */; };
 		CD26B7A31E6B6F420016AF8C /* WelcomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD26B7A21E6B6F420016AF8C /* WelcomeViewController.swift */; };
+		CD280B2B2006B3C000B1874F /* SqueezeNet.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = CD280B2A2006B3BF00B1874F /* SqueezeNet.mlmodel */; };
 		CD381A6B1ECF376800B95AF1 /* ItemsCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD381A6A1ECF376800B95AF1 /* ItemsCell.swift */; };
 		CD381A6E1ECF683900B95AF1 /* PostedItemViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD381A6D1ECF683900B95AF1 /* PostedItemViewController.swift */; };
 		CD381A721ECF996A00B95AF1 /* PostedImageCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD381A711ECF996A00B95AF1 /* PostedImageCell.swift */; };
@@ -82,6 +83,7 @@
 		CD26B7901E69F9800016AF8C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		CD26B79E1E6A43610016AF8C /* MenuBar.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MenuBar.swift; sourceTree = "<group>"; };
 		CD26B7A21E6B6F420016AF8C /* WelcomeViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WelcomeViewController.swift; sourceTree = "<group>"; };
+		CD280B2A2006B3BF00B1874F /* SqueezeNet.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; name = SqueezeNet.mlmodel; path = ../../../Downloads/SqueezeNet.mlmodel; sourceTree = "<group>"; };
 		CD381A6A1ECF376800B95AF1 /* ItemsCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ItemsCell.swift; sourceTree = "<group>"; };
 		CD381A6D1ECF683900B95AF1 /* PostedItemViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PostedItemViewController.swift; sourceTree = "<group>"; };
 		CD381A711ECF996A00B95AF1 /* PostedImageCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PostedImageCell.swift; sourceTree = "<group>"; };
@@ -310,6 +312,7 @@
 		CD6E2C011E7000D800D11EC0 /* Model */ = {
 			isa = PBXGroup;
 			children = (
+				CD280B2A2006B3BF00B1874F /* SqueezeNet.mlmodel */,
 				CD6E2C021E7000EC00D11EC0 /* PeopleCell.swift */,
 				CDE135CA1E75E81C00ED6F72 /* User.swift */,
 				CD11DBEC1F580B2F00B46B84 /* TabViewProvider.swift */,
@@ -592,6 +595,7 @@
 				CD6565CF1EAAAC4400C6353A /* SwiftyRecordButton.swift in Sources */,
 				CD3BD70E1E7422C800693BAA /* MenuBarCell.swift in Sources */,
 				CD381A6E1ECF683900B95AF1 /* PostedItemViewController.swift in Sources */,
+				CD280B2B2006B3C000B1874F /* SqueezeNet.mlmodel in Sources */,
 				CD11DBF31F59FF2B00B46B84 /* BrowseSettingsTableViewController.swift in Sources */,
 				CD6E2C111E7148E900D11EC0 /* SignInViewController.swift in Sources */,
 				CD4E5D581FF43ADE00D2B53B /* ChangeProfileEmailViewController.swift in Sources */,

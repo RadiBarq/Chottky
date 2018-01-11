@@ -612,6 +612,7 @@
                             </collectionView>
                             <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="العنوان" textAlignment="right" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="lZv-nT-orz">
                                 <rect key="frame" x="16" y="140" width="343" height="30"/>
+                                <color key="tintColor" red="0.18823529411764706" green="0.30980392156862746" blue="0.99607843137254903" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="343" id="01K-cU-2ld"/>
                                     <constraint firstAttribute="height" constant="30" id="46H-Pn-KuA"/>
@@ -622,6 +623,7 @@
                             </textField>
                             <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="السعر (غير محدد)" textAlignment="right" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="WkT-H1-Sn9">
                                 <rect key="frame" x="190" y="330" width="169" height="30"/>
+                                <color key="tintColor" red="0.18823529411764706" green="0.30980392156862746" blue="0.99607843137254903" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="169" id="5Y0-e4-aRL"/>
                                     <constraint firstAttribute="height" constant="30" id="MaM-fC-7aJ"/>
@@ -633,6 +635,7 @@
                             <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" bounces="NO" showsHorizontalScrollIndicator="NO" text="وصف عام" textAlignment="right" translatesAutoresizingMaskIntoConstraints="NO" id="Ec1-sZ-tlg">
                                 <rect key="frame" x="16" y="190" width="343" height="120"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <color key="tintColor" red="0.18823529411764706" green="0.30980392156862746" blue="0.99607843137254903" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="120" id="eXF-4E-KTe"/>
                                     <constraint firstAttribute="width" constant="343" id="gDy-kf-GIw"/>
@@ -2041,110 +2044,10 @@
                                     </tableViewCell>
                                 </cells>
                             </tableViewSection>
-                            <tableViewSection headerTitle="تم نشر المنتج من مدة" id="Xua-ln-24n">
-                                <cells>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="none" indentationWidth="10" id="1f9-m2-vXa" customClass="BrowseSettingsTableViewCell" customModule="Chottky" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="551.5" width="375" height="44"/>
-                                        <autoresizingMask key="autoresizingMask"/>
-                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="1f9-m2-vXa" id="B8I-nL-F4Y">
-                                            <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
-                                            <autoresizingMask key="autoresizingMask"/>
-                                            <subviews>
-                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="اخر ٢٤ سيعة" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="cFq-1k-qbQ">
-                                                    <rect key="frame" x="274" y="11" width="85" height="21"/>
-                                                    <constraints>
-                                                        <constraint firstAttribute="height" constant="21" id="bJh-i0-vLX"/>
-                                                        <constraint firstAttribute="width" constant="85" id="wV5-Ox-s3x"/>
-                                                    </constraints>
-                                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                                    <color key="textColor" red="0.23137254901960785" green="0.23137254901960785" blue="0.23137254901960785" alpha="1" colorSpace="calibratedRGB"/>
-                                                    <nil key="highlightedColor"/>
-                                                </label>
-                                            </subviews>
-                                            <constraints>
-                                                <constraint firstItem="cFq-1k-qbQ" firstAttribute="centerY" secondItem="B8I-nL-F4Y" secondAttribute="centerY" id="J2s-jK-0Jx"/>
-                                                <constraint firstItem="cFq-1k-qbQ" firstAttribute="trailing" secondItem="B8I-nL-F4Y" secondAttribute="trailingMargin" id="xNF-Ir-AKp"/>
-                                            </constraints>
-                                        </tableViewCellContentView>
-                                    </tableViewCell>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="none" indentationWidth="10" id="RvB-aM-dHI" customClass="BrowseSettingsTableViewCell" customModule="Chottky" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="595.5" width="375" height="44"/>
-                                        <autoresizingMask key="autoresizingMask"/>
-                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="RvB-aM-dHI" id="lZ8-Ym-yDM">
-                                            <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
-                                            <autoresizingMask key="autoresizingMask"/>
-                                            <subviews>
-                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="اخر ٧ ايام" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Dpx-Pc-3mP">
-                                                    <rect key="frame" x="279" y="11" width="80" height="21"/>
-                                                    <constraints>
-                                                        <constraint firstAttribute="width" constant="80" id="Fob-T8-CVG"/>
-                                                        <constraint firstAttribute="height" constant="21" id="c9Y-vP-Far"/>
-                                                    </constraints>
-                                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                                    <color key="textColor" red="0.23137254901960785" green="0.23137254901960785" blue="0.23137254901960785" alpha="1" colorSpace="calibratedRGB"/>
-                                                    <nil key="highlightedColor"/>
-                                                </label>
-                                            </subviews>
-                                            <constraints>
-                                                <constraint firstItem="Dpx-Pc-3mP" firstAttribute="centerY" secondItem="lZ8-Ym-yDM" secondAttribute="centerY" id="6RI-38-K9I"/>
-                                                <constraint firstItem="Dpx-Pc-3mP" firstAttribute="trailing" secondItem="lZ8-Ym-yDM" secondAttribute="trailingMargin" id="P6I-LS-kgC"/>
-                                            </constraints>
-                                        </tableViewCellContentView>
-                                    </tableViewCell>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="none" indentationWidth="10" id="t3U-Un-E91" customClass="BrowseSettingsTableViewCell" customModule="Chottky" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="639.5" width="375" height="44"/>
-                                        <autoresizingMask key="autoresizingMask"/>
-                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="t3U-Un-E91" id="RmV-dz-EpN">
-                                            <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
-                                            <autoresizingMask key="autoresizingMask"/>
-                                            <subviews>
-                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="في اخر ٣٠ يوم" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="02F-JR-TLS">
-                                                    <rect key="frame" x="263" y="11" width="96" height="21"/>
-                                                    <constraints>
-                                                        <constraint firstAttribute="width" constant="96" id="Ddc-Yr-4jh"/>
-                                                        <constraint firstAttribute="height" constant="21" id="d3i-lP-7S9"/>
-                                                    </constraints>
-                                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                                    <color key="textColor" red="0.23137254901960785" green="0.23137254901960785" blue="0.23137254901960785" alpha="1" colorSpace="calibratedRGB"/>
-                                                    <nil key="highlightedColor"/>
-                                                </label>
-                                            </subviews>
-                                            <constraints>
-                                                <constraint firstItem="02F-JR-TLS" firstAttribute="trailing" secondItem="RmV-dz-EpN" secondAttribute="trailingMargin" id="Yk0-Fv-JTm"/>
-                                                <constraint firstItem="02F-JR-TLS" firstAttribute="centerY" secondItem="RmV-dz-EpN" secondAttribute="centerY" id="t5B-sx-ZZo"/>
-                                            </constraints>
-                                        </tableViewCellContentView>
-                                    </tableViewCell>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="none" indentationWidth="10" id="Yhh-Ye-RLb" customClass="BrowseSettingsTableViewCell" customModule="Chottky" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="683.5" width="375" height="44"/>
-                                        <autoresizingMask key="autoresizingMask"/>
-                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="Yhh-Ye-RLb" id="lvy-dQ-1Wa">
-                                            <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
-                                            <autoresizingMask key="autoresizingMask"/>
-                                            <subviews>
-                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="كل المنتجات" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="eCl-aj-19I">
-                                                    <rect key="frame" x="277" y="11" width="90" height="21"/>
-                                                    <constraints>
-                                                        <constraint firstAttribute="width" constant="90" id="IvK-wP-OC0"/>
-                                                        <constraint firstAttribute="height" constant="21" id="VyO-pe-f5f"/>
-                                                    </constraints>
-                                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                                    <color key="textColor" red="0.23137254901960785" green="0.23137254901960785" blue="0.23137254901960785" alpha="1" colorSpace="calibratedRGB"/>
-                                                    <nil key="highlightedColor"/>
-                                                </label>
-                                            </subviews>
-                                            <constraints>
-                                                <constraint firstItem="eCl-aj-19I" firstAttribute="centerY" secondItem="lvy-dQ-1Wa" secondAttribute="centerY" id="Odu-bg-mgF"/>
-                                                <constraint firstItem="eCl-aj-19I" firstAttribute="trailing" secondItem="lvy-dQ-1Wa" secondAttribute="trailingMargin" constant="8" id="uqw-AN-SWB"/>
-                                            </constraints>
-                                        </tableViewCellContentView>
-                                    </tableViewCell>
-                                </cells>
-                            </tableViewSection>
                             <tableViewSection headerTitle="المسافة" id="vUo-BR-ArQ">
                                 <cells>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="none" indentationWidth="10" id="Y1U-7e-vtl" customClass="BrowseSettingsTableViewCell" customModule="Chottky" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="783.5" width="375" height="44"/>
+                                        <rect key="frame" x="0.0" y="551.5" width="375" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="Y1U-7e-vtl" id="caY-EC-3xF">
                                             <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
@@ -2168,7 +2071,7 @@
                                         </tableViewCellContentView>
                                     </tableViewCell>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="none" indentationWidth="10" id="gdj-4p-2G6" customClass="BrowseSettingsTableViewCell" customModule="Chottky" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="827.5" width="375" height="44"/>
+                                        <rect key="frame" x="0.0" y="595.5" width="375" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="gdj-4p-2G6" id="QFb-ax-Lsw">
                                             <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
@@ -2199,7 +2102,7 @@
                                         </tableViewCellContentView>
                                     </tableViewCell>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="none" indentationWidth="10" id="Uy8-si-Eex" customClass="BrowseSettingsTableViewCell" customModule="Chottky" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="871.5" width="375" height="44"/>
+                                        <rect key="frame" x="0.0" y="639.5" width="375" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="Uy8-si-Eex" id="PfV-tG-lhN">
                                             <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
@@ -2223,7 +2126,7 @@
                                         </tableViewCellContentView>
                                     </tableViewCell>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="none" indentationWidth="10" id="3Nn-FS-r6J" customClass="BrowseSettingsTableViewCell" customModule="Chottky" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="915.5" width="375" height="44"/>
+                                        <rect key="frame" x="0.0" y="683.5" width="375" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="3Nn-FS-r6J" id="VKg-oZ-w14">
                                             <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
@@ -2251,13 +2154,13 @@
                             <tableViewSection headerTitle="التصنيف حسب" id="Sha-zf-PQm">
                                 <cells>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="none" indentationWidth="10" id="xtv-9k-XS5" customClass="BrowseSettingsTableViewCell" customModule="Chottky" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="1015.5" width="375" height="44"/>
+                                        <rect key="frame" x="0.0" y="783.5" width="375" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="xtv-9k-XS5" id="Vsc-cJ-DTD">
                                             <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="الاقرب اولا" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="EOD-fR-9ZD">
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="الاعجابات" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="EOD-fR-9ZD">
                                                     <rect key="frame" x="290" y="12" width="77" height="21"/>
                                                     <constraints>
                                                         <constraint firstAttribute="height" constant="21" id="9XH-pg-hHe"/>
@@ -2275,7 +2178,7 @@
                                         </tableViewCellContentView>
                                     </tableViewCell>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="none" indentationWidth="10" id="tgR-Vk-Xun" customClass="BrowseSettingsTableViewCell" customModule="Chottky" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="1059.5" width="375" height="44"/>
+                                        <rect key="frame" x="0.0" y="827.5" width="375" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="tgR-Vk-Xun" id="pZr-Uk-Y80">
                                             <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
@@ -2299,7 +2202,7 @@
                                         </tableViewCellContentView>
                                     </tableViewCell>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="none" indentationWidth="10" id="Px0-4G-hku" customClass="BrowseSettingsTableViewCell" customModule="Chottky" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="1103.5" width="375" height="44"/>
+                                        <rect key="frame" x="0.0" y="871.5" width="375" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="Px0-4G-hku" id="fYC-K5-KoO">
                                             <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
@@ -2323,7 +2226,7 @@
                                         </tableViewCellContentView>
                                     </tableViewCell>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="none" indentationWidth="10" id="91z-Lu-WbA" customClass="BrowseSettingsTableViewCell" customModule="Chottky" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="1147.5" width="375" height="44"/>
+                                        <rect key="frame" x="0.0" y="915.5" width="375" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="91z-Lu-WbA" id="dkG-O9-i2i">
                                             <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>

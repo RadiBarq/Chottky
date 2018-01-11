@@ -35,7 +35,6 @@ class NotificationsTableViewController: UITableViewController{
         self.navigationController?.navigationBar.topItem?.title = ""
         initializeIndicator()
         fetchNotifications()
-        
     }
     
      override func viewDidAppear(_ animated: Bool) {
@@ -88,7 +87,6 @@ class NotificationsTableViewController: UITableViewController{
             self.notifications.reverse()
             self.tableView.reloadData()
         })
-        
     }
     
     func initializeIndicator()
@@ -215,7 +213,6 @@ class NotificationsTableViewController: UITableViewController{
             let profileStoryboard = UIStoryboard(name: "Main", bundle: nil)
             let profileViewController = profileStoryboard.instantiateViewController(withIdentifier: "ProfileViewController") as! ProfileViewController
             self.navigationController?.pushViewController(profileViewController, animated: true)
-            
         }
         
     }

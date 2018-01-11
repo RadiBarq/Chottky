@@ -113,7 +113,7 @@ class MessagesTableViewController: UITableViewController {
                 holdingName = usersNames[indexPath.row]
                 
                 holdingTouchIndex = indexPath
-               popOutTheHoldView(name: holdingRow) // That's it
+                popOutTheHoldView(name: holdingRow) // That's it
 
             }
         }
@@ -137,8 +137,7 @@ class MessagesTableViewController: UITableViewController {
          //   self.holdView.alpha = 1
           //  self.holdView.transform = CGAffineTransform.identity
        // }
-        
-        
+    
         let alert = UIAlertController(title: "العملية على هاذا المستخدم", message: "", preferredStyle: .actionSheet)
         
         alert.addAction(UIAlertAction(title: "حذر المستخدم", style: .default, handler: { (action) in

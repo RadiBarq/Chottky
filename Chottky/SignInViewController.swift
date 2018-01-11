@@ -71,12 +71,10 @@ class SignInViewController: UIViewController, UITextFieldDelegate {
         // Dispose of any resources that can be recreated.
     }
     
- 
     
     @IBAction func onClickSingIn(_ sender: UIButton) {
         
         signIn()
-        
     }
     
     
@@ -98,7 +96,6 @@ class SignInViewController: UIViewController, UITextFieldDelegate {
             
         else
         {
-            
             authenticateWithFirebase(email: emailText, password: passwordText)
             
         }
@@ -158,12 +155,12 @@ class SignInViewController: UIViewController, UITextFieldDelegate {
                 
                 WelcomeViewController.user.setUpUserId(userId: userId)
                 
-                    let ref = FIRDatabase.database().reference().child("Users").child(userId).child("UserName")
+                     let ref = FIRDatabase.database().reference().child("Users").child(userId).child("UserName")
                 
-                    let userName = ref.observeSingleEvent(of: .value, with: { (FIRDataSnapshot) in
-                    
+                     let userName = ref.observeSingleEvent(of: .value, with: { (FIRDataSnapshot) in
                      WelcomeViewController.user.setUserDisplayName(name: (FIRDataSnapshot.value) as! String)
-                    
+                     var userInstanceId = FIRInstanceID.instanceID().token()
+                     FIRDatabase.database().reference().child("Users").child(userId).child("instanceId").setValue(userInstanceId)
                      let mainStoryboard = UIStoryboard(name: "Main", bundle: nil)
                      let tabViewController = mainStoryboard.instantiateViewController(withIdentifier: "tabBarViewController")
                      let addItemViewController = mainStoryboard.instantiateViewController(withIdentifier: "PostedItemViewController")

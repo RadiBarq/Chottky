@@ -10,6 +10,8 @@ import Firebase
 import GeoFire
 import CoreLocation
 import Lottie
+import CoreML
+import Foundation
 
 
 class PostedItemViewController: UIViewController, UICollectionViewDataSource, UITextViewDelegate, UITextFieldDelegate, UICollectionViewDelegateFlowLayout, UINavigationControllerDelegate, UIImagePickerControllerDelegate, CLLocationManagerDelegate{
@@ -21,7 +23,9 @@ class PostedItemViewController: UIViewController, UICollectionViewDataSource, UI
     var test_images: [UIImage?] = [UIImage(named: "nike_shoes-1"), UIImage(named: "nike_shoes"), UIImage(named: "nike_shoes-2")]
     var test_images_names: [String] = ["1.jpeg", "2.jpeg", "3.jpeg", "4.jpeg"]
     var categoryItems = ["سيارات", "الكترونيات", "شقق و اراضي", ]
-
+    var model:  SqueezeNet!
+    
+    
     @IBOutlet weak var postButton: UIButton!
     
     static var imageClickedNumber: Int = 0
@@ -34,6 +38,8 @@ class PostedItemViewController: UIViewController, UICollectionViewDataSource, UI
     
     var animationSuperView = UIView()
     var indicatioAnimation = LOTAnimationView(name: "animation-w500-h500")
+    
+    var tagsArray = [String]()
     
     
     @IBOutlet weak var imagesCollectionView: UICollectionView!
@@ -49,13 +55,11 @@ class PostedItemViewController: UIViewController, UICollectionViewDataSource, UI
     static var itemId = String()
     
     
-    
     override func viewDidLoad() {
         
         super.viewDidLoad()
         // imagesCollectionView.register(PostedImageCell.self, forCellWithReuseIdentifier: cellId)
         // Here the place where to put the right currency
-        
         
         let locale = Locale.current
         let currencySymbol = locale.currencySymbol!
@@ -98,8 +102,11 @@ class PostedItemViewController: UIViewController, UICollectionViewDataSource, UI
         self.locationManager.delegate = self
         self.locationManager.requestWhenInUseAuthorization()
         self.locationManager.startUpdatingLocation()
+        
+
+        model = SqueezeNet()
+       // uploadTheTags(itemId: "1")
     }
-    
     
     func addAnimationSuperView()
     {
@@ -114,7 +121,6 @@ class PostedItemViewController: UIViewController, UICollectionViewDataSource, UI
         animationSuperView.layer.cornerRadius = 5
         animationSuperView.backgroundColor = Constants.FirstColor.withAlphaComponent(0.85)
         
-        
         animationSuperView.addSubview(indicatioAnimation!)
         indicatioAnimation?.translatesAutoresizingMaskIntoConstraints = false
         indicatioAnimation?.widthAnchor.constraint(equalToConstant: 100).isActive = true
@@ -124,15 +130,9 @@ class PostedItemViewController: UIViewController, UICollectionViewDataSource, UI
         indicatioAnimation?.animationProgress = 0.0
         indicatioAnimation?.loopAnimation = true
         indicatioAnimation?.play()
-        
-      
-        
     }
     
-
     
-    
-  
     func doneClicked()
     {
         view.endEditing(true)
@@ -375,8 +375,6 @@ class PostedItemViewController: UIViewController, UICollectionViewDataSource, UI
     }
     
     
-    
-    
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         
         var cell = imagesCollectionView.dequeueReusableCell(withReuseIdentifier: cellId, for: indexPath) as! PostedImageCell
@@ -419,6 +417,8 @@ class PostedItemViewController: UIViewController, UICollectionViewDataSource, UI
     @IBAction func handlePost(_ sender: UIButton) {
         
         var isThereIsPhotos = checkIfThereIsAvailablePhotos()
+        self.titleField.text = titleField.text?.trimmingCharacters(in: .whitespaces)
+        self.descriptionTextView.text = descriptionTextView.text.trimmingCharacters(in: .whitespaces)
         
         if (stringLocation == "")
         {
@@ -426,20 +426,33 @@ class PostedItemViewController: UIViewController, UICollectionViewDataSource, UI
             let defaultAction = UIAlertAction(title: "موافق", style: .default, handler: nil)
             alertEmailController.addAction(defaultAction)
             self.present(alertEmailController, animated: true, completion: nil)
-            
         }
+            
             
         else
         {
         
-        if descriptionTextView.text == "" || titleField.text == "" || isThereIsPhotos == false
+        if isThereIsPhotos == false
         {
-            let alertEmailController = UIAlertController(title: "المعلومات المدخلة غير مكتملة", message: "الرجاء اعد المحاولة", preferredStyle: .alert)
+
+            let alertEmailController = UIAlertController(title: "المعلومات المدخلة غير مكتملة", message: "الرجاء التاكد من اختيار الصورة للمنتج", preferredStyle: .alert)
             let defaultAction = UIAlertAction(title: "موافق", style: .default, handler: nil)
             alertEmailController.addAction(defaultAction)
             present(alertEmailController, animated: true, completion: nil)
+
         }
         
+            
+        else if (titleField.text?.range(of: "$") != nil) || (titleField.text?.range(of: "." ) != nil) || (titleField.text?.range(of: "[") != nil) || (titleField.text?.range(of: "]") != nil)
+        {
+            
+            let alertEmailController = UIAlertController(title: "عنوان المنتج المدخل غير صحيح", message: "لايجوز لعنوان المنتج ان يحتوي احد الاحرف الاتية ($, [, ], .)", preferredStyle: .alert)
+            let defaultAction = UIAlertAction(title: "موافق", style: .default, handler: nil)
+            alertEmailController.addAction(defaultAction)
+            present(alertEmailController, animated: true, completion: nil)
+           
+            }
+
         else
         {
             self.addAnimationSuperView()
@@ -490,11 +503,38 @@ class PostedItemViewController: UIViewController, UICollectionViewDataSource, UI
                         
                         else
                         {
+                            
+                            self.postButton.isEnabled = false
                             //There everything is good and fine.
                             if (dataBaseCounter == storageCounter)
                             {
+                                var price = String()
+                                
+                                if (self.priceField.text == "")
+                                {
+                                    price = "غير محدد"
+                                }
+                                
+                                else
+                                {
+                                    
+                                    price = self.priceField.text!
+                                }
+                                
                                 let timestamp = Int(NSDate().timeIntervalSince1970)
-                                databaseRef.updateChildValues(["title": self.titleField.text, "description":self.descriptionTextView.text, "price": self.priceField.text, "currency": self.currencySegemnted.titleForSegment(at: self.currencySegemnted.selectedSegmentIndex) , "userId":
+                                
+                                  self.uploadTheTags(itemId: databaseRef.key)
+                                
+                                if (self.descriptionTextView.text == "الوصف")
+                                {
+                                    
+                                    self.descriptionTextView.text = ""
+                                }
+                            
+                                
+                                self.uploadTheTags(itemId: databaseRef.key)
+                                
+                                databaseRef.updateChildValues(["title": self.titleField.text, "description":self.descriptionTextView.text, "price": price, "currency": self.currencySegemnted.titleForSegment(at: self.currencySegemnted.selectedSegmentIndex) , "userId":
                                     self.userID,"imagesCount": dataBaseCounter - 1,  "timestamp": timestamp, "displayName": WelcomeViewController.user.getUserDisplayName(),
                                                 "favourites": 0])
                                 FIRDatabase.database().reference().child("Users").child(self.userID).child("items").updateChildValues([databaseRef.key :""])
@@ -503,15 +543,16 @@ class PostedItemViewController: UIViewController, UICollectionViewDataSource, UI
                                 // here the work of the geofire
                                 self.postGeofireInformation(itemId: databaseRef.key)
                                 
-                                //self.backTapped()
+                              
                                 
+                                 CollectionsCollectionViewController.presentedFor = "sell"
                                 let collectionsStoryboard = UIStoryboard(name: "Main", bundle: nil)
                                 let collectionsViewController = collectionsStoryboard.instantiateViewController(withIdentifier: "CollectionsCollectionViewController") as! CollectionsCollectionViewController
-                                  CollectionsCollectionViewController.presentedFor = "sell"
+
                                 PostedItemViewController.itemId = databaseRef.key
                                 self.navigationController?.pushViewController(collectionsViewController, animated: true)
-                                self.postButton.isEnabled = false
-                                self.indicatior.stopAnimating()
+                                
+                             //   self.indicatior.stopAnimating()
                                 self.animationSuperView.removeFromSuperview()
                             }
                         }
@@ -519,11 +560,112 @@ class PostedItemViewController: UIViewController, UICollectionViewDataSource, UI
                        // dataBaseCounter = dataBaseCounter + 1
                     }
                 }
+                
                 storageCounter = storageCounter + 1
             }
         }
     }
+}
+
+    
+    func uploadTheTags(itemId: String)
+    {
+        var titleTags = [String]()
+       // PostedItemViewController.images = [#imageLiteral(resourceName: "house20"), #imageLiteral(resourceName: "adidas"), #imageLiteral(resourceName: "caon-camera") ,#imageLiteral(resourceName: "mercedes")]
+        if (self.titleField.text != "")
+        {
+            titleTags =  (self.titleField.text?.components(separatedBy: " "))!
+        }
+        
+        var mlTags = [String]()
+        
+        for image in PostedItemViewController.images
+         {
+            if (image != nil)
+            {
+                var mlSet = Set(mlTags)
+                
+                UIGraphicsBeginImageContextWithOptions(CGSize(width: 227, height: 227), true, 2.0)
+                image?.draw(in: CGRect(x: 0, y: 0, width: 227, height: 227))
+                var newImage = UIGraphicsGetImageFromCurrentImageContext()!
+                UIGraphicsEndImageContext()
+                UIGraphicsEndImageContext()
+                
+                let attrs = [kCVPixelBufferCGImageCompatibilityKey: kCFBooleanTrue, kCVPixelBufferCGBitmapContextCompatibilityKey: kCFBooleanTrue] as CFDictionary
+                var pixelBuffer : CVPixelBuffer?
+                let status = CVPixelBufferCreate(kCFAllocatorDefault, Int(newImage.size.width), Int(newImage.size.height), kCVPixelFormatType_32ARGB, attrs, &pixelBuffer)
+                guard (status == kCVReturnSuccess) else {
+                    return
+                }
+                
+                CVPixelBufferLockBaseAddress(pixelBuffer!, CVPixelBufferLockFlags(rawValue: 0))
+                let pixelData = CVPixelBufferGetBaseAddress(pixelBuffer!)
+                
+                let rgbColorSpace = CGColorSpaceCreateDeviceRGB()
+                let context = CGContext(data: pixelData, width: Int(newImage.size.width), height: Int(newImage.size.height), bitsPerComponent: 8, bytesPerRow: CVPixelBufferGetBytesPerRow(pixelBuffer!), space: rgbColorSpace, bitmapInfo: CGImageAlphaInfo.noneSkipFirst.rawValue) //3
+                
+                context?.translateBy(x: 0, y: newImage.size.height)
+                context?.scaleBy(x: 1.0, y: -1.0)
+                
+                UIGraphicsPushContext(context!)
+                newImage.draw(in: CGRect(x: 0, y: 0, width: newImage.size.width, height: newImage.size.height))
+                UIGraphicsPopContext()
+                CVPixelBufferUnlockBaseAddress(pixelBuffer!, CVPixelBufferLockFlags(rawValue: 0))
+
+                guard let prediction = try? model.prediction(image: pixelBuffer!) else {
+                    
+                    return
+                }
+                
+                var classfiers = prediction.classLabel.components(separatedBy:[",", " ", ".", "#", "$", "[", "]"])
+                
+                var classifiersSet = Set(classfiers)
+                mlSet = mlSet.union(classifiersSet)
+                mlTags = Array(mlSet)
+            }
+        }
+    
+        var string = NSLocalizedString("apple", comment: "")
+        
+        for index in 0 ..< mlTags.count
+        {
+             if index >= mlTags.count
+             {
+                    break
+             }
+            
+            if mlTags[index] == "$" || mlTags[index] == " " || mlTags[index] == "." || mlTags[index] == "]" || mlTags[index] == "[" || mlTags[index] == ""
+            {
+                mlTags.remove(at: index)
+            }
+         }
+
+         if (self.titleField.text == "")
+         {
+            for tag in mlTags
+            {
+                titleTags.append( NSLocalizedString(tag, comment: " "))
+            }
+            
+            self.titleField.text = titleTags.joined(separator: " ")
+         }
+        
+          else
+          {
+            var titleTagsSet = Set(titleTags)
+            var mlTagsSet = Set(mlTags)
+            self.tagsArray = Array(titleTagsSet.union(mlTagsSet))
+          }
+        
+          var tagsRef = FIRDatabase.database().reference().child("tags")
+    
+          for tag in tagsArray
+          {
+                tagsRef.child(tag.lowercased()).child(itemId).setValue("")
+            
+          }
     }
+    
     
     func postGeofireInformation(itemId: String)
     {
