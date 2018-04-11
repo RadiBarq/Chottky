@@ -70,7 +70,7 @@ class ItemViewController: UIViewController, UICollectionViewDelegateFlowLayout, 
          favouriteRef = FIRDatabase.database().reference().child("Users").child(userID).child("favourites")
          soldItemsRef = FIRDatabase.database().reference().child("Users").child(userID).child("sold_items")
         
-         // playFavouriteAnimation()
+         // playFavouriteAnimation().
          getItemInformation()
         // getItemDistance()
        
@@ -85,7 +85,6 @@ class ItemViewController: UIViewController, UICollectionViewDelegateFlowLayout, 
          //self.navigationController?.isNavigationBarHidden = false
          initializeIndicatior()
          indicator.startAnimating()
-        
     }
     
     func getItemInformation()
@@ -120,7 +119,7 @@ class ItemViewController: UIViewController, UICollectionViewDelegateFlowLayout, 
                 print("GeoFire does not conatains the needed locaiton in this scenario")
             }
         })
-    
+        
     }
 
     func initializeIndicatior() {
@@ -154,7 +153,8 @@ class ItemViewController: UIViewController, UICollectionViewDelegateFlowLayout, 
             self.navigationController?.popViewController(animated: true)
         }
     }
-    
+
+
     func checkIfThisIsFavouriteItem()
     {
            favouriteRef.observeSingleEvent(of: .value, with: {
@@ -174,13 +174,14 @@ class ItemViewController: UIViewController, UICollectionViewDelegateFlowLayout, 
             }
         })
     }
+
     
     func addFavouriteNotification() // Here is a very important point to discuss.
     {
         favouriteNotificationRef = FIRDatabase.database().reference().child("Users").child(itemUserId).child("notifications").child(ItemViewController.itemKey)
         var itemKey = ItemViewController.itemKey
         let timestamp = Int(NSDate().timeIntervalSince1970)
-        favouriteNotificationRef.updateChildValues(["userId": userID, "itemId": ItemViewController.itemKey, "new": "true", "timestamp": timestamp, "type" : "favourite", "userName": WelcomeViewController.user.getUserDisplayName()])
+        favouriteNotificationRef.updateChildValues(["userId": userID, "itemId": ItemViewController.itemKey, "recent": "true", "timestamp": timestamp, "type" : "favourite", "userName": WelcomeViewController.user.getUserDisplayName()])
     
         FIRDatabase.database().reference().child("notifications").child(ItemViewController.itemKey + userID).updateChildValues([
             
@@ -210,7 +211,6 @@ class ItemViewController: UIViewController, UICollectionViewDelegateFlowLayout, 
 
                 else
                 {
-                    
                     var ref =  FIRDatabase.database().reference().child("Users").child(self.itemUserId).child("block")
                     ref.observeSingleEvent(of: .value, with: {(snapshot) in
                         
@@ -221,28 +221,27 @@ class ItemViewController: UIViewController, UICollectionViewDelegateFlowLayout, 
                             let defaultAction = UIAlertAction(title: "موافق", style: .default, handler: nil)
                             alertEmailController.addAction(defaultAction)
                             self.present(alertEmailController, animated: true, completion: nil)
-            
                         }
                         
                         else
                         {
                             ChatCollectionViewController.messageFromDisplayName = self.itemUserDisplayName
-                            ChatCollectionViewController.messageToId = self.self.itemUserId
+                            ChatCollectionViewController.messageToId = self.itemUserId
+                            ChatCollectionViewController.itemId = ItemViewController.itemKey
                             let flowLayout = UICollectionViewFlowLayout()
                             let chatLogController = ChatCollectionViewController(collectionViewLayout:flowLayout)
                             self.navigationController?.pushViewController(chatLogController, animated: true)
                         }
-                        
                     })
                     
                   }
             })
         }
-            
         else
         {
-        FIRDatabase.database().reference().child("items").child(ItemViewController.itemKey).removeValue()
-        FIRDatabase.database().reference().child("Users").child(userID).child("items").child(ItemViewController.itemKey).removeValue()
+          //  FIRDatabase.database().reference().child("items").child(ItemViewController.itemKey).removeValue()
+            FIRDatabase.database().reference().child("items-location").child(ItemViewController.itemKey).removeValue()
+            FIRDatabase.database().reference().child("Users").child(userID).child("items").child(ItemViewController.itemKey).removeValue()
             var itemKey = ItemViewController.itemKey!
             self.soldItemsRef.updateChildValues([itemKey: ""])
             self.navigationController?.popViewController(animated: true)
@@ -430,9 +429,10 @@ class ItemViewController: UIViewController, UICollectionViewDelegateFlowLayout, 
     func removeFavouriteFromFirebase()
     {
         
-            let ref = FIRDatabase.database().reference().child("notification")
+        let ref = FIRDatabase.database().reference().child("notification")
         FIRDatabase.database().reference().child("Users").child(itemUserId).child("notifications").child(ItemViewController.itemKey).removeValue()
         FIRDatabase.database().reference().child("Users").child(userID).child("favourites").child(ItemViewController.itemKey).removeValue()
+        
         FIRDatabase.database().reference().child("items").child(ItemViewController.itemKey).child("favourites").observeSingleEvent(of: .value, with: { (snapshot) in
             
             var favouritesNumber = ((snapshot as! FIRDataSnapshot).value) as! Int
@@ -497,6 +497,7 @@ class ItemViewController: UIViewController, UICollectionViewDelegateFlowLayout, 
         iconImageView.centerYAnchor.constraint(equalTo: backButton.centerYAnchor).isActive = true
         iconImageView.centerXAnchor.constraint(equalTo: backButton.centerXAnchor).isActive = true
         backButton.addTarget(self, action: #selector(dismissView), for: .touchUpInside)
+
     }
 
     func dismissView()
@@ -615,7 +616,6 @@ class ItemViewController: UIViewController, UICollectionViewDelegateFlowLayout, 
          UIApplication.shared.statusBarStyle = .lightContent
         statusBar.tintColor = UIColor.white
         setupTheCloseButton()
-
     }
     
     

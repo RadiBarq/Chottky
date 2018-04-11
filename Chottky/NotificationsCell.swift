@@ -15,7 +15,6 @@ class NotificationsCell: UITableViewCell {
     @IBOutlet weak var notificationLabel: UILabel!
     @IBOutlet weak var notificationUser: UIImageView!
     
-    
     override func awakeFromNib() {
         
         super.awakeFromNib()

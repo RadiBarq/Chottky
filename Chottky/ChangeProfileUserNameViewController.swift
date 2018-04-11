@@ -18,26 +18,35 @@ class ChangeProfileUserNameViewController: UIViewController, UITextFieldDelegate
       let userID = FIRAuth.auth()!.currentUser!.uid
     
     @IBAction func saveButtonClicked(_ sender: UIButton) {
-    
+        
             var alertEmailController:UIAlertController = UIAlertController()
-        
             let userName = userNameTextField.text!
-            FIRDatabase.database().reference().child("Users").child(userID).updateChildValues(["UserName": userName], withCompletionBlock: {_,_ in
-            
-            alertEmailController = UIAlertController(title: "تمت العملية بنجاح", message: "تم تغير اسم المستخدم بنجاح", preferredStyle: .alert)
-                
+            let firebaseUser = FIRAuth.auth()?.currentUser
+            let changeRequest = firebaseUser?.profileChangeRequest()
+            changeRequest?.displayName = userName
         
-            let defaultAction = UIAlertAction(title: "موافق", style: .default, handler: { (alert: UIAlertAction!) in
-                
-                WelcomeViewController.user.displayName = self.userNameTextField.text!
-                self.navigationController?.popViewController(animated: true)
-            })
+    
+            changeRequest?.commitChanges { error in
+              if let error = error {
             
-            alertEmailController.addAction(defaultAction)
-            self.present(alertEmailController, animated: true, completion: {
-            })
+               } else {
+                // Profile updated.
+                FIRDatabase.database().reference().child("Users").child(self.userID).updateChildValues(["UserName": userName], withCompletionBlock: {_,_ in
+                    alertEmailController = UIAlertController(title: "تمت العملية بنجاح", message: "تم تغير اسم المستخدم بنجاح", preferredStyle: .alert)
+                    
+                    let defaultAction = UIAlertAction(title: "موافق", style: .default, handler: { (alert: UIAlertAction!) in
+                        
+                        WelcomeViewController.user.displayName = self.userNameTextField.text!
+                        self.navigationController?.popViewController(animated: true)
+                    })
+                    
+                    alertEmailController.addAction(defaultAction)
+                    self.present(alertEmailController, animated: true, completion: {
+                    })
+                }
+                )
+            }
         }
-        )
     }
     
     override func viewDidLoad() {

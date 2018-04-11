@@ -28,8 +28,8 @@ class BrowseSettingsTableViewCell: UITableViewCell {
     {
         self.addSubview(tickImageView)
         tickImageView.translatesAutoresizingMaskIntoConstraints = false
-        tickImageView.widthAnchor.constraint(equalToConstant: 20).isActive = true
-        tickImageView.heightAnchor.constraint(equalToConstant: 20).isActive = true
+        tickImageView.widthAnchor.constraint(equalToConstant: 25).isActive = true
+        tickImageView.heightAnchor.constraint(equalToConstant: 25).isActive = true
         tickImageView.centerYAnchor.constraint(equalTo: self.centerYAnchor).isActive = true
         tickImageView.leftAnchor.constraint(equalTo: self.leftAnchor, constant: 10).isActive = true
     }

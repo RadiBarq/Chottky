@@ -12,7 +12,7 @@ import CoreLocation
 import Lottie
 import CoreML
 import Foundation
-
+import ROGoogleTranslate
 
 class PostedItemViewController: UIViewController, UICollectionViewDataSource, UITextViewDelegate, UITextFieldDelegate, UICollectionViewDelegateFlowLayout, UINavigationControllerDelegate, UIImagePickerControllerDelegate, CLLocationManagerDelegate{
     
@@ -25,7 +25,6 @@ class PostedItemViewController: UIViewController, UICollectionViewDataSource, UI
     var categoryItems = ["سيارات", "الكترونيات", "شقق و اراضي", ]
     var model:  SqueezeNet!
     
-    
     @IBOutlet weak var postButton: UIButton!
     
     static var imageClickedNumber: Int = 0
@@ -35,12 +34,9 @@ class PostedItemViewController: UIViewController, UICollectionViewDataSource, UI
     static var isItFirstTimeOnThisView: Bool = true
     //static var backButtonPressed: Bool = false
     // static var firstImage: UIImage?
-    
     var animationSuperView = UIView()
     var indicatioAnimation = LOTAnimationView(name: "animation-w500-h500")
-    
     var tagsArray = [String]()
-    
     
     @IBOutlet weak var imagesCollectionView: UICollectionView!
     @IBOutlet weak var currencySegemnted: UISegmentedControl!
@@ -53,7 +49,6 @@ class PostedItemViewController: UIViewController, UICollectionViewDataSource, UI
     var indicatior = UIActivityIndicatorView()
     var stringLocation:String = ""
     static var itemId = String()
-    
     
     override func viewDidLoad() {
         
@@ -72,6 +67,7 @@ class PostedItemViewController: UIViewController, UICollectionViewDataSource, UI
         
         let toolBar = UIToolbar()
         toolBar.sizeToFit()
+
         
         let doneButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.done, target: self, action: #selector(doneClicked))
         doneButton.tintColor = Constants.FirstColor
@@ -102,15 +98,13 @@ class PostedItemViewController: UIViewController, UICollectionViewDataSource, UI
         self.locationManager.delegate = self
         self.locationManager.requestWhenInUseAuthorization()
         self.locationManager.startUpdatingLocation()
-        
-
+    
         model = SqueezeNet()
        // uploadTheTags(itemId: "1")
     }
     
     func addAnimationSuperView()
     {
-        
         self.view.addSubview(animationSuperView)
         animationSuperView.layer.masksToBounds = true
         animationSuperView.translatesAutoresizingMaskIntoConstraints = false
@@ -182,7 +176,6 @@ class PostedItemViewController: UIViewController, UICollectionViewDataSource, UI
         return false
     }
     
-    
     override func viewWillAppear(_ animated: Bool) {
         
         // PostedItemViewController.images[PostedItemViewController.imageClickedNumber] = (PostedItemViewController.imageClicked!)
@@ -205,8 +198,6 @@ class PostedItemViewController: UIViewController, UICollectionViewDataSource, UI
                                                  options: NSStringDrawingOptions.usesLineFragmentOrigin,
                                                          attributes: [NSFontAttributeName: font],
                                                          context: nil).size
-        
-        
     }
     
     
@@ -280,7 +271,6 @@ class PostedItemViewController: UIViewController, UICollectionViewDataSource, UI
             let boundingRect = sizeOfString(string: newText, constrainedToWidth: Double(textWidth), font: textView.font!)
             let numberOfLines = boundingRect.height / textView.font!.lineHeight;
             return numberOfLines <= 6;
-
     }
     
     func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
@@ -373,7 +363,7 @@ class PostedItemViewController: UIViewController, UICollectionViewDataSource, UI
         //isBackButtonClicked = true
         imageLibraryController.dismiss(animated: true, completion: nil)
     }
-    
+
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         
@@ -413,6 +403,77 @@ class PostedItemViewController: UIViewController, UICollectionViewDataSource, UI
     
         return checker
     }
+
+    func checkNudityForPictures() -> Bool
+    {
+        var allPhotosClear = true
+    
+        for image in PostedItemViewController.images
+        {
+            if (image != nil)
+            {
+            
+             let model = Nudity()
+             var oneImage = image
+            
+            UIGraphicsBeginImageContextWithOptions(CGSize(width: 224, height: 224), true, 2.0)
+            oneImage?.draw(in: CGRect(x: 0, y: 0, width: 224, height: 224))
+            var newImage = UIGraphicsGetImageFromCurrentImageContext()!
+            UIGraphicsEndImageContext()
+            
+            let attrs = [kCVPixelBufferCGImageCompatibilityKey: kCFBooleanTrue, kCVPixelBufferCGBitmapContextCompatibilityKey: kCFBooleanTrue] as CFDictionary
+            var pixelBuffer : CVPixelBuffer?
+            let status = CVPixelBufferCreate(kCFAllocatorDefault, Int(newImage.size.width), Int(newImage.size.height), kCVPixelFormatType_32ARGB, attrs, &pixelBuffer)
+            guard (status == kCVReturnSuccess) else {
+
+             fatalError("Scaling or converting to pixel buffer failed! in nudity detection!")
+                
+            }
+            
+            CVPixelBufferLockBaseAddress(pixelBuffer!, CVPixelBufferLockFlags(rawValue: 0))
+            let pixelData = CVPixelBufferGetBaseAddress(pixelBuffer!)
+            
+            let rgbColorSpace = CGColorSpaceCreateDeviceRGB()
+            let context = CGContext(data: pixelData, width: Int(newImage.size.width), height: Int(newImage.size.height), bitsPerComponent: 8, bytesPerRow: CVPixelBufferGetBytesPerRow(pixelBuffer!), space: rgbColorSpace, bitmapInfo: CGImageAlphaInfo.noneSkipFirst.rawValue) //3
+            
+            context?.translateBy(x: 0, y: newImage.size.height)
+            context?.scaleBy(x: 1.0, y: -1.0)
+            
+            UIGraphicsPushContext(context!)
+            newImage.draw(in: CGRect(x: 0, y: 0, width: newImage.size.width, height: newImage.size.height))
+            UIGraphicsPopContext()
+            CVPixelBufferUnlockBaseAddress(pixelBuffer!, CVPixelBufferLockFlags(rawValue: 0))
+   
+            guard let result = try? model.prediction(data: pixelBuffer!) else {
+                
+                fatalError("Prediction in predect nudity failed!")
+            }
+            
+              var confidence = result.classLabel
+            
+                if (confidence == "NSFW")
+                {
+                    
+                    allPhotosClear = false
+                }
+            
+            }
+        
+        }
+        
+        if (allPhotosClear == true)
+        {
+            
+            return true
+        }
+        
+        else
+        {
+            
+            return false
+        }
+ 
+    }
     
     @IBAction func handlePost(_ sender: UIButton) {
         
@@ -427,7 +488,6 @@ class PostedItemViewController: UIViewController, UICollectionViewDataSource, UI
             alertEmailController.addAction(defaultAction)
             self.present(alertEmailController, animated: true, completion: nil)
         }
-            
             
         else
         {
@@ -451,14 +511,26 @@ class PostedItemViewController: UIViewController, UICollectionViewDataSource, UI
             alertEmailController.addAction(defaultAction)
             present(alertEmailController, animated: true, completion: nil)
            
-            }
+        }
+            
+            
+        else if (checkNudityForPictures() == false)
+        {
+        
+            let alertEmailController = UIAlertController(title: "الصور المدخلة غير مناسبة للعمل", message: "احدى او جميع الصور المدخلة غير مناسبة للعمل الرجاء التاكد من الصور المدخلة", preferredStyle: .alert)
+            let defaultAction = UIAlertAction(title: "موافق", style: .default, handler: nil)
+            alertEmailController.addAction(defaultAction)
+            present(alertEmailController, animated: true, completion: nil)
+        
+        }
 
         else
         {
             self.addAnimationSuperView()
             var storageCounter = 1
             var dataBaseCounter = 1
-            
+            var counter = 1
+
             for image in PostedItemViewController.images
             {
                 if (image != nil)
@@ -488,7 +560,6 @@ class PostedItemViewController: UIViewController, UICollectionViewDataSource, UI
                         
                         if error != nil
                         {
-                            
                             // Here ther is an error
                             print (error?.localizedDescription)
                             let alertEmailController = UIAlertController(title: "حدث خطأ ما", message: "الرجاء اعد المحاولة لاحقا", preferredStyle: .alert)
@@ -498,7 +569,6 @@ class PostedItemViewController: UIViewController, UICollectionViewDataSource, UI
                             self.present(alertEmailController, animated: true, completion: nil)
                             self.indicatior.stopAnimating()
                             return
-                            
                         }
                         
                         else
@@ -506,8 +576,9 @@ class PostedItemViewController: UIViewController, UICollectionViewDataSource, UI
                             
                             self.postButton.isEnabled = false
                             //There everything is good and fine.
-                            if (dataBaseCounter == storageCounter)
+                            if (counter == dataBaseCounter - 1)
                             {
+                                
                                 var price = String()
                                 
                                 if (self.priceField.text == "")
@@ -530,7 +601,7 @@ class PostedItemViewController: UIViewController, UICollectionViewDataSource, UI
                                     
                                     self.descriptionTextView.text = ""
                                 }
-                            
+                                
                                 
                                 self.uploadTheTags(itemId: databaseRef.key)
                                 
@@ -543,18 +614,22 @@ class PostedItemViewController: UIViewController, UICollectionViewDataSource, UI
                                 // here the work of the geofire
                                 self.postGeofireInformation(itemId: databaseRef.key)
                                 
-                              
                                 
                                  CollectionsCollectionViewController.presentedFor = "sell"
                                 let collectionsStoryboard = UIStoryboard(name: "Main", bundle: nil)
                                 let collectionsViewController = collectionsStoryboard.instantiateViewController(withIdentifier: "CollectionsCollectionViewController") as! CollectionsCollectionViewController
 
                                 PostedItemViewController.itemId = databaseRef.key
+                                self.animationSuperView.removeFromSuperview()
                                 self.navigationController?.pushViewController(collectionsViewController, animated: true)
+                               
                                 
                              //   self.indicatior.stopAnimating()
-                                self.animationSuperView.removeFromSuperview()
+                            
+                                
                             }
+                            
+                             counter = counter + 1
                         }
                         
                        // dataBaseCounter = dataBaseCounter + 1
@@ -565,9 +640,8 @@ class PostedItemViewController: UIViewController, UICollectionViewDataSource, UI
             }
         }
     }
+        
 }
-
-    
     func uploadTheTags(itemId: String)
     {
         var titleTags = [String]()
@@ -577,6 +651,7 @@ class PostedItemViewController: UIViewController, UICollectionViewDataSource, UI
             titleTags =  (self.titleField.text?.components(separatedBy: " "))!
         }
         
+        
         var mlTags = [String]()
         
         for image in PostedItemViewController.images
@@ -584,11 +659,9 @@ class PostedItemViewController: UIViewController, UICollectionViewDataSource, UI
             if (image != nil)
             {
                 var mlSet = Set(mlTags)
-                
                 UIGraphicsBeginImageContextWithOptions(CGSize(width: 227, height: 227), true, 2.0)
                 image?.draw(in: CGRect(x: 0, y: 0, width: 227, height: 227))
                 var newImage = UIGraphicsGetImageFromCurrentImageContext()!
-                UIGraphicsEndImageContext()
                 UIGraphicsEndImageContext()
                 
                 let attrs = [kCVPixelBufferCGImageCompatibilityKey: kCFBooleanTrue, kCVPixelBufferCGBitmapContextCompatibilityKey: kCFBooleanTrue] as CFDictionary
@@ -617,15 +690,24 @@ class PostedItemViewController: UIViewController, UICollectionViewDataSource, UI
                     return
                 }
                 
+                
                 var classfiers = prediction.classLabel.components(separatedBy:[",", " ", ".", "#", "$", "[", "]"])
                 
+               // var params = ROGoogleTranslateParams(source: "ar",
+                                 //               //     target: "en",
+                                                   //  text:   "Here you can add your sentence you want to be translated")
+                //
+          ///      translator.translate(params: params) { (result) in
+              
+                 //   print("Translation: \(result)")
+
                 var classifiersSet = Set(classfiers)
                 mlSet = mlSet.union(classifiersSet)
                 mlTags = Array(mlSet)
             }
         }
     
-        var string = NSLocalizedString("apple", comment: "")
+       // var string = NSLocalizedString("apple", comment: "")
         
         for index in 0 ..< mlTags.count
         {
@@ -652,9 +734,11 @@ class PostedItemViewController: UIViewController, UICollectionViewDataSource, UI
         
           else
           {
+            
             var titleTagsSet = Set(titleTags)
             var mlTagsSet = Set(mlTags)
             self.tagsArray = Array(titleTagsSet.union(mlTagsSet))
+            
           }
         
           var tagsRef = FIRDatabase.database().reference().child("tags")
@@ -662,10 +746,8 @@ class PostedItemViewController: UIViewController, UICollectionViewDataSource, UI
           for tag in tagsArray
           {
                 tagsRef.child(tag.lowercased()).child(itemId).setValue("")
-            
           }
     }
-    
     
     func postGeofireInformation(itemId: String)
     {
@@ -687,7 +769,7 @@ class PostedItemViewController: UIViewController, UICollectionViewDataSource, UI
             } else {
                 
                 print("Saved location successfully!")
-                
+            
             }
         }
     }

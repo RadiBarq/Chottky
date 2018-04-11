@@ -41,7 +41,7 @@ class BrowseSettingsTableViewController: UITableViewController {
        //selectedPostedWithInIndex = 3
        // selectedDistanceIndex = 3
     }
-
+    
     override func viewWillAppear(_ animated: Bool) {
         
         super.viewWillAppear(animated)
@@ -52,6 +52,7 @@ class BrowseSettingsTableViewController: UITableViewController {
         copyOfSelectedCategory = BrowseSettingsTableViewController.selectedCategoriesIndexes!
         copyOfSelectedDistance = BrowseSettingsTableViewController.selectedDistanceIndex!
         copySortedByIndex = BrowseSettingsTableViewController.selectedsortedByIndex!
+        
     }
 
     override func viewWillDisappear(_ animated: Bool) {
@@ -66,8 +67,7 @@ class BrowseSettingsTableViewController: UITableViewController {
     
     func intializeCategoryArray()
     {
-       // unselectRowsInSection(rowsCount: (BrowseSettingsTableViewController.selectedCategoriesIndexes?.count)!, section: 0)
-        
+        // unselectRowsInSection(rowsCount: (BrowseSettingsTableViewController.selectedCategoriesIndexes?.count)!, section: 0)
         var thirdSectionIndexPath = IndexPath(row:BrowseSettingsTableViewController.selectedDistanceIndex! , section: 0)
         self.tableView.scrollToRow(at: thirdSectionIndexPath, at: .bottom, animated: false)
         var thirdCell =  tableView.cellForRow(at: thirdSectionIndexPath) as! BrowseSettingsTableViewCell
@@ -110,7 +110,8 @@ class BrowseSettingsTableViewController: UITableViewController {
             counter = counter + 1
         }
     }
-
+    
+    
     func resetButtonClicked()
     {
         var thirdSectionIndexPath = IndexPath(row:BrowseSettingsTableViewController.selectedDistanceIndex! , section: 0)
@@ -164,7 +165,7 @@ class BrowseSettingsTableViewController: UITableViewController {
         let label = UILabel(frame: CGRect(x: -10, y: 22, width: view.frame.size.width, height: 10))
         
         label.text = self.sectionHeaderTitleArray[section]
-        label.textColor = Constants.FirstColor
+        label.textColor = UIColor.black
 
         label.textAlignment = .right
         returnedView.addSubview(label)
@@ -201,7 +202,6 @@ class BrowseSettingsTableViewController: UITableViewController {
         return indexPath
     }
     
-    
     override func tableView(_ tableView: UITableView, willSelectRowAt indexPath: IndexPath) ->
         IndexPath? {
         
@@ -230,7 +230,6 @@ class BrowseSettingsTableViewController: UITableViewController {
         let row = indexPath.row  // this is the row number.
         let selectedCell =  tableView.cellForRow(at: indexPath) as! BrowseSettingsTableViewCell
     
-    
          if (section == 1)
         {
             let sectionNumber = 1
@@ -242,7 +241,6 @@ class BrowseSettingsTableViewController: UITableViewController {
         
         else if (section == 2)
         {
-
             let sectionNumber = 2
             let numberOfRowsInSection = tableView.numberOfRows(inSection: sectionNumber)
             unselectRowsInSection(rowsCount: numberOfRowsInSection, section: sectionNumber)

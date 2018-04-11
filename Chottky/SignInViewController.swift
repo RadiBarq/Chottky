@@ -24,7 +24,7 @@ class SignInViewController: UIViewController, UITextFieldDelegate {
     override func viewDidLoad() {
         
         super.viewDidLoad()
-
+        
         emailTextField.delegate = self
         passwordTextField.delegate = self
         self.view.backgroundColor = UIColor.clear
@@ -32,12 +32,23 @@ class SignInViewController: UIViewController, UITextFieldDelegate {
         backgroundImage.image = UIImage(named: "house-photo")
         backgroundImage.frame = self.view.bounds
         self.backgroundView.addSubview(backgroundImage)
-        emailTextField.underlined()
-        passwordTextField.underlined()
+        
+        backgroundImage.translatesAutoresizingMaskIntoConstraints = false
+        //backgroundImage.widthAnchor.constraint(equalToConstant: self.backgroundView.frame.width).isActive = true
+        backgroundImage.topAnchor.constraint(equalTo: self.backgroundView.topAnchor).isActive = true
+        backgroundImage.bottomAnchor.constraint(equalTo: self.backgroundView.bottomAnchor).isActive = true
+        backgroundImage.centerXAnchor.constraint(equalTo: backgroundView.centerXAnchor).isActive = true
+        backgroundImage.leftAnchor.constraint(equalTo: backgroundView.leftAnchor).isActive = true
+        backgroundImage.rightAnchor.constraint(equalTo: backgroundView.rightAnchor).isActive = true
         
         emailTextField.attributedPlaceholder = NSAttributedString(string: "البريد الاكتروني", attributes: [NSForegroundColorAttributeName: UIColor.white])
 
         passwordTextField.attributedPlaceholder = NSAttributedString(string: "كلمة المرور", attributes: [NSForegroundColorAttributeName: UIColor.white])
+        
+        
+       emailTextField.underlined()
+        passwordTextField.underlined()
+        
         
         
         emailTextField.tag = 0
@@ -50,6 +61,8 @@ class SignInViewController: UIViewController, UITextFieldDelegate {
        // passwordTextField.placeholder = "كلمة المرور"
 
         // Do any additional setup after loading the view.
+        
+        
     }
     
     func textFieldShouldReturn(_ textField: UITextField) -> Bool
@@ -78,13 +91,20 @@ class SignInViewController: UIViewController, UITextFieldDelegate {
     }
     
     
+    @IBAction func forgotPasswordClicked(_ sender: UIButton) {
+        
+        let mainStoryboard = UIStoryboard(name: "Main", bundle: nil)
+        var resetPasswordController = mainStoryboard.instantiateViewController(withIdentifier: "resetPasswordViewController") as! ResetPasswordViewController
+        present(resetPasswordController, animated: true, completion:nil)
+    }
+    
+    
     func signIn()
     {
         
         let alertEmailController = UIAlertController(title: "صيغة البريد الالكتروني غير صحيحة", message: "الرجاء اعد المحاولة", preferredStyle: .alert)
         let defaultAction = UIAlertAction(title: "موافق", style: .default, handler: nil)
          alertEmailController.addAction(defaultAction)
-        
         let emailText:String = emailTextField.text!
         let passwordText:String = passwordTextField.text!
         
@@ -97,7 +117,6 @@ class SignInViewController: UIViewController, UITextFieldDelegate {
         else
         {
             authenticateWithFirebase(email: emailText, password: passwordText)
-            
         }
     }
     
@@ -140,43 +159,35 @@ class SignInViewController: UIViewController, UITextFieldDelegate {
             let defaultAction = UIAlertAction(title: "موافق", style: .default, handler: nil)
             alertEmailController.addAction(defaultAction)
             self.present(alertEmailController, animated: true, completion: nil)
-
+           // self.dismiss(animated: false, completion: nil)
         }
             
          // Nothing Happened Here
             else
             {
-                
-                 let userEmail:String = (user?.email)!
-                 let endEmailTextIndex = userEmail.index(userEmail.endIndex, offsetBy: -4)
-                 var emailTruncatedDotCom = userEmail.substring(to: endEmailTextIndex)
-                 let userId = user?.uid as! String
-                 WelcomeViewController.user.setUserEmail(email: emailTruncatedDotCom)
-                
-                WelcomeViewController.user.setUpUserId(userId: userId)
-                
+                     let userEmail:String = (user?.email)!
+                     let endEmailTextIndex = userEmail.index(userEmail.endIndex, offsetBy: -4)
+                     var emailTruncatedDotCom = userEmail.substring(to: endEmailTextIndex)
+                     let userId = user?.uid as! String
+                     WelcomeViewController.user.setUserEmail(email: emailTruncatedDotCom)
+                     WelcomeViewController.user.setUpUserId(userId: userId)
                      let ref = FIRDatabase.database().reference().child("Users").child(userId).child("UserName")
-                
-                     let userName = ref.observeSingleEvent(of: .value, with: { (FIRDataSnapshot) in
-                     WelcomeViewController.user.setUserDisplayName(name: (FIRDataSnapshot.value) as! String)
+                    WelcomeViewController.user.setUserDisplayName(name: (user?.displayName)!)
                      var userInstanceId = FIRInstanceID.instanceID().token()
                      FIRDatabase.database().reference().child("Users").child(userId).child("instanceId").setValue(userInstanceId)
                      let mainStoryboard = UIStoryboard(name: "Main", bundle: nil)
                      let tabViewController = mainStoryboard.instantiateViewController(withIdentifier: "tabBarViewController")
                      let addItemViewController = mainStoryboard.instantiateViewController(withIdentifier: "PostedItemViewController")
                      self.present(tabViewController, animated: true, completion: nil)
-                    
-                })
             }
         }
     }
     
     @IBAction func onClickedSignUp(_ sender: UIButton) {
         
-        
         let mainStoryboard = UIStoryboard(name: "Main", bundle: nil)
         let welcomeViewController = mainStoryboard.instantiateViewController(withIdentifier: "WelcomeViewController")
-        self.present(welcomeViewController, animated: true, completion: nil)
+         self.dismiss(animated: false, completion: nil)
     }
 
 }
@@ -187,7 +198,7 @@ extension UITextField {
     func underlined(){
         
         let border = CALayer()
-        let width = CGFloat(0.5)
+        let width = CGFloat(1.5)
         border.borderColor = UIColor.white.cgColor
         border.frame = CGRect(x: 0, y: self.frame.size.height - width, width:  self.frame.size.width, height: self.frame.size.height)
         border.borderWidth = width

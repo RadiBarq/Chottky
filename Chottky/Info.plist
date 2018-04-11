@@ -66,6 +66,7 @@
 	<string>شاري يود استخدام مكتبة الصور خاصتك</string>
 	<key>UIAppFonts</key>
 	<array>
+		<string>pacifico.regular.ttf</string>
 		<string>Ceri Lebran.otf</string>
 		<string>Siddiqua.otf</string>
 	</array>

@@ -17,13 +17,23 @@ class WelcomeViewController: UIViewController {
     public static var user = User()
     
     
-    
-    
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
         UIApplication.shared.isStatusBarHidden = false
         
+        if( FIRAuth.auth()!.currentUser != nil)
+        {
+            let user = FIRAuth.auth()?.currentUser!
+            WelcomeViewController.user.setUpUserId(userId: (user!.uid))
+            WelcomeViewController.user.setUserEmail(email: (user!.email)!)
+            WelcomeViewController.user.setUserDisplayName(name: user!.displayName!)
+            
+            let mainStoryboard = UIStoryboard(name: "Main", bundle: nil)
+            let tabViewController = mainStoryboard.instantiateViewController(withIdentifier: "tabBarViewController")
+            self.present(tabViewController, animated: true, completion: nil)
+            
+        }
     }
     
     override func viewDidLoad() {
@@ -40,9 +50,17 @@ class WelcomeViewController: UIViewController {
         
         self.view.backgroundColor = UIColor.clear
         var backgroundImage = UIImageView()
-        backgroundImage.image = UIImage(named: "1")
-        backgroundImage.frame = self.view.bounds
+        backgroundImage.image = #imageLiteral(resourceName: "house-photo")
+        backgroundImage.frame = self.backgroundView.bounds
         self.backgroundView.addSubview(backgroundImage)
+        
+        backgroundImage.translatesAutoresizingMaskIntoConstraints = false
+        //backgroundImage.widthAnchor.constraint(equalToConstant: self.backgroundView.frame.width).isActive = true
+        backgroundImage.topAnchor.constraint(equalTo: self.backgroundView.topAnchor).isActive = true
+        backgroundImage.bottomAnchor.constraint(equalTo: self.backgroundView.bottomAnchor).isActive = true
+        backgroundImage.centerXAnchor.constraint(equalTo: backgroundView.centerXAnchor).isActive = true
+        backgroundImage.leftAnchor.constraint(equalTo: backgroundView.leftAnchor).isActive = true
+        backgroundImage.rightAnchor.constraint(equalTo: backgroundView.rightAnchor).isActive = true
 
         let statusBar: UIView = UIApplication.shared.value(forKey: "statusBar") as! UIView
         statusBar.backgroundColor = UIColor.clear
@@ -52,7 +70,10 @@ class WelcomeViewController: UIViewController {
        // blurEffectView.frame = self.view.bounds
        // blurEffectView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
        // self.backgroundView.addSubview(blurEffectView)
+        
+
     }
+    
     
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
@@ -75,7 +96,7 @@ class WelcomeViewController: UIViewController {
                         FIRAuth.auth()?.signIn(with: credential) { (user, error) in
                             // ...
                             if let error = error {
-                                
+                            
                                 print(error)
                                 return
                             }

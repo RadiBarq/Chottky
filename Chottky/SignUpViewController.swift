@@ -120,12 +120,10 @@ class SignUpViewController: UIViewController, UITextFieldDelegate
                     
                      UIView.animate(withDuration: 0.5, delay: 0.4, options: [],
                            animations: {
-
-                                    
+                            
+                            
                                     self.topImageConstraint.constant = 40
                                     self.view.layoutIfNeeded()
-                                    
-                
        
             },
                 
@@ -236,22 +234,23 @@ class SignUpViewController: UIViewController, UITextFieldDelegate
     }
     
     // all the work here
-    
     func addNewUserInformationToFirebase(emailText: String, userNameText:String, passwordText:String, userId: String)
     {
         let endEmailTextIndex = emailText.index(emailText.endIndex, offsetBy: -4)
         let emailTruncatedDotCom = emailText.substring(to: endEmailTextIndex)
         let user = ["Email":emailText, "UserName":userNameText, "UserId": userId] // Here TODO The Location Name
-       
-        
         let storageRef = FIRStorage.storage().reference().child("Profile_Pictures").child(userId).child("Profile.jpg")
+    
+        let firebaseUser = FIRAuth.auth()?.currentUser
+        let changeRequest = firebaseUser?.profileChangeRequest()
+        changeRequest?.displayName = userNameText
+    
+        changeRequest?.commitChanges(completion: nil)
         
         if let uploadData = UIImageJPEGRepresentation(#imageLiteral(resourceName: "profile-picture") , 0.5)
         {
-            
              storageRef.put(uploadData, metadata: nil)
              {
-                
                 (metadata, error) in
                 
                 if (error != nil)
@@ -263,11 +262,11 @@ class SignUpViewController: UIViewController, UITextFieldDelegate
                     alertEmailController.addAction(defaultAction)
                     self.present(alertEmailController, animated: true, completion: nil)
                 }
-                
+                    
                 else
                 {
                       FIRDatabase.database().reference().child("Users").child(userId).setValue(user)
-
+                
                 }
                 
             }
@@ -279,6 +278,8 @@ class SignUpViewController: UIViewController, UITextFieldDelegate
       
         let mainStoryboard = UIStoryboard(name: "Main", bundle: nil)
         let welcomeViewController = mainStoryboard.instantiateViewController(withIdentifier: "WelcomeViewController")
-        self.present(welcomeViewController, animated: true, completion: nil)
+        self.dismiss(animated: true, completion: nil)
+      //  self.present(welcomeViewController, animated: true, completion: nil)
+       
     }
 }

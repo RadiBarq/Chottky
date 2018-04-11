@@ -15,14 +15,13 @@ import Firebase
 class AppDelegate: UIResponder, UIApplicationDelegate {
     
     var window: UIWindow?
-
     
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
         FIRApp.configure()
         
-        UINavigationBar.appearance().barTintColor = UIColor.rgb(red: 41, green: 121, blue: 255)
+        UINavigationBar.appearance().barTintColor = UIColor.white
     
         //application.statusBarStyle = .lightContent
         
@@ -30,8 +29,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         self.window?.backgroundColor = .white;
         
-        
-       application.statusBarStyle = .lightContent
+       //application.statusBarStyle = .lightContent
         
        // let statusBarBackgroundView = UIView()
         
@@ -43,10 +41,22 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
  
       //  UIApplication.shared.statusBarStyle = .lightContent
         UINavigationBar.appearance().clipsToBounds = true
+
+        if( FIRAuth.auth()!.currentUser != nil)
+        {
+            let user = FIRAuth.auth()?.currentUser!
+            WelcomeViewController.user.setUpUserId(userId: (user!.uid))
+            WelcomeViewController.user.setUserEmail(email: (user!.email)!)
+           // WelcomeViewController.user.setUserDisplayName(name: user!.displayName!)
+           let mainStoryboard = UIStoryboard(name: "Main", bundle: nil)
+           let tabViewController = mainStoryboard.instantiateViewController(withIdentifier: "tabBarViewController")
+           self.window?.rootViewController = tabViewController
+            
+        }
+        
       //  let statusBar: UIView = UIApplication.shared.value(forKey: "statusBar") as! UIView
        // statusBar.backgroundColor = UIColor.rgb(red: 41, green: 121, blue: 255)
         return true
-        
     }
 
     func applicationWillResignActive(_ application: UIApplication) {

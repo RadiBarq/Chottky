@@ -26,6 +26,8 @@ class ReportUserViewController: UIViewController, UICollectionViewDelegate, UICo
                           "not active", "selling illegal items","spammer", "selling fake items", "others"
                           ]
     
+    
+    
     @IBOutlet weak var reportDescription: UITextView!
     
     let userID = FIRAuth.auth()!.currentUser!.uid
@@ -100,8 +102,6 @@ class ReportUserViewController: UIViewController, UICollectionViewDelegate, UICo
         super.viewWillAppear(animated)
         self.navigationController?.isNavigationBarHidden = false
         title = "التبليغ عن المستخدم"
-        
-        
         // self.navigationController?.navigationBar.topItem?.title = "اعدادات التصفح"
        // self.navigationController?.navigationBar.isTranslucent = false
         self.navigationItem.rightBarButtonItem = UIBarButtonItem(title: "تبليغ", style: .done, target: self, action: #selector(reportButtonClicked(_:)))

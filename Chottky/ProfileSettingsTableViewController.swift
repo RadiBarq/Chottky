@@ -20,7 +20,6 @@ class ProfileSettingsTableViewController: UITableViewController, UIImagePickerCo
     var imageLibraryController = UIImagePickerController()
     let userID = FIRAuth.auth()!.currentUser!.uid
     var newImage = UIImage()
-    
     var indicator = UIActivityIndicatorView()
     
     override func viewDidLoad() {
@@ -32,6 +31,7 @@ class ProfileSettingsTableViewController: UITableViewController, UIImagePickerCo
         self.imageLibraryController.delegate = self
         self.imageLibraryController.sourceType = UIImagePickerControllerSourceType.photoLibrary
         initializeIndicatior()
+        
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -87,17 +87,36 @@ class ProfileSettingsTableViewController: UITableViewController, UIImagePickerCo
         
         else if(indexPath.row == 4)
         {
-            
             var reportedUsersViewController = mainStoryboard.instantiateViewController(withIdentifier: "blockedUsersTableViewController") as!
             BlockedUsersTableViewController
-            
             self.navigationController?.pushViewController(reportedUsersViewController, animated: true)
             
         }
         
-        
     }
     
+    
+    @IBAction func onClickSignOut(_ sender: UIButton) {
+        
+        do
+        {
+           try FIRAuth.auth()?.signOut()
+            
+            let mainStoryboard = UIStoryboard(name: "Main", bundle: nil)
+            var welcomeViewController = mainStoryboard.instantiateViewController(withIdentifier: "WelcomeViewController") as! WelcomeViewController
+            self.tabBarController?.navigationController?.dismiss(animated: false, completion: nil)
+            self.present(welcomeViewController, animated: true, completion: nil)
+            
+          //  self.navigationController?.dismiss(animated: true, completion: nil)®
+
+        }
+        
+        catch
+        {
+            print("error happened while signing out")
+        }
+    }
+
     func initializeIndicatior() {
         
         indicator = UIActivityIndicatorView(frame: CGRect(x: 0, y: 0, width: 100, height: 100))

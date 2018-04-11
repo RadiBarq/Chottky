@@ -18,7 +18,9 @@ import UserNotifications
 
 private let reuseIdentifier = "itemCell"
 
-class BrowseCollectionViewController: UICollectionViewController, UICollectionViewDelegateFlowLayout, UITabBarControllerDelegate, CLLocationManagerDelegate {
+class BrowseCollectionViewController: UICollectionViewController, UICollectionViewDelegateFlowLayout, UITabBarControllerDelegate, CLLocationManagerDelegate, UISearchBarDelegate  {
+    
+    
     
     static var browseNavigaionController: UINavigationController?
     var databaseRef: FIRDatabaseReference!
@@ -61,42 +63,50 @@ class BrowseCollectionViewController: UICollectionViewController, UICollectionVi
     var timestampDictionary: [String: Double] = [:]
     var animationSuperView = UIView()
     var indicatioAnimation = LOTAnimationView(name: "animation-w500-h500")
+    var loadingAnimation = LOTAnimationView(name: "browsing-animation.json")
+    var notItemsAnimation = LOTAnimationView(name: "not-items-animation.json")
     var dollarCurrenciesPrices: [String:Double] = ["SAR": 3.75,"ILS":3.44, "KWD": 0.3016, "AED": 3.672, "QAR": 3.640, "LYD": 1.359, "OMR": 0.3845,
                                                    "EGP":17.6541, "DZD": 114.343, "IQD": 1179, "MAD": 9.27913, "SDD":699.230, "SDG":6.99230,
                                                    "TND":2.46597, "LBP":1504.17, "SYP":214.550, "YER":249.856, "JOD": 0.70777, "BHD": 0.37456, "MRO": 349.800, "SOS": 548.639, "DJF": 177.296, "KMF": 409.221]
-    
+    var searchBar = UISearchBar()
+    var searchButtonClicked:Bool = false
+    var searchKeys = [String]()
     
     override func viewWillAppear(_ animated: Bool) {
         
+    
         super.viewWillAppear(animated)
-        
-        //   UIApplication.shared.setStatusBarHidden(false, with: .none)
+        //   UIApplication.share fd.setStatusBarHidden(false, with: .none)
         self.navigationController?.isNavigationBarHidden = false
         UIApplication.shared.isStatusBarHidden = false
         self.navigationController?.navigationBar.isTranslucent = false
         //        navigationController??.navigationBar.barTintColor = .orange
         let statusBar: UIView = UIApplication.shared.value(forKey: "statusBar") as! UIView
-        statusBar.backgroundColor = UIColor.rgb(red: 41, green: 121, blue: 255)
+        statusBar.backgroundColor = UIColor.white
         setupLefMenuProfileImage()
         self.locationManager.desiredAccuracy = kCLLocationAccuracyBest
         self.locationManager.delegate = self
         self.locationManager.requestWhenInUseAuthorization()
         self.locationManager.startUpdatingLocation()
+        self.tabBarController?.tabBar.isTranslucent = false
+    
+        
         
         if (BrowseCollectionViewController.queryChanged == true)
         {
             self.noItemAvailableLabel.removeFromSuperview()
+            self.notItemsAnimation?.removeFromSuperview()
+            self.notItemsAnimation?.removeFromSuperview()
             self.locationDisabledLabel.removeFromSuperview()
             self.locationDisabledButton.removeFromSuperview()
-                initializeItems()
+            initializeItems()
             
             addAnimationSuperView()
-         
+            
             
             if (BrowseSettingsTableViewController.selectedDistanceIndex == 0)
             {
                  maximumRadius = 1
-                
             }
             
             else if (BrowseSettingsTableViewController.selectedDistanceIndex == 1)
@@ -116,23 +126,25 @@ class BrowseCollectionViewController: UICollectionViewController, UICollectionVi
             }
             
             getItems()
-            
         }
     }
+    
+    
     
     override func viewDidLoad() {
         
         super.viewDidLoad()
-        
         // Uncomment the following line to preserve selection between presentations
         // self.clearsSelectionOnViewWillAppear = false
         // Register cell classes
         self.collectionView!.register(ItemsCell.self, forCellWithReuseIdentifier: reuseIdentifier)
         BrowseCollectionViewController.browseNavigaionController = self.navigationController
         
+
+        
         self.navigationController?.navigationBar.isTranslucent = false
         let statusBar: UIView = UIApplication.shared.value(forKey: "statusBar") as! UIView
-        statusBar.backgroundColor = UIColor.rgb(red: 41, green: 121, blue: 255)
+        statusBar.backgroundColor = UIColor.white
         //statusBar.tintColor = UIColor.white
         
         // notifications stuff
@@ -140,11 +152,11 @@ class BrowseCollectionViewController: UICollectionViewController, UICollectionVi
         center.requestAuthorization(options:[.badge, .alert, .sound]) { (granted, error) in
             // Enable or disable features based on authorization.
         }
-        UIApplication.shared.registerForRemoteNotifications()
         
+
+        UIApplication.shared.registerForRemoteNotifications()
         radius = 5
         maximumRadius = 50
-        
         let menuLeftNavigationController = UISideMenuNavigationController(rootViewController: LeftMenuTableViewController())
         menuLeftNavigationController.leftSide = true
         // UISideMenuNavigationController is a subclass of UINavigationController, so do any additional configuration
@@ -165,7 +177,6 @@ class BrowseCollectionViewController: UICollectionViewController, UICollectionVi
         
         initializeIndicatior()
         indicator.backgroundColor = UIColor.clear
-        
         self.navigationController?.navigationBar.tintColor = UIColor.white
         self.navigationController!.navigationBar.titleTextAttributes = [NSForegroundColorAttributeName: UIColor.white]
         
@@ -180,9 +191,29 @@ class BrowseCollectionViewController: UICollectionViewController, UICollectionVi
             self.locationManager.requestWhenInUseAuthorization()
             self.locationManager.startUpdatingLocation()
         }
-    
+        
         addAnimationSuperView()
     }
+    
+    
+   // func playLoadingAnimation()
+    //{
+      //  self.view.addSubview(loadingAnimation!)
+        //loadingAnimation?.backgroundColor = UIColor.clear
+        //self.view.bringSubview(toFront: loadingAnimation!)
+        //finalArray = []
+        //self.collectionView?.reloadData()
+        //loadingAnimation?.translatesAutoresizingMaskIntoConstraints = false
+        //loadingAnimation?.widthAnchor.constraint(equalToConstant: 500).isActive = true
+        //loadingAnimation?.heightAnchor.constraint(equalToConstant: 500).isActive = true
+        //loadingAnimation?.centerYAnchor.constraint(equalTo: view.centerYAnchor).isActive = true
+        //loadingAnimation?.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
+        //loadingAnimation?.animationProgress = 0.0
+        //loadingAnimation?.loopAnimation = true
+        //loadingAnimation?.play()
+        //self.collectionView?.isUserInteractionEnabled = false
+        
+    //}
     
     func addAnimationSuperView()
     {
@@ -195,8 +226,6 @@ class BrowseCollectionViewController: UICollectionViewController, UICollectionVi
         animationSuperView.centerYAnchor.constraint(equalTo: self.view.centerYAnchor).isActive = true
         animationSuperView.layer.cornerRadius = 5
         animationSuperView.backgroundColor = Constants.FirstColor.withAlphaComponent(0.85)
-        
-        
         animationSuperView.addSubview(indicatioAnimation!)
         indicatioAnimation?.translatesAutoresizingMaskIntoConstraints = false
         indicatioAnimation?.widthAnchor.constraint(equalToConstant: 100).isActive = true
@@ -208,21 +237,72 @@ class BrowseCollectionViewController: UICollectionViewController, UICollectionVi
         indicatioAnimation?.play()
         self.collectionView?.isUserInteractionEnabled = false
     }
-        
+    
     func setupNavigationBarItems()
     {
-        var image = UIImage(named: "ic_filter_list_white.png")
-        image = image?.withRenderingMode(UIImageRenderingMode.alwaysOriginal)
-        self.navigationItem.rightBarButtonItem = UIBarButtonItem(image: image, style: UIBarButtonItemStyle.plain, target: self, action: #selector(onClickBrowseSettings))
+        var image = #imageLiteral(resourceName: "menu")
+        image = image.withRenderingMode(UIImageRenderingMode.alwaysOriginal)
+        self.navigationItem.rightBarButtonItem = UIBarButtonItem(image: image, style: UIBarButtonItemStyle.plain, target: self, 
+                                                                 action: #selector(onClickBrowseSettings))
+    
         
-        var searchBar = UISearchBar()
+         searchBar = UISearchBar()
         searchBar.placeholder = "ابحث في جايلك"
         searchBar.tintColor = Constants.FirstColor
+        searchBar.delegate = self
         //searchBar.frame(forAlignmentRect: CGRect(x: 0, y: 0, width: 40, height: 40))
-        // Create your search bar
-        self.navigationItem.titleView = searchBar
+        
+        let logoContainer = UIView(frame: CGRect(x: 0, y: 0, width: 270, height: 30))
+        var logoImage = UIImageView()
+        logoImage.image = #imageLiteral(resourceName: "g30-white")
+        logoImage.contentMode = .scaleAspectFit
+        
+        
+        var logoLabel = UILabel()
+        logoLabel.text = "Gayelak"
+        logoLabel.textAlignment = .center
+        logoLabel.textColor = Constants.FirstColor
+        logoLabel.font = UIFont(name: "pacifico.regular",size: 25)
+        
+        logoContainer.addSubview(logoLabel)
+        logoLabel.translatesAutoresizingMaskIntoConstraints = false
+        logoLabel.widthAnchor.constraint(equalToConstant: 150).isActive = true
+        logoLabel.heightAnchor.constraint(equalToConstant: 30).isActive = true
+        logoLabel.centerXAnchor.constraint(equalTo: logoContainer.centerXAnchor).isActive = true
+        logoLabel.centerYAnchor.constraint(equalTo: logoContainer.centerYAnchor).isActive = true
+        //logoImage.translar
+        
+        self.navigationItem.titleView = logoContainer
     }
     
+    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+        
+        self.noItemAvailableLabel.removeFromSuperview()
+        self.notItemsAnimation?.removeFromSuperview()
+        self.locationDisabledLabel.removeFromSuperview()
+        self.locationDisabledButton.removeFromSuperview()
+        searchKeys = (searchBar.text?.lowercased().components(separatedBy: " "))!
+        searchButtonClicked = true
+        self.itemKeys = []
+        addAnimationSuperView()
+        initializeItems()
+        self.getItems()
+    }
+    
+    // this function used to clear the textfield somehow
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+        if searchText == "" {
+            
+               self.noItemAvailableLabel.removeFromSuperview()
+               self.notItemsAnimation?.removeFromSuperview()
+               self.locationDisabledLabel.removeFromSuperview()
+               self.locationDisabledButton.removeFromSuperview()
+                BrowseCollectionViewController.queryChanged = true
+               addAnimationSuperView()
+               initializeItems()
+               self.getItems()
+        }
+    }
     func onClickBrowseSettings()
     {
         let mainStoryboard = UIStoryboard(name: "Main", bundle: nil)
@@ -246,13 +326,21 @@ class BrowseCollectionViewController: UICollectionViewController, UICollectionVi
         noItemAvailableLabel.widthAnchor.constraint(equalToConstant: 350).isActive = true
         noItemAvailableLabel.heightAnchor.constraint(equalToConstant: 60).isActive = true
         noItemAvailableLabel.centerXAnchor.constraint(equalTo: self.view.centerXAnchor).isActive = true
-        noItemAvailableLabel.textColor = Constants.FirstColor
+        noItemAvailableLabel.textColor = UIColor(red: 116/255, green: 121/255, blue: 142/255, alpha: 255/255)
         noItemAvailableLabel.lineBreakMode = .byWordWrapping
         noItemAvailableLabel.numberOfLines = 2
         noItemAvailableLabel.text = "لم نتمكن من ايجاد اي نتائج بالقرب منك، حاول البحث عن شئ اخر او حاول في وقت لاحق!"
         noItemAvailableLabel.textAlignment = .center
+        self.view.addSubview(notItemsAnimation!)
+        notItemsAnimation?.translatesAutoresizingMaskIntoConstraints = false
+        notItemsAnimation?.centerXAnchor.constraint(equalTo: self.view.centerXAnchor).isActive = true
+        notItemsAnimation?.centerYAnchor.constraint(equalTo: self.view.centerYAnchor).isActive = true
+        notItemsAnimation?.widthAnchor.constraint(equalToConstant: 300).isActive = true
+        notItemsAnimation?.heightAnchor.constraint(equalToConstant: 300).isActive = true
+        notItemsAnimation?.play()
+        notItemsAnimation?.loopAnimation = true
     }
-
+    
     
     override func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
         
@@ -298,8 +386,7 @@ class BrowseCollectionViewController: UICollectionViewController, UICollectionVi
                         {
                             self.phoneCategoryArray.append(self.uncommonArray[i])
                         }
-                            
-                            
+                        
                         else if (childValue == "category-aparment")
                         {
                             self.apartmentCategoryArray.append(self.uncommonArray[i])
@@ -343,22 +430,19 @@ class BrowseCollectionViewController: UICollectionViewController, UICollectionVi
                         else if (childValue == "category-others")
                         {
                             self.otherCategoryArray.append(self.uncommonArray[i])
-                            
                         }
                             
                         else
                         {
                             print("There is an issue with the category-type fellow")
-                            
                         }
                     }
-                        
+                
                     else if (childKey == "currency")
                     {
                         oneItem.currency = childValue as! String
-                        
                     }
-                        
+                    
                     else if (childKey == "description")
                     {
                         
@@ -367,9 +451,7 @@ class BrowseCollectionViewController: UICollectionViewController, UICollectionVi
                         
                     else if (childKey == "displayName")
                     {
-                        
                         oneItem.displayName = childValue as! String
-                        
                     }
                         
                     else if (childKey == "imagesCount")
@@ -397,7 +479,6 @@ class BrowseCollectionViewController: UICollectionViewController, UICollectionVi
 
                         }
                         
-                        
                         self.pricesHighToLowDictionary[self.uncommonArray[i]] = price
                         self.pricesLowToHighDictionary[self.uncommonArray[i]] = price
                     }
@@ -405,15 +486,8 @@ class BrowseCollectionViewController: UICollectionViewController, UICollectionVi
                     else if (childKey == "timestamp")
                     {
                         oneItem.timestamp = childValue as! String
-                        let locale = Locale.current
-                        let currencyCode = locale.currencyCode!
-                        
-                        
-                      
-                        
                         var timestamp = Double(childValue)
                         self.timestampDictionary[self.uncommonArray[i]] = timestamp
-                        
                     }
                         
                     else if (childKey == "title")
@@ -429,11 +503,9 @@ class BrowseCollectionViewController: UICollectionViewController, UICollectionVi
                         
                     else if (childKey == "favourites")
                     {
-                        
                         var numberOfFavourites = Int(childValue)
                         self.favouritesDictionary[self.uncommonArray[i]] = numberOfFavourites
                         oneItem.itemPrice = childValue as! String
-                        
                     }
                         
                     else
@@ -446,7 +518,6 @@ class BrowseCollectionViewController: UICollectionViewController, UICollectionVi
                 
                 if (i == self.uncommonArray.count - 1)
                 {
-                    
                     // so here sorting the uncommonArray according to favourites here
                    // var keys = Array(self.favouritesDictionary.keys)
             
@@ -457,44 +528,146 @@ class BrowseCollectionViewController: UICollectionViewController, UICollectionVi
                     
                     else if (BrowseSettingsTableViewController.selectedsortedByIndex == 1)
                     {
-                        
-                        self.pricesHighToLawQuery()
-            
+                        self.pricesHighToLowQuery()
                     }
                     
                     else if (BrowseSettingsTableViewController.selectedsortedByIndex == 2)
                     {
                         self.pricesLowToHighQuery()
-                        
                     }
                     
                     else
                     {
                         self.newestQuery()
-                        
                     }
-                    
                 }
             })
         }
     }
     
+
+    func itemsSearchQuery()
+    {
+        var fetchedKeys = [String]()
+        var keysRef = FIRDatabase.database().reference().child("tags")
+        
+        var counter = 0
+        for key in searchKeys
+        {
+            var keys = [String]()
+            
+            keysRef.child(key).observeSingleEvent(of: .value) { (snapshot, error) in
+                
+                if (error == nil)
+                {
+                    for item in snapshot.children
+                    {
+                        var childKey = String(describing: (item as! FIRDataSnapshot).key)
+                        keys.append(childKey)
+                    }
+
+
+                    if (counter == 0)
+                    {
+                        fetchedKeys = keys
+                    }
+                        
+                    else
+                    {
+                        var fetchedSet = Set(fetchedKeys)
+                        var keysSet = Set(keys)
+                        fetchedSet = fetchedSet.intersection(keysSet)
+                        fetchedKeys = Array(fetchedSet)
+                    }
+                    
+                    if (counter == self.searchKeys.count - 1)
+                    {
+                        var finalSet = Set(self.finalArray)
+                        var fetchedSet = Set(fetchedKeys)
+                        finalSet = finalSet.intersection(fetchedSet)
+                        self.finalArray = Array(finalSet)
+                        
+                        if (self.finalArray.count < 12)
+                        {
+                            
+                            if (self.radius < self.maximumRadius)
+                            {
+                                self.radius = self.radius + 10
+                                self.itemKeys = []
+                                 self.currentItemsCount = self.finalArray.count
+                                self.getItems()
+                            }
+                            
+                            else
+                            {
+                                if (self.finalArray.count == 0)
+                                {
+                                    self.currentItemsCount = 0
+                                    self.initializeNoItemAvailable()
+                                    self.animationSuperView.removeFromSuperview()
+                                    self.collectionView?.reloadData()
+                                    self.collectionView?.isUserInteractionEnabled = true
+                                    BrowseCollectionViewController.queryChanged = false
+                                    self.searchButtonClicked = false
+                                }
+                                
+                                else
+                                {
+                                    self.currentItemsCount = self.finalArray.count
+                                    self.collectionView?.reloadData()
+                                    
+                                    if (BrowseCollectionViewController.queryChanged == true)
+                                    {
+                                        self.collectionView?.scrollToItem(at: IndexPath(row: 0, section: 0),
+                                                                          at: .top,
+                                                                          animated: true)
+                                        BrowseCollectionViewController.queryChanged = false
+                                    }
+                                    
+                                    self.animationSuperView.removeFromSuperview()
+                                    self.collectionView?.isUserInteractionEnabled = true
+                                    self.searchButtonClicked = false
+                                    
+                                }
+                            }
+                        }
+                        
+                        else
+                        {
+                            self.currentItemsCount = self.finalArray.count
+                            self.collectionView?.reloadData()
+                        
+                            if (BrowseCollectionViewController.queryChanged == true)
+                            {
+                                self.collectionView?.scrollToItem(at: IndexPath(row: 0, section: 0),
+                                                              at: .top,
+                                                              animated: true)
+                                
+                                BrowseCollectionViewController.queryChanged = false
+                            }
+                        
+                                self.animationSuperView.removeFromSuperview()
+                                self.collectionView?.isUserInteractionEnabled = true
+                                self.searchButtonClicked = false
+                          }
+                     }
+                }
+                 
+                else
+                {
+                    // we had to work on that
+                    print("error happened while searching")
+                    
+                }
+                
+                   counter = counter + 1
+            }
+        }
+    }
     
     func favouritesQuery()
     {
         var itemsRef = FIRDatabase.database().reference().child("items")
-        let givenSet:Set<String> = Set(finalArray)
-        var carsSet:Set<String> = Set(carCategoryArray)
-        var phonesSet:Set<String> = Set(phoneCategoryArray)
-        var apartmentSet:Set<String> = Set(apartmentCategoryArray)
-        var homeSet: Set<String> = Set(homeCategoryArray)
-        var dogSet: Set<String> = Set(dogCategoryArray)
-        var sportSet: Set<String> = Set(sportCategoryArray)
-        var clothesSet: Set<String> = Set(clothesCategoryArray)
-        var kidsSet: Set<String> = Set(kidsCategoryArray)
-        var booksSet: Set<String> = Set(booksCategoryArray)
-        var othersSet: Set<String> = Set(otherCategoryArray)
-        var finalSet: Set<String> = Set()
         var tempArray = [String]()
         var checkIfAtLeastOneChecked = false
         var categoryFavouritesDic: [String: Int] = [:]
@@ -505,7 +678,6 @@ class BrowseCollectionViewController: UICollectionViewController, UICollectionVi
             // carsSet = carsSet.intersection(givenSet)
             tempArray.mergeElements(newElements:  carCategoryArray)
             checkIfAtLeastOneChecked = true
-            
         }
         
         if (BrowseSettingsTableViewController.selectedCategoriesIndexes![1] == 1)
@@ -586,7 +758,6 @@ class BrowseCollectionViewController: UICollectionViewController, UICollectionVi
             for item in tempArray
             {
                 categoryFavouritesDic[item] = self.favouritesDictionary[item]
-                
             }
             
             self.uncommonArray = tempArray
@@ -594,14 +765,13 @@ class BrowseCollectionViewController: UICollectionViewController, UICollectionVi
                 return categoryFavouritesDic[o1]! as! Int > categoryFavouritesDic[o2]! as! Int
             }
             
-            
             self.finalArray = self.finalArray + self.uncommonArray
             self.currentItemsCount = self.finalArray.count
+            
         }
             
         else
         {
-            
             if (checkIfAtLeastOneChecked == true)
             {
                 
@@ -609,7 +779,7 @@ class BrowseCollectionViewController: UICollectionViewController, UICollectionVi
                 {
                     self.finalArray = tempArray
                     initializeNoItemAvailable()
-                    self.animationSuperView.removeFromSuperview()
+                   self.animationSuperView.removeFromSuperview()
                     self.collectionView?.reloadData()
                     self.collectionView?.isUserInteractionEnabled = true
                     BrowseCollectionViewController.queryChanged = false
@@ -620,7 +790,6 @@ class BrowseCollectionViewController: UICollectionViewController, UICollectionVi
                 else
                 {
                     self.currentItemsCount = finalArray.count
-                    
                 }
             }
                 
@@ -632,12 +801,10 @@ class BrowseCollectionViewController: UICollectionViewController, UICollectionVi
                 
                 self.finalArray = self.finalArray + self.uncommonArray
                 self.currentItemsCount = self.finalArray.count
-                
             }
-            
         }
         
-        
+    
         if (finalArray.count < 12 && radius<=maximumRadius)
         {
             self.radius = self.radius + 10
@@ -647,6 +814,13 @@ class BrowseCollectionViewController: UICollectionViewController, UICollectionVi
             
         else
         {
+            if (searchButtonClicked == true){
+        
+                self.itemsSearchQuery()
+            }
+                
+            else
+            {
             
             self.collectionView?.reloadData()
             
@@ -658,27 +832,15 @@ class BrowseCollectionViewController: UICollectionViewController, UICollectionVi
                                                   animated: true)
                 BrowseCollectionViewController.queryChanged = false
             }
-            
+
             self.animationSuperView.removeFromSuperview()
             self.collectionView?.isUserInteractionEnabled = true
         }
     }
+    }
     
-    func pricesHighToLawQuery()
+    func pricesHighToLowQuery()
     {
-        var itemsRef = FIRDatabase.database().reference().child("items")
-        let givenSet:Set<String> = Set(finalArray)
-        var carsSet:Set<String> = Set(carCategoryArray)
-        var phonesSet:Set<String> = Set(phoneCategoryArray)
-        var apartmentSet:Set<String> = Set(apartmentCategoryArray)
-        var homeSet: Set<String> = Set(homeCategoryArray)
-        var dogSet: Set<String> = Set(dogCategoryArray)
-        var sportSet: Set<String> = Set(sportCategoryArray)
-        var clothesSet: Set<String> = Set(clothesCategoryArray)
-        var kidsSet: Set<String> = Set(kidsCategoryArray)
-        var booksSet: Set<String> = Set(booksCategoryArray)
-        var othersSet: Set<String> = Set(otherCategoryArray)
-        var finalSet: Set<String> = Set()
         var tempArray = [String]()
         var checkIfAtLeastOneChecked = false
         var categoryPricesDic: [String: Double] = [:]
@@ -777,7 +939,6 @@ class BrowseCollectionViewController: UICollectionViewController, UICollectionVi
                 return categoryPricesDic[o1]! as! Double > categoryPricesDic[o2]! as! Double
             }
             
-            
             self.finalArray = self.finalArray + self.uncommonArray
             self.currentItemsCount = self.finalArray.count
         }
@@ -825,41 +986,36 @@ class BrowseCollectionViewController: UICollectionViewController, UICollectionVi
             
         else
         {
-            self.collectionView?.reloadData()
-            
-            if (BrowseCollectionViewController.queryChanged == true)
-            {
+            if (searchButtonClicked == true){
                 
-                self.collectionView?.scrollToItem(at: IndexPath(row: 0, section: 0),
+                self.itemsSearchQuery()
+            }
+                
+            else
+            {
+                self.collectionView?.reloadData()
+            
+                if (BrowseCollectionViewController.queryChanged == true)
+                {
+                
+                    self.collectionView?.scrollToItem(at: IndexPath(row: 0, section: 0),
                                                   at: .top,
                                                   animated: true)
-                BrowseCollectionViewController.queryChanged = false
-            }
+                    BrowseCollectionViewController.queryChanged = false
+                }
             
-            self.animationSuperView.removeFromSuperview()
-            self.collectionView?.isUserInteractionEnabled = true
+                 self.animationSuperView.removeFromSuperview()
+                self.collectionView?.isUserInteractionEnabled = true
+            }
         }
     }
     
     func newestQuery()
     {
-        var itemsRef = FIRDatabase.database().reference().child("items")
-        let givenSet:Set<String> = Set(finalArray)
-        var carsSet:Set<String> = Set(carCategoryArray)
-        var phonesSet:Set<String> = Set(phoneCategoryArray)
-        var apartmentSet:Set<String> = Set(apartmentCategoryArray)
-        var homeSet: Set<String> = Set(homeCategoryArray)
-        var dogSet: Set<String> = Set(dogCategoryArray)
-        var sportSet: Set<String> = Set(sportCategoryArray)
-        var clothesSet: Set<String> = Set(clothesCategoryArray)
-        var kidsSet: Set<String> = Set(kidsCategoryArray)
-        var booksSet: Set<String> = Set(booksCategoryArray)
-        var othersSet: Set<String> = Set(otherCategoryArray)
-        var finalSet: Set<String> = Set()
+   
         var tempArray = [String]()
         var checkIfAtLeastOneChecked = false
         var categoryTimeStampDic: [String: Double] = [:]
-        
         
         if (BrowseSettingsTableViewController.selectedCategoriesIndexes![0] == 1)
         {
@@ -993,9 +1149,7 @@ class BrowseCollectionViewController: UICollectionViewController, UICollectionVi
                 self.currentItemsCount = self.finalArray.count
                 
             }
-            
         }
-        
         
         if (finalArray.count < 12 && radius<=maximumRadius)
         {
@@ -1007,19 +1161,26 @@ class BrowseCollectionViewController: UICollectionViewController, UICollectionVi
         else
         {
             
-            self.collectionView?.reloadData()
-            
-            if (BrowseCollectionViewController.queryChanged == true)
-            {
+            if (searchButtonClicked == true){
                 
-                self.collectionView?.scrollToItem(at: IndexPath(row: 0, section: 0),
+                self.itemsSearchQuery()
+            }
+        
+            else
+            {
+                self.collectionView?.reloadData()
+                if (BrowseCollectionViewController.queryChanged == true)
+                {
+                
+                    self.collectionView?.scrollToItem(at: IndexPath(row: 0, section: 0),
                                                   at: .top,
                                                   animated: true)
-                BrowseCollectionViewController.queryChanged = false
+                    BrowseCollectionViewController.queryChanged = false
+                }
+                
+                self.animationSuperView.removeFromSuperview()
+                self.collectionView?.isUserInteractionEnabled = true
             }
-            
-            self.animationSuperView.removeFromSuperview()
-            self.collectionView?.isUserInteractionEnabled = true
         }
     }
     
@@ -1185,24 +1346,29 @@ class BrowseCollectionViewController: UICollectionViewController, UICollectionVi
             
         else
         {
-            self.collectionView?.reloadData()
             
-            if (BrowseCollectionViewController.queryChanged == true)
-            {
+            if (searchButtonClicked == true){
                 
-                self.collectionView?.scrollToItem(at: IndexPath(row: 0, section: 0),
+                self.itemsSearchQuery()
+                
+            }
+    
+            else{
+                
+                self.collectionView?.reloadData()
+                if (BrowseCollectionViewController.queryChanged == true)
+                {
+                    self.collectionView?.scrollToItem(at: IndexPath(row: 0, section: 0),
                                                   at: .top,
                                                   animated: true)
-                BrowseCollectionViewController.queryChanged = false
-            }
+                    BrowseCollectionViewController.queryChanged = false
+                }
             
-            self.animationSuperView.removeFromSuperview()
-            self.collectionView?.isUserInteractionEnabled = true
+                self.animationSuperView.removeFromSuperview()
+                self.collectionView?.isUserInteractionEnabled = true
+            }
         }
     }
-    
-    
-    
     
     func addSellItemButton()
     {
@@ -1228,6 +1394,7 @@ class BrowseCollectionViewController: UICollectionViewController, UICollectionVi
         indicator.activityIndicatorViewStyle = UIActivityIndicatorViewStyle.gray
         indicator.center = self.view.center
         self.view.addSubview(indicator)
+
     }
 
     func setupLefMenuProfileImage()
@@ -1290,8 +1457,9 @@ class BrowseCollectionViewController: UICollectionViewController, UICollectionVi
         
         //cell.itemImageView.sd_showActivityIndicatorView()
         //cell.itemImageView.sd_setIndicatorStyle(.gray)
-       
         return cell
+        
+
     }
     
     @IBAction func onClickShowMenu(_ sender: UIButton) {
@@ -1392,20 +1560,20 @@ class BrowseCollectionViewController: UICollectionViewController, UICollectionVi
         print("hi")
     }
     
+    
     func getItems()
     {
         // we should make sure that the location is available here.
-
         BrowseCollectionViewController.arrayLocation = stringLocation.components(separatedBy: " ")
         let geoFire = GeoFire(firebaseRef: geofireRef)
         let lat = Double(BrowseCollectionViewController.arrayLocation[0])
         let lon = Double(BrowseCollectionViewController.arrayLocation[1])
         var queryHandle = geoFire?.query(at: CLLocation(latitude: lat!, longitude: lon!), withRadius: Double(radius))
+
         
         queryHandle?.observe(.keyEntered) { (key, location) in
             
             self.itemKeys.append(key!)
-            
         }
     
         queryHandle?.observeReady({
@@ -1415,9 +1583,8 @@ class BrowseCollectionViewController: UICollectionViewController, UICollectionVi
                self.animationSuperView.removeFromSuperview()
                self.collectionView?.isUserInteractionEnabled = true
                self.initializeNoItemAvailable()
-                
             }
-                
+            
            else if (self.itemKeys.count - self.currentItemsCount < 12 && self.radius <= self.maximumRadius) //&& self.radius <= self.maximumRadius
            {
                self.radius = self.radius + 10
@@ -1437,19 +1604,16 @@ class BrowseCollectionViewController: UICollectionViewController, UICollectionVi
                 self.kidsCategoryArray = []
                 self.booksCategoryArray = []
                 self.otherCategoryArray = []
-                
+            
                  self.uncommonArray = self.itemKeys.filter{ item in !self.finalArray.contains(item)}
              //   self.itemKeys = self.currentKeys
              //   self.finalArray = self.itemKeys
-                
                 self.fetchGeofireDataToDictionary()
                 queryHandle?.removeAllObservers()
           }
         })
     }
     
-    
-
     override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         
         //self.navigationController?.navigationBar.isTranslucent = false
@@ -1460,6 +1624,7 @@ class BrowseCollectionViewController: UICollectionViewController, UICollectionVi
         let itemViewController = itemStoryBoard.instantiateViewController(withIdentifier: "ItemViewController") as! ItemViewController
         self.navigationController?.pushViewController(itemViewController, animated: true)
         ItemViewController.isItOpenedFromProfileView = false
+        
     }
     
     //These for the number of items my lord

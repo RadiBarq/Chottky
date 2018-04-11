@@ -17,6 +17,8 @@ class LeftMenuTableViewController: UITableViewController{
     public static var profileImageView: UIImageView = UIImageView()
     let userID = FIRAuth.auth()!.currentUser!.uid
     
+    
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         // Uncomment the following line to preserve selection between presentations
@@ -26,7 +28,7 @@ class LeftMenuTableViewController: UITableViewController{
         // self.navigationItem.rightBarButtonItem = self.editButtonItem()
         intitializeMenusArray()
         self.tableView.backgroundColor = UIColor.white
-        //self.navigationController?.navigationBar.barTintColor = Constants.FirstColor
+        self.navigationController?.navigationBar.barTintColor = UIColor.white
        // navigationController?.navigationBar.isHidden = true
         tableView.separatorColor = UIColor.white
         tableView.register(MenuBarCell.self, forCellReuseIdentifier: "cellId")
@@ -35,7 +37,7 @@ class LeftMenuTableViewController: UITableViewController{
         self.tableView.isScrollEnabled = false
         
         self.navigationController?.navigationBar.isHidden = true
-        self.navigationController?.navigationBar.tintColor = Constants.FirstColor
+        self.navigationController?.navigationBar.tintColor = UIColor.black
         self.navigationController!.navigationBar.titleTextAttributes = [NSForegroundColorAttributeName: UIColor.white]
       // self.tableView.register(BrowseCollectionViewController(, forCellReuseIdentifier: "leftMenuBarCell")
     }
@@ -90,7 +92,7 @@ class LeftMenuTableViewController: UITableViewController{
         let headerView = UIView(frame:rect)
         headerView.addSubview(backgroundImageView)
         
-        var profileBackgroundFrame = CGRect(x: 35.7, y: headerView.frame.size.height / 3 - 32.3
+        var profileBackgroundFrame = CGRect(x: 15, y: headerView.frame.size.height / 3 - 32.3
             , width: 60 + 5, height: 60 + 5)
         
         var profileBackgroundImageView = UIImageView(frame: profileBackgroundFrame)
@@ -100,7 +102,7 @@ class LeftMenuTableViewController: UITableViewController{
         profileBackgroundImageView.layer.masksToBounds = true
         headerView.addSubview(profileBackgroundImageView)
         
-        var profileImageFrame = CGRect(x: 38, y: headerView.frame.size.height / 3 - 30
+        var profileImageFrame = CGRect(x: 17.3, y: headerView.frame.size.height / 3 - 30
             , width: 60, height: 60)
         
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(self.imageTapped(gesture:)))
@@ -113,25 +115,24 @@ class LeftMenuTableViewController: UITableViewController{
         //LeftMenuTableViewController.profileImageView.sd_setImage(with: storageRef)
         headerView.addSubview(LeftMenuTableViewController.profileImageView)
         
-        var nameTextFrame = CGRect(x: 38, y: headerView.frame.size.height / 3 + 45, width: 45, height: 7)
+        var nameTextFrame = CGRect(x: 17.3, y: headerView.frame.size.height / 3 + 45, width: 45, height: 7)
         var nameLabel = UILabel(frame: nameTextFrame)
         nameLabel.text = WelcomeViewController.user.getUserDisplayName()
         nameLabel.textColor = .white
         nameLabel.sizeToFit()
         headerView.addSubview(nameLabel)
         return headerView
+        
     }
 
     func imageTapped(gesture: UIGestureRecognizer) {
         // What to do here is like the following my little lord
-        
         ProfileViewController.userId = userID
         ProfileViewController.userDisplayName = WelcomeViewController.user.displayName
         
         let profileStoryboard = UIStoryboard(name: "Main", bundle: nil)
         let profileViewController = profileStoryboard.instantiateViewController(withIdentifier: "ProfileViewController") as! ProfileViewController
         self.navigationController?.pushViewController(profileViewController, animated: true)
-    
     }
     
     func addThePhoto(cell: MenuBarCell, indexPath: Int) -> UITableViewCell

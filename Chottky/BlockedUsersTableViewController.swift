@@ -20,6 +20,8 @@ class BlockedUsersTableViewController: UITableViewController {
     var usersNames = [String]()
     //var clickedRow: Int?
     
+    
+    
     override func viewDidLoad() {
         
         super.viewDidLoad()
@@ -75,9 +77,8 @@ class BlockedUsersTableViewController: UITableViewController {
         
 
     }
-
     
-   
+    
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
@@ -168,8 +169,6 @@ class BlockedUsersTableViewController: UITableViewController {
         return 60
     }
     
-    
-    
 }
 
 
@@ -180,7 +179,7 @@ class BlockedUser: UITableViewCell
         var lbl = UILabel()
         lbl.textAlignment = .right
         lbl.translatesAutoresizingMaskIntoConstraints = false
-        lbl.font = UIFont.systemFont(ofSize: 18)
+        lbl.font = UIFont.systemFont(ofSize: 16)
         lbl.textColor = UIColor.black
         return lbl
         
@@ -194,7 +193,7 @@ class BlockedUser: UITableViewCell
         button.translatesAutoresizingMaskIntoConstraints = false
         button.tintColor = Constants.FirstColor
         button.setTitleColor(Constants.FirstColor, for: .normal)
-        button.titleLabel?.font = UIFont(name: "Times New Roman", size: 18)
+        button.titleLabel?.font = UIFont(name: "Times New Roman", size: 16)
         return button
         
     }()
@@ -214,16 +213,16 @@ class BlockedUser: UITableViewCell
     func setupViews()
     {
         addSubview(removeBlockButton)
-        removeBlockButton.widthAnchor.constraint(equalToConstant:100).isActive = true
+        removeBlockButton.widthAnchor.constraint(equalToConstant:60).isActive = true
         removeBlockButton.heightAnchor.constraint(equalToConstant: 20).isActive = true
         removeBlockButton.centerYAnchor.constraint(equalTo: self.centerYAnchor).isActive = true
-        removeBlockButton.leftAnchor.constraint(equalTo: self.leftAnchor, constant: 50).isActive = true
+        removeBlockButton.leftAnchor.constraint(equalTo: self.leftAnchor, constant: 30).isActive = true
         
         addSubview(blockedUser)
         blockedUser.widthAnchor.constraint(equalToConstant: 200).isActive = true
         blockedUser.heightAnchor.constraint(equalToConstant: 30).isActive = true
         blockedUser.centerYAnchor.constraint(equalTo: self.centerYAnchor).isActive = true
-        blockedUser.rightAnchor.constraint(equalTo: self.rightAnchor, constant:  -50).isActive = true
+        blockedUser.rightAnchor.constraint(equalTo: self.rightAnchor, constant:  -10).isActive = true
         
     }
     

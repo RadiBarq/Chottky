@@ -60,10 +60,12 @@ class ProfileViewController: UIViewController {
                // let cameraStoryboard = UIStoryboard(name: "Main", bundle: nil)
               //  let cameraViewController = cameraStoryboard.instantiateViewController(withIdentifier: "cameraView") as! CameraViewController
               //  self.navigationController?.pushViewController(cameraViewController, animated: true)
-         
-                var blockReference = FIRDatabase.database().reference().child("Users").child(self.userID).child("block").child(ProfileViewController.userId).setValue(ProfileViewController.userDisplayName)
+                
+                self.blockUser(userKey:ProfileViewController.userId, userName: ProfileViewController.userDisplayName)
+                
+              //  var blockReference = FIRDatabase.database().reference().child("Users").child(self.userID).child("block").child(ProfileViewController.userId).setValue(ProfileViewController.userDisplayName)
         
-                var deleteReference = FIRDatabase.database().reference().child("Users").child(self.userID).child("chat").child(ProfileViewController.userId).removeValue()
+                //var deleteReference = FIRDatabase.database().reference().child("Users").child(self.userID).child("chat").child(ProfileViewController.userId).removeValue()
                 
                    self.isThisUserBlocked = true
                 
@@ -71,7 +73,7 @@ class ProfileViewController: UIViewController {
             }
             
             else{
-    
+                
                 alert.addAction(UIAlertAction(title: "الغاء حذر المستخدم", style: .default, handler: { (action) in
                     // PostedItemViewController.imageClickedNumber = indexPath.item
                     // let cameraStoryboard = UIStoryboard(name: "Main", bundle: nil)
@@ -79,9 +81,9 @@ class ProfileViewController: UIViewController {
                     //  self.navigationController?.pushViewController(cameraViewController, animated: true)
                     
                     var blockReference = FIRDatabase.database().reference().child("Users").child(self.userID).child("block").child(ProfileViewController.userId).removeValue()
-                    
                     self.isThisUserBlocked = false
- 
+                    
+                
                 }))
             }
         
@@ -129,12 +131,14 @@ class ProfileViewController: UIViewController {
         })
     }
     
+    
     override func viewWillDisappear(_ animated: Bool) {
         
         super.viewWillDisappear(animated)
         controllerArray = []
         self.navigationController?.isNavigationBarHidden = false
         self.tabBarController?.tabBar.isHidden = false
+        self.tabBarController?.tabBar.isTranslucent = false
     
     }
     
@@ -146,6 +150,8 @@ class ProfileViewController: UIViewController {
         self.navigationController?.isNavigationBarHidden = true
         title = ""
         self.tabBarController?.tabBar.isHidden = true
+        self.tabBarController?.tabBar.isTranslucent = true
+        
         
         var moveTo: Int = 0
         // title = "الصفحة الشخصية"
@@ -217,8 +223,8 @@ class ProfileViewController: UIViewController {
             .menuItemSeparatorPercentageHeight(0.1),
             .scrollMenuBackgroundColor(UIColor.white),
             .menuItemSeparatorColor(UIColor.white),
-            .selectedMenuItemLabelColor(Constants.FirstColor),
-            .selectionIndicatorColor(Constants.FirstColor),
+            .selectedMenuItemLabelColor(UIColor.black),
+            .selectionIndicatorColor(UIColor.black),
             .selectionIndicatorHeight(2),
             .enableHorizontalBounce(true),
             .unselectedMenuItemLabelColor(UIColor(red:  127/255, green: 127/255, blue: 127/255 , alpha: 1))
@@ -254,7 +260,44 @@ class ProfileViewController: UIViewController {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
+    
+    private func blockUser(userKey: String, userName: String)
+    {
+        FIRDatabase.database().reference().child("Users").child(WelcomeViewController.user.userId).child("chat").observeSingleEvent(of: .value, with:{ (snapshot) in
+            
+            for message in snapshot.children
+            {
+                let messageValue = ((message as! FIRDataSnapshot).value!) as! NSDictionary
+                let blockedUserKey = messageValue["user-id"] as? String
+                
+                if (blockedUserKey == userKey)
+                {
+                    var messageKey = (String(describing: (message as! FIRDataSnapshot).key))
+                    FIRDatabase.database().reference().child("Users").child(WelcomeViewController.user.userId).child("chat").child(messageKey).removeValue()
+                }
+            }
+        });
+        
+        FIRDatabase.database().reference().child("Users").child(userKey).child("chat").observeSingleEvent(of: .value, with: {(snapshot) in
+            
+            for message in snapshot.children
+            {
+                let messageValue = ((message as! FIRDataSnapshot).value!) as! NSDictionary
+                let blockedUserKey = messageValue["user-id"] as? String
+                
+                if (blockedUserKey == WelcomeViewController.user.userId)
+                {
+                    var messageKey = (String(describing: (message as! FIRDataSnapshot).key))
+                    FIRDatabase.database().reference().child("Users").child(userKey).child("chat").child(messageKey).removeValue()
+                }
+            }
+        });
+        
+        FIRDatabase.database().reference().child("Users").child(WelcomeViewController.user.userId).child("block").child(userKey).setValue(userName)
 
+    }
+    
+    
     func showNoItemLabel()
     {
         var noItemLabel = UILabel()

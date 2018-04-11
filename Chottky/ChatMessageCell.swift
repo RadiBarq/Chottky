@@ -10,6 +10,7 @@
  
  class ChatMessageCell: UICollectionViewCell {
     
+
     let textView: UITextView =
         {
             let textV = UITextView()
@@ -18,11 +19,13 @@
             textV.translatesAutoresizingMaskIntoConstraints = false
             textV.backgroundColor = UIColor.clear
             textV.textColor = .white
+            textV.textAlignment = .center
             textV.isEditable = false
-            textV.textAlignment = .right
             return textV
+            
+            
+
     }()
-    
     
     var profileImageView: UIImageView =
         {
@@ -39,9 +42,9 @@
     let bubbleView: UIView = {
         
         let view = UIView()
-        view.backgroundColor = Constants.SecondColor
+        view.backgroundColor = Constants.LightGray
         view.translatesAutoresizingMaskIntoConstraints = false
-        view.layer.cornerRadius = 16
+        view.layer.cornerRadius = 30
         view.layer.masksToBounds = true
         return view
         
@@ -76,12 +79,15 @@
         profileImageView.widthAnchor.constraint(equalToConstant: 32).isActive = true
         profileImageView.heightAnchor.constraint(equalToConstant: 32).isActive = true
         
-        
         //textView.rightAnchor.constraint(equalTo: self.rightAnchor).isActive = true
-        textView.rightAnchor.constraint(equalTo: bubbleView.rightAnchor).isActive = true
-        textView.leftAnchor.constraint(equalTo: bubbleView.leftAnchor, constant: 8).isActive = true
-        textView.topAnchor.constraint(equalTo: self.topAnchor).isActive = true
+        textView.rightAnchor.constraint(equalTo: bubbleView.rightAnchor, constant: 0).isActive = true
+        textView.leftAnchor.constraint(equalTo: bubbleView.leftAnchor, constant: 0).isActive = true
+       // textView.centerXAnchor.constraint(equalTo: bubbleView.centerXAnchor).isActive = true
+
+        textView.topAnchor.constraint(equalTo: self.topAnchor, constant: 10).isActive = true
+        textView.bottomAnchor.constraint(equalTo: self.bottomAnchor, constant:  -10).isActive = true
         // textView.widthAnchor.constraint(equalToConstant: 200).isActive = true
+        
         textView.heightAnchor.constraint(equalTo: self.heightAnchor).isActive = true
         // ios9 constraitns x, y, w, h
     }

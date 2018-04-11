@@ -27,19 +27,23 @@ enum TabViewProvider
         let v3 =  mainStoryboard.instantiateViewController(withIdentifier: "browseNavigationController")
         let v4 =  mainStoryboard.instantiateViewController(withIdentifier: "messagesNavigationController")
         let v5 =  mainStoryboard.instantiateViewController(withIdentifier: "notificationsNavigationController")
-        
         v1.tabBarItem = UITabBarItem.init(title: "", image: UIImage(named: "home"), selectedImage: UIImage(named: "home_1"))
         
-        var photoImage = UIImage(named: "ic_panorama_fish_eye_48pt")
+        var photoImage = UIImage(named: "thin-circle")
         v2.tabBarItem = UITabBarItem.init(title: "", image: UIImage(named: "find"), selectedImage: UIImage(named: "find_1"))
-        v3.tabBarItem = UITabBarItem.init(title: "", image: UIImage(named: "ic_panorama_fish_eye_48pt"), selectedImage: photoImage)
+        v3.tabBarItem = UITabBarItem.init(title: "", image: UIImage(named: "thin-circle"), selectedImage: photoImage)
         v4.tabBarItem = UITabBarItem.init(title: "", image: UIImage(named: "message-2"), selectedImage: UIImage(named: "message_!"))
         v5.tabBarItem = UITabBarItem.init(title: "", image: UIImage(named: "ic_notifications_none"), selectedImage: UIImage(named: "ic_notifications"))
         
         tabBarController.tabBar.shadowImage = nil
         tabBarController.viewControllers = [v1, v2, v3, v4, v5]
-        tabBarController.view.tintColor = Constants.FirstColor
+        tabBarController.view.tintColor = UIColor.black
         tabBarController.tabBar.barTintColor = .white
+        tabBarController.tabBar.isTranslucent = false
+        tabBarController.tabBar.layer.borderWidth = 0.50
+        tabBarController.tabBar.layer.borderColor = UIColor.clear.cgColor
+        tabBarController.tabBar.clipsToBounds = true
+        
         
         for tabBarItem in tabBarController.tabBar.items!
         {
