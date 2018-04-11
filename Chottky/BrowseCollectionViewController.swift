@@ -244,8 +244,7 @@ class BrowseCollectionViewController: UICollectionViewController, UICollectionVi
         image = image.withRenderingMode(UIImageRenderingMode.alwaysOriginal)
         self.navigationItem.rightBarButtonItem = UIBarButtonItem(image: image, style: UIBarButtonItemStyle.plain, target: self, 
                                                                  action: #selector(onClickBrowseSettings))
-    
-        
+
          searchBar = UISearchBar()
         searchBar.placeholder = "ابحث في جايلك"
         searchBar.tintColor = Constants.FirstColor
@@ -314,8 +313,8 @@ class BrowseCollectionViewController: UICollectionViewController, UICollectionVi
         
         // At the end of this, remember to add this.
         let cameraStoryboard = UIStoryboard(name: "Main", bundle: nil)
-        let cameraViewController = cameraStoryboard.instantiateViewController(withIdentifier: "cameraView") as! CameraViewController
-        self.navigationController?.pushViewController(cameraViewController, animated: true)
+        //let cameraViewController = cameraStoryboard.instantiateViewController(withIdentifier: "cameraView") as! CameraViewController
+       // self.navigationController?.pushViewController(cameraViewController, animated: true)
     }
     
     func initializeNoItemAvailable()

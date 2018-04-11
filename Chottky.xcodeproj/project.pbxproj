@@ -26,7 +26,6 @@
 		CD3BD7061E736F6D00693BAA /* BrowseCollectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD3BD7051E736F6D00693BAA /* BrowseCollectionViewController.swift */; };
 		CD3BD7081E74062500693BAA /* LeftMenuTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD3BD7071E74062500693BAA /* LeftMenuTableViewController.swift */; };
 		CD3BD70E1E7422C800693BAA /* MenuBarCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD3BD70D1E7422C800693BAA /* MenuBarCell.swift */; };
-		CD3BD7101E74708200693BAA /* CameraViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD3BD70F1E74708200693BAA /* CameraViewController.swift */; };
 		CD3C30871ED1DDB900A1C349 /* SoldViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD3C30861ED1DDB900A1C349 /* SoldViewController.swift */; };
 		CD3C30891ED1DDCB00A1C349 /* SellingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD3C30881ED1DDCB00A1C349 /* SellingViewController.swift */; };
 		CD3C308B1ED1DDDB00A1C349 /* WatchingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD3C308A1ED1DDDB00A1C349 /* WatchingViewController.swift */; };
@@ -39,9 +38,6 @@
 		CD4E5D5C1FF43B4400D2B53B /* ChangeProfilePasswordViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD4E5D5B1FF43B4400D2B53B /* ChangeProfilePasswordViewController.swift */; };
 		CD5F08BC207EC18500B2D3CE /* pacifico.regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = CD5F08BB207EC18500B2D3CE /* pacifico.regular.ttf */; };
 		CD6565C91EAAA8B300C6353A /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = CD6565C81EAAA8B300C6353A /* GoogleService-Info.plist */; };
-		CD6565CB1EAAAC2700C6353A /* PhotoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD6565CA1EAAAC2700C6353A /* PhotoViewController.swift */; };
-		CD6565CD1EAAAC3500C6353A /* VideoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD6565CC1EAAAC3500C6353A /* VideoViewController.swift */; };
-		CD6565CF1EAAAC4400C6353A /* SwiftyRecordButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD6565CE1EAAAC4400C6353A /* SwiftyRecordButton.swift */; };
 		CD6D29BB1FFE2AE8008B4AD2 /* BlockedUsersTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD6D29BA1FFE2AE8008B4AD2 /* BlockedUsersTableViewController.swift */; };
 		CD6E2C001E6FFD3000D11EC0 /* NearbyPeopleTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD6E2BFF1E6FFD3000D11EC0 /* NearbyPeopleTableViewController.swift */; };
 		CD6E2C031E7000EC00D11EC0 /* PeopleCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD6E2C021E7000EC00D11EC0 /* PeopleCell.swift */; };
@@ -96,7 +92,6 @@
 		CD3BD7051E736F6D00693BAA /* BrowseCollectionViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BrowseCollectionViewController.swift; sourceTree = "<group>"; };
 		CD3BD7071E74062500693BAA /* LeftMenuTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LeftMenuTableViewController.swift; sourceTree = "<group>"; };
 		CD3BD70D1E7422C800693BAA /* MenuBarCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MenuBarCell.swift; sourceTree = "<group>"; };
-		CD3BD70F1E74708200693BAA /* CameraViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = CameraViewController.swift; path = ../CameraViewController.swift; sourceTree = "<group>"; };
 		CD3C30861ED1DDB900A1C349 /* SoldViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SoldViewController.swift; sourceTree = "<group>"; };
 		CD3C30881ED1DDCB00A1C349 /* SellingViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SellingViewController.swift; sourceTree = "<group>"; };
 		CD3C308A1ED1DDDB00A1C349 /* WatchingViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WatchingViewController.swift; sourceTree = "<group>"; };
@@ -124,9 +119,6 @@
 		CD5EF31B1FF7B20A00C1055A /* GFCircleQuery.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GFCircleQuery.h; sourceTree = "<group>"; };
 		CD5F08BB207EC18500B2D3CE /* pacifico.regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = pacifico.regular.ttf; sourceTree = "<group>"; };
 		CD6565C81EAAA8B300C6353A /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
-		CD6565CA1EAAAC2700C6353A /* PhotoViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PhotoViewController.swift; sourceTree = "<group>"; };
-		CD6565CC1EAAAC3500C6353A /* VideoViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VideoViewController.swift; sourceTree = "<group>"; };
-		CD6565CE1EAAAC4400C6353A /* SwiftyRecordButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SwiftyRecordButton.swift; sourceTree = "<group>"; };
 		CD6D29BA1FFE2AE8008B4AD2 /* BlockedUsersTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlockedUsersTableViewController.swift; sourceTree = "<group>"; };
 		CD6E2BFF1E6FFD3000D11EC0 /* NearbyPeopleTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NearbyPeopleTableViewController.swift; sourceTree = "<group>"; };
 		CD6E2C021E7000EC00D11EC0 /* PeopleCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PeopleCell.swift; sourceTree = "<group>"; };
@@ -249,7 +241,6 @@
 				CDDB3D1F1ECA28BF0083D722 /* Login */,
 				CDDB3D1E1ECA28A80083D722 /* Chat */,
 				CDDB3D1D1ECA288E0083D722 /* Notifications */,
-				CDDB3D1C1ECA28810083D722 /* Camera */,
 			);
 			name = Controller;
 			sourceTree = "<group>";
@@ -363,17 +354,6 @@
 				CD26B78B1E69F9800016AF8C /* Assets.xcassets */,
 			);
 			name = Resources;
-			sourceTree = "<group>";
-		};
-		CDDB3D1C1ECA28810083D722 /* Camera */ = {
-			isa = PBXGroup;
-			children = (
-				CD3BD70F1E74708200693BAA /* CameraViewController.swift */,
-				CD6565CC1EAAAC3500C6353A /* VideoViewController.swift */,
-				CD6565CA1EAAAC2700C6353A /* PhotoViewController.swift */,
-				CD6565CE1EAAAC4400C6353A /* SwiftyRecordButton.swift */,
-			);
-			name = Camera;
 			sourceTree = "<group>";
 		};
 		CDDB3D1D1ECA288E0083D722 /* Notifications */ = {
@@ -610,7 +590,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CD6565CF1EAAAC4400C6353A /* SwiftyRecordButton.swift in Sources */,
 				CD3BD70E1E7422C800693BAA /* MenuBarCell.swift in Sources */,
 				CD381A6E1ECF683900B95AF1 /* PostedItemViewController.swift in Sources */,
 				CD280B2B2006B3C000B1874F /* SqueezeNet.mlmodel in Sources */,
@@ -623,14 +602,11 @@
 				CD4E5D5C1FF43B4400D2B53B /* ChangeProfilePasswordViewController.swift in Sources */,
 				CD98DB2A1FFA5B22007210FF /* Item.swift in Sources */,
 				CD3BD7081E74062500693BAA /* LeftMenuTableViewController.swift in Sources */,
-				CD3BD7101E74708200693BAA /* CameraViewController.swift in Sources */,
 				CD6D29BB1FFE2AE8008B4AD2 /* BlockedUsersTableViewController.swift in Sources */,
 				CDDB3D101EC9031A0083D722 /* NotificationsCell.swift in Sources */,
 				CD3C30871ED1DDB900A1C349 /* SoldViewController.swift in Sources */,
 				CD3C308B1ED1DDDB00A1C349 /* WatchingViewController.swift in Sources */,
-				CD6565CD1EAAAC3500C6353A /* VideoViewController.swift in Sources */,
 				CD772D2B1ECCD7980016ADF7 /* ProfileViewController.swift in Sources */,
-				CD6565CB1EAAAC2700C6353A /* PhotoViewController.swift in Sources */,
 				CDE135CB1E75E81C00ED6F72 /* User.swift in Sources */,
 				CD4E5D5A1FF43B1900D2B53B /* ChangeProfileUserNameViewController.swift in Sources */,
 				CD98DB2C1FFAD950007210FF /* ReportUserViewController.swift in Sources */,

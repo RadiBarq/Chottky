@@ -305,8 +305,8 @@ class PostedItemViewController: UIViewController, UICollectionViewDataSource, UI
         alert.addAction(UIAlertAction(title: "الكاميرة", style: .default, handler: { (action) in
             PostedItemViewController.imageClickedNumber = indexPath.item
             let cameraStoryboard = UIStoryboard(name: "Main", bundle: nil)
-            let cameraViewController = cameraStoryboard.instantiateViewController(withIdentifier: "cameraView") as! CameraViewController
-            self.navigationController?.pushViewController(cameraViewController, animated: true)
+           // let cameraViewController = cameraStoryboard.instantiateViewController(withIdentifier: "cameraView") as! CameraViewController
+          //  self.navigationController?.pushViewController(cameraViewController, animated: true)
         }))
         
         alert.addAction(UIAlertAction(title: "مكتبة الصور", style: .default, handler: { (action) in
